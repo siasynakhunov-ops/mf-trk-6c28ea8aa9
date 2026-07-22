@@ -92,6 +92,7 @@ td.pos{color:var(--good);font-weight:700}td.neg{color:var(--bad);font-weight:700
    <div id="wkScroll" style="overflow-x:auto;overflow-y:hidden;width:100%">
      <div id="wkInner" style="height:300px;position:relative"><canvas id="wkChart"></canvas></div>
    </div>
+   <div id="promoNotes"></div>
  </div>
 
  <div class="two">
@@ -142,19 +143,36 @@ var rb=document.getElementById('reprojBadge'), rd=D.reproj-D.annPlan;
 rb.textContent=(rd>=0?'+':'')+f0(rd)+'М · '+f1(D.reprojPct)+'% плана'; rb.className='badge '+(rd>=0?'b-good':'b-bad');
 // weekly chart
 const fFull=n=>n==null?'—':Math.round(n*1e6).toLocaleString('ru')+' ₽';
+const promos=D.promos||[];
+const weekPromo={}; // недельный индекс (0-based) -> список акций, задевших эту неделю
+promos.forEach(pr=>pr.weeks.forEach(w=>{ (weekPromo[w-1]=weekPromo[w-1]||[]).push(pr); }));
 const cols=D.factW.map((v,i)=> v==null?'rgba(148,163,184,0.25)':(v>=D.planW[i]?'rgba(22,163,74,0.85)':'rgba(220,38,38,0.85)'));
+const borders=D.factW.map((v,i)=> weekPromo[i]?'#F59E0B':'rgba(0,0,0,0)');
 const factOrPlan=D.factW.map((v,i)=> v==null? D.planW[i]:v);
 var PX_PER_WEEK=38, wkInnerEl=document.getElementById('wkInner'), wkScrollEl=document.getElementById('wkScroll');
 wkInnerEl.style.width=(D.labels.length*PX_PER_WEEK)+'px';
 new Chart(wkChart,{data:{labels:D.labels,datasets:[
- {type:'bar',label:'Факт/План',data:factOrPlan,backgroundColor:cols,borderRadius:3,order:2},
+ {type:'bar',label:'Факт/План',data:factOrPlan,backgroundColor:cols,borderColor:borders,borderWidth:2,borderRadius:3,order:2},
  {type:'line',label:'План',data:D.planW,borderColor:'#0E1726',borderWidth:2,pointRadius:0,tension:.25,order:1}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
  tooltip:{callbacks:{title:c=>'Неделя '+(c[0].dataIndex+1)+' ('+D.labels[c[0].dataIndex]+')',label:c=>{
    var i=c.dataIndex,fa=D.factW[i],pl=D.planW[i];
-   if(fa==null) return ' План '+fFull(pl)+' (факт ожидается)';
-   var dd=fa-pl; return [' Факт '+fFull(fa)+' · План '+fFull(pl), ' '+(dd>=0?'▲ +':'▼ ')+fFull(dd)+' ('+(dd>=0?'+':'')+(fa/pl*100-100).toFixed(1)+'%)'];
+   var lines;
+   if(fa==null) lines=[' План '+fFull(pl)+' (факт ожидается)'];
+   else { var dd=fa-pl; lines=[' Факт '+fFull(fa)+' · План '+fFull(pl), ' '+(dd>=0?'▲ +':'▼ ')+fFull(dd)+' ('+(dd>=0?'+':'')+(fa/pl*100-100).toFixed(1)+'%)']; }
+   (weekPromo[i]||[]).forEach(pr=>{ lines.push(' 🎉 '+pr.name+(pr.impact!=null?': +'+fFull(pr.impact)+' к плану':'')); });
+   return lines;
  }}}},scales:{x:{grid:{display:false}},y:{grid:{color:'#EEF1F5'},ticks:{callback:v=>v+'М'}}}}});
+// подписи под графиком — какие недели затронуты разовыми акциями и на сколько
+if(promos.length){
+  var pn=document.getElementById('promoNotes');
+  pn.innerHTML=promos.map(pr=>{
+    var range=pr.start.split('-').reverse().slice(0,2).join('.')+'–'+pr.end.split('-').reverse()[0]+'.'+pr.end.split('-')[1];
+    var impactTxt=pr.impact!=null ? ' · факт превысил органический план на <b style="color:#16A34A">+'+fFull(pr.impact)+'</b>' : ' · ещё не завершилась';
+    return '<div style="margin-top:10px;padding:10px 14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;font-size:12px;color:#78350F">'+
+      '🎉 <b>'+pr.name+'</b> ('+range+') — разовая акция, не входит в органический план'+impactTxt+'</div>';
+  }).join('');
+}
 // показать по умолчанию последние ~16 недель крупно, остальное — прокрутка
 requestAnimationFrame(function(){
   var target=(D.lastW+3)*PX_PER_WEEK - wkScrollEl.clientWidth;
