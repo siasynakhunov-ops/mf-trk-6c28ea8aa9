@@ -863,6 +863,9 @@ const PLAN_MO = [143.11,133.26,150.14,138.00,150.40,147.16,145.00,148.52,147.95,
 const ANN_PLAN = PLAN_MO.reduce(function(a,b){return a+b;},0); // = 1800.30, совпадает с трекером
 // Точный факт из Dodo IS в РУБЛЯХ по месяцам (обновляет update_master.py). null = месяц не закрыт.
 const FACT_RUB = [143108000, 133255000, 150137700, 137995700, 150402000, 147163500, 157439400, 151863200, null, null, null, null];
+// Текущий НЕЗАКРЫТЫЙ месяц — факт с начала месяца (обновляет update_master.py).
+// {mo:индекс月, days:дней с фактом, dim:дней в месяце, rub:точные рубли}
+const PART_MONTH = {mo:8, days:8, dim:30, rub:38642764};
 
 const PIZZA_COLORS = {
   'Я-1':'#F97316','Я-2':'#FB923C','Я-3':'#22C55E','Я-4':'#16A34A',
@@ -2194,11 +2197,13 @@ function buildFVP(){
   document.getElementById('fvpChartSub').textContent = 'План сети '+m1(annPlan)+'M ₽ · факт по '+MONTHS[LA]+' = '+m1(ytdF)+'M ('+pct.toFixed(2)+'% плана · '+sgn1(dY)+'M ₽)';
   // grouped bar chart
   var factArr=factMo.map(function(v,i){return i<=LA?v:null;});
+  // текущий незакрытый месяц — отдельным бледным баром, чтобы было видно факт «на сегодня»
+  if(PART_MONTH && factArr[PART_MONTH.mo]==null) factArr[PART_MONTH.mo]=PART_MONTH.rub/1e6;
   if(!_fvpChart){
     _fvpChart=new Chart(document.getElementById('fvpChart').getContext('2d'),{type:'bar',
       data:{labels:MONTHS,datasets:[
         {label:'План',data:PLAN_MO,backgroundColor:'#CBD5E1',borderRadius:4},
-        {label:'Факт',data:factArr,backgroundColor:factArr.map(function(v,i){return v==null?'#eee':(v>=PLAN_MO[i]?'#16A34A':'#FF7A00');}),borderRadius:4}
+        {label:'Факт',data:factArr,backgroundColor:factArr.map(function(v,i){return v==null?'#eee':((PART_MONTH&&i===PART_MONTH.mo)?'#FBBF24':(v>=PLAN_MO[i]?'#16A34A':'#FF7A00'));}),borderRadius:4}
       ]},
       options:{responsive:true,interaction:{mode:'index',intersect:false},
         plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},
@@ -2209,7 +2214,7 @@ function buildFVP(){
         scales:{y:{ticks:{callback:function(v){return v+'M';}},grid:{color:'#F3F4F6'}}}}});
   }else{
     _fvpChart.data.datasets[1].data=factArr;
-    _fvpChart.data.datasets[1].backgroundColor=factArr.map(function(v,i){return v==null?'#eee':(v>=PLAN_MO[i]?'#16A34A':'#FF7A00');});
+    _fvpChart.data.datasets[1].backgroundColor=factArr.map(function(v,i){return v==null?'#eee':((PART_MONTH&&i===PART_MONTH.mo)?'#FBBF24':(v>=PLAN_MO[i]?'#16A34A':'#FF7A00'));});
     _fvpChart.update();
   }
   // monthly network table — точные значения: млн (2 знака) + точная сумма в рублях
@@ -2218,7 +2223,20 @@ function buildFVP(){
   for(var i=0;i<12;i++){
     var p=PLAN_MO[i], f=(i<=LA)?factMo[i]:null;
     var pCell='<td>'+m1(p)+'<div style="'+sub+'">'+rub(p)+'</div></td>';
-    if(f==null){ mt+='<tr><td><b>'+MONTHS[i]+'</b></td>'+pCell+'<td colspan="3" style="color:#D1D5DB;text-align:center">прогноз</td></tr>'; continue; }
+    if(f==null){
+      // текущий незакрытый месяц — показываем факт с начала месяца и план за столько же дней
+      if(PART_MONTH && PART_MONTH.mo===i){
+        var pf=PART_MONTH.rub/1e6, pp=PLAN_MO[i]*PART_MONTH.days/PART_MONTH.dim;
+        var pd=pf-pp, pc=pd>=0?'#16A34A':'#DC2626';
+        mt+='<tr style="background:#FFFBEB"><td><b>'+MONTHS[i]+'</b>'
+          +'<div style="'+sub+'">1–'+PART_MONTH.days+' · месяц не закрыт</div></td>'
+          +'<td>'+m1(pp)+'<div style="'+sub+'">план за '+PART_MONTH.days+' дн · '+rub(pp)+'</div></td>'
+          +'<td style="font-weight:700">'+m1(pf)+'<div style="'+sub+'">'+PART_MONTH.rub.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</div></td>'
+          +'<td style="color:'+pc+';font-weight:600">'+sgn1(pd)+'<div style="'+sub+';color:'+pc+';opacity:.75">'+(pd>=0?'+':'−')+rub(Math.abs(pd))+'</div></td>'
+          +'<td style="color:'+pc+';font-weight:700">'+(pp?pf/pp*100:0).toFixed(2)+'%</td></tr>';
+        continue;
+      }
+      mt+='<tr><td><b>'+MONTHS[i]+'</b></td>'+pCell+'<td colspan="3" style="color:#D1D5DB;text-align:center">прогноз</td></tr>'; continue; }
     var dd=f-p, dc=dd>=0?'#16A34A':'#DC2626';
     var fRub=(FACT_RUB[i]!=null)? FACT_RUB[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽' : rub(f);
     mt+='<tr><td><b>'+MONTHS[i]+'</b></td>'+pCell
@@ -2257,7 +2275,7 @@ function buildFVP(){
 // ─── ВКЛАДКА НЕДЕЛЬНЫЙ ПЛАН/ФАКТ (нативная, обновляется ЕЖЕНЕДЕЛЬНО) ──
 // TRK наполняет update_master.py данными недельного трекера (planW/factW/units/ytd…), еженедельный републиш.
 // Прогноз года берётся из строковой модели (yearFc) — совпадает со всеми вкладками.
-const TRK = {"labels": ["01.01", "05.01", "12.01", "19.01", "26.01", "02.02", "09.02", "16.02", "23.02", "02.03", "09.03", "16.03", "23.03", "30.03", "06.04", "13.04", "20.04", "27.04", "04.05", "11.05", "18.05", "25.05", "01.06", "08.06", "15.06", "22.06", "29.06", "06.07", "13.07", "20.07", "27.07", "03.08", "10.08", "17.08", "24.08", "31.08", "07.09", "14.09", "21.09", "28.09", "05.10", "12.10", "19.10", "26.10", "02.11", "09.11", "16.11", "23.11", "30.11", "07.12", "14.12", "21.12"], "lastW": 36, "cut": "2026-09-07", "planW": [17.06915, 36.874074, 32.121096, 32.213848, 30.945471, 30.926013, 33.311437, 34.762154, 34.429399, 36.285348, 31.015998, 32.177641, 35.810176, 31.754007, 31.705646, 32.091223, 32.06429, 35.080322, 33.293808, 30.7591, 34.573384, 35.646418, 35.437972, 35.533098, 32.942146, 33.559442, 34.369363, 31.670125, 33.072752, 34.042279, 32.103911, 32.4494, 32.392958, 33.044375, 34.888506, 38.267292, 33.706092, 34.372444, 33.78923, 34.15215, 34.149413, 34.160916, 35.175205, 36.132311, 36.91655, 34.691076, 35.144715, 36.764848, 36.918691, 38.613653, 41.072484, 75.856603], "factW": [19.792172, 37.126034, 31.216392, 30.391761, 29.406488, 31.116315, 33.335333, 33.825162, 35.589266, 38.693028, 32.068286, 31.794838, 33.280253, 35.924712, 30.703756, 31.099748, 31.731073, 33.652917, 31.485518, 31.586994, 33.495409, 37.582979, 36.126287, 33.531613, 33.935084, 34.068471, 40.975894, 37.733741, 32.712717, 33.254525, 32.759634, 33.011577, 33.657132, 34.28691, 35.696418, 36.099598, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "planMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 145.0, 148.5, 148.0, 153.3, 157.3, 186.2], "factMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 157.4, 151.9, 35.0, null, null, null], "ytdPlan": 1188.7, "ytdFact": 1202.7, "ytdPct": 101.2, "annPlan": 1800.3, "units": [{"u": "Я-1", "plan": 114.2, "fact": 116.9, "pct": 102.4}, {"u": "Я-2", "plan": 147.5, "fact": 150.0, "pct": 101.7}, {"u": "Я-3", "plan": 191.5, "fact": 194.2, "pct": 101.4}, {"u": "Я-4", "plan": 142.8, "fact": 145.6, "pct": 102.0}, {"u": "Я-5", "plan": 183.6, "fact": 186.6, "pct": 101.7}, {"u": "Я-6", "plan": 252.6, "fact": 256.9, "pct": 101.7}, {"u": "Я-7", "plan": 153.6, "fact": 156.2, "pct": 101.7}]};
+const TRK = {"labels": ["01.01", "05.01", "12.01", "19.01", "26.01", "02.02", "09.02", "16.02", "23.02", "02.03", "09.03", "16.03", "23.03", "30.03", "06.04", "13.04", "20.04", "27.04", "04.05", "11.05", "18.05", "25.05", "01.06", "08.06", "15.06", "22.06", "29.06", "06.07", "13.07", "20.07", "27.07", "03.08", "10.08", "17.08", "24.08", "31.08", "07.09", "14.09", "21.09", "28.09", "05.10", "12.10", "19.10", "26.10", "02.11", "09.11", "16.11", "23.11", "30.11", "07.12", "14.12", "21.12"], "lastW": 36, "cut": "2026-09-08", "planW": [17.06915, 36.874074, 32.121096, 32.213848, 30.945471, 30.926013, 33.311437, 34.762154, 34.429399, 36.285348, 31.015998, 32.177641, 35.810176, 31.754007, 31.705646, 32.091223, 32.06429, 35.080322, 33.293808, 30.7591, 34.573384, 35.646418, 35.437972, 35.533098, 32.942146, 33.559442, 34.369363, 31.670125, 33.072752, 34.042279, 32.103911, 32.4494, 32.392958, 33.044375, 34.888506, 38.267292, 33.706092, 34.372444, 33.78923, 34.15215, 34.149413, 34.160916, 35.175205, 36.132311, 36.91655, 34.691076, 35.144715, 36.764848, 36.918691, 38.613653, 41.072484, 75.856603], "factW": [19.792172, 37.126034, 31.216392, 30.391761, 29.406488, 31.116315, 33.335333, 33.825162, 35.589266, 38.693028, 32.068286, 31.794838, 33.280253, 35.924712, 30.703756, 31.099748, 31.731073, 33.652917, 31.485518, 31.586994, 33.495409, 37.582979, 36.126287, 33.531613, 33.935084, 34.068471, 40.975894, 37.733741, 32.712717, 33.254525, 32.759634, 33.011577, 33.657132, 34.28691, 35.696418, 36.099598, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "planMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 145.0, 148.5, 148.0, 153.3, 157.3, 186.2], "factMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 157.4, 151.9, 38.6, null, null, null], "ytdPlan": 1188.7, "ytdFact": 1202.7, "ytdPct": 101.2, "annPlan": 1800.3, "units": [{"u": "Я-1", "plan": 114.6, "fact": 117.3, "pct": 102.3}, {"u": "Я-2", "plan": 148.0, "fact": 150.4, "pct": 101.6}, {"u": "Я-3", "plan": 192.2, "fact": 194.8, "pct": 101.3}, {"u": "Я-4", "plan": 143.4, "fact": 146.0, "pct": 101.9}, {"u": "Я-5", "plan": 184.2, "fact": 187.2, "pct": 101.6}, {"u": "Я-6", "plan": 253.5, "fact": 257.7, "pct": 101.6}, {"u": "Я-7", "plan": 154.2, "fact": 156.6, "pct": 101.6}]};
 var _trkChart=null;
 function buildTracker(){
   if(!TRK || !TRK.units){ return; }
