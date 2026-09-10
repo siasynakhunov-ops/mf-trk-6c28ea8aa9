@@ -212,6 +212,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="maintab on" data-t="monthly" onclick="showTab('monthly')">📊 Месячный прогноз</button>
   <button class="maintab" data-t="weekly" onclick="showTab('weekly')">📅 Недельный прогноз</button>
   <button class="maintab" data-t="fvp" onclick="showTab('fvp')">📈 Факт / План по месяцам</button>
+  <button class="maintab" data-t="sched" onclick="showTab('sched')">🏗 Перенос открытий <span style="font-size:9px;background:#DC2626;color:#fff;padding:1px 5px;border-radius:4px;margin-left:4px">НОВОЕ</span></button>
   <button class="maintab" data-t="tracker" onclick="showTab('tracker')">🎯 Трекер План/Факт <span style="font-size:9px;background:#16A34A;color:#fff;padding:1px 5px;border-radius:4px;margin-left:4px">LIVE</span></button>
 </div>
 <div id="tab-monthly">
@@ -820,6 +821,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="foot">Недельный прогноз · Якутск Dodo Pizza · данные Dodo IS /finances/sales/units/daily (2025 + H1 2026, 546 дней)<br>52 недели × 7 дней · доставка/зал по каналам продаж (Delivery / Dine-in)</div>
 </div>
 </div><!-- /tab-weekly -->
+
+<div id="tab-sched" style="display:none;padding:20px 40px 40px">
+  <div class="st" style="margin-top:0">Изменение сроков открытия новых пиццерий</div>
+  <div style="background:#FEF2F2;border-left:3px solid #DC2626;padding:12px 16px;border-radius:6px;font-size:12.5px;color:#7F1D1D;line-height:1.7;margin-bottom:16px">
+    <b>Что изменилось.</b> Запуск Якутск-10 перенесён с <b>сентября на октябрь 2026</b>, Якутск-11 — с <b>октября на середину ноября 2026</b>.
+    Прогноз пересчитан: новые точки дают выручку меньше месяцев, зато <b>Якутск-5 продолжает работать</b> до передачи зоны в Я-11
+    (январь–октябрь полностью + половина ноября) — это частично компенсирует потерю.
+  </div>
+  <div id="schedKpi" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px"></div>
+  <div class="cc"><div class="ch"><div><div class="ct">Сроки: было → стало</div>
+    <div class="cs">месяцы работы в 2026 году и вклад в выручку</div></div></div>
+    <div style="overflow-x:auto"><table class="dt" id="schedUnits" style="min-width:760px"></table></div></div>
+  <div class="cc"><div class="ch"><div><div class="ct">Помесячно 2026: прежний план и новый прогноз</div>
+    <div class="cs">млн ₽ · разница возникает только в сентябре–декабре</div></div></div>
+    <canvas id="schedChart" height="130"></canvas></div>
+  <div class="cc" style="margin-bottom:0"><div class="ch"><div><div class="ct">Помесячно — цифрами</div>
+    <div class="cs">только месяцы, на которые повлиял перенос</div></div></div>
+    <table class="dt" id="schedMon"></table></div>
+</div>
 
 <div id="tab-tracker" style="display:none;padding:20px 40px 40px">
   <div class="st" style="margin-top:0">Недельный План / Факт 2026 <span style="font-size:11px;font-weight:400;color:#16A34A">● данные на <span id="trkCut"></span> · обновляется еженедельно (факт из Dodo IS) · <a href="https://siasynakhunov-ops.github.io/mf-trk-6c28ea8aa9/" target="_blank" rel="noopener" style="color:#2563EB">ежедневная версия ↗</a></span></div>
@@ -1473,7 +1493,8 @@ const OVERFLOW_YA6 = 3.75; // млн ₽/мес: перелив спроса Я-
 const CAP_YA1 = 9.5;       // млн ₽/мес: центр диапазона Я-1 (ОДНА печь) — сезонно ~8 (лето) … ~11 (зима)
 const YA1_TO_YA2 = 0.6;    // доля излишка Я-1 сверх потолка, уходящая в Я-2 (остальное — в зону Я-10)
 // Плавный переход зон при запуске Я-10: Сен 50% → Окт 80% → Ноя–Дек 100% (клиенты мигрируют не мгновенно)
-const PHASE_H2 = [0,0,0,0,0,0,0,0, 0.5, 0.8, 1.0, 1.0];
+// Плавный переход зон при запуске Я-10: Окт 50% → Ноя 80% → Дек 100% (сдвинуто из-за переноса открытия)
+const PHASE_H2 = [0,0,0,0,0,0,0,0, 0, 0.5, 0.8, 1.0];
 
 // Канонические сезонные веса = факт выручки 2025 по месяцам (млн ₽).
 // Используются для распределения H2, чтобы сезонность (в т.ч. летний спад июля)
@@ -1515,14 +1536,14 @@ function getFullRows26(s) {
   var ya1Excess = [0,0,0,0,0,0,0,0,0,0,0,0]; // излишек Я-1 сверх потолка (одна печь), с плавным входом
   if (ya2p) {
     var pr2 = projectH2('Я-2', ya2p.v, 12);
-    for (var ki=0; ki<6; ki++) { var mi = 6 + ki; if (mi >= 8) ya2Cannib[mi] = pr2.months[ki] * pr2.delRatio * YA2_CANNIB * PHASE_H2[mi]; }
+    for (var ki=0; ki<6; ki++) { var mi = 6 + ki; if (mi >= OPEN_FROM_26['Я-10']) ya2Cannib[mi] = pr2.months[ki] * pr2.delRatio * YA2_CANNIB * PHASE_H2[mi]; }
   }
   var avgSD1 = (SEASON[8]+SEASON[9]+SEASON[10]+SEASON[11]) / 4; // средняя сезонность Сен–Дек (сезонный потолок Я-1)
   if (ya1p) {
     var pr1 = projectH2('Я-1', ya1p.v, 12);
     for (var kj=0; kj<6; kj++) {
       var mj = 6 + kj;
-      if (mj >= 8) {
+      if (mj >= OPEN_FROM_26['Я-10']) {
         var capv1 = CAP_YA1 * SEASON[mj] / avgSD1; // сезонный уровень Я-1 (8 лето … 11 зима)
         var served1 = pr1.months[kj] * (1 - PHASE_H2[mj]) + capv1 * PHASE_H2[mj]; // плавный переход к потолку
         ya1Excess[mj] = Math.max(0, pr1.months[kj] - served1);
@@ -1541,6 +1562,8 @@ function getFullRows26(s) {
       var h1Vals = CH_MONTHS.map(function(m){ return CH[p.n] ? CH[p.n][m].del + CH[p.n][m].hall : 0; });
       var pr = projectH2(p.n, p.v, closeAt);
       months = h1Vals.concat(pr.months);
+      // неполный последний месяц (Я-5 передаёт зону Я-11 серединой ноября)
+      if (CLOSE_FRAC_26[p.n] !== undefined && closeAt-1 < 12) months[closeAt-1] *= CLOSE_FRAC_26[p.n];
     } else if (p.n === 'Я-11') {
       // Я-11 = реновированная Я-5: доставка ПРОДОЛЖАЕТСЯ с уровня Я-5 (существующая, БЕЗ разгона),
       // + добавляется НОВЫЙ ресторан (зал) с мягким разгоном. Считаем доставку и зал раздельно.
@@ -1548,12 +1571,16 @@ function getFullRows26(s) {
       var y5del = CH['Я-5'] ? CH['Я-5']['06'].del : 20; // якорь доставки = июнь Я-5
       var hallM = s.hall11 || 12;                        // зрелый зальный темп/мес
       var sAvg = SEASON.reduce(function(t,w){ return t+w; }, 0) / 12;
-      var rampH = [0.55, 0.72, 0.88];                    // Окт, Ноя, Дек — мягкий разгон зала
+      var rampH = [0.55, 0.72, 0.88];                    // мягкий разгон зала с месяца открытия
+      var frac11 = OPEN_FRAC_26['Я-11'] || 1;            // неполный первый месяц (открытие серединой)
       dh11 = []; months = [];
       for (var i11=0; i11<12; i11++) {
         if (i11 < from11) { dh11.push({del:0, hall:0}); months.push(0); continue; }
         var dd = y5del * (SEASON[i11] / SEASON[5]);                       // доставка продолжается
-        var hh = hallM * (SEASON[i11] / sAvg) * rampH[i11 - from11];      // зал разгоняется
+        var rmp = rampH[i11 - from11] !== undefined ? rampH[i11 - from11] : 1;
+        var hh = hallM * (SEASON[i11] / sAvg) * rmp;                      // зал разгоняется
+        var f11 = (i11 === from11) ? frac11 : 1;                          // первый месяц — половина
+        dd *= f11; hh *= f11;
         dh11.push({del:dd, hall:hh}); months.push(dd + hh);
       }
     } else {
@@ -1564,19 +1591,24 @@ function getFullRows26(s) {
       var wArr = [];
       for (var i=0; i<12; i++) { wArr.push(i < from ? 0 : SEASON[i] * ramp[i-from]); }
       var wSum = wArr.reduce(function(t,w){ return t+w; }, 0);
-      months = wArr.map(function(w){ return wSum ? p.v / wSum * w : 0; });
+      // Годовая цель p.v задавалась на 4 месяца работы (сен–дек). При переносе открытия
+      // сохраняем месячный ТЕМП, а не годовую сумму: цель масштабируется на фактический срок.
+      var refFrom = 8, refRamp = RAMP[12-refFrom] || RAMP[4], refSum = 0;
+      for (var ri=refFrom; ri<12; ri++) refSum += SEASON[ri] * refRamp[ri-refFrom];
+      var pvEff = p.v * (refSum ? wSum / refSum : 1);
+      months = wArr.map(function(w){ return wSum ? pvEff / wSum * w : 0; });
     }
     // Закрытые месяцы (≥июль) — ФАКТ из Dodo, одинаково во всех сценариях
     Object.keys(MONTH_ACT).forEach(function(mo){ var a = MONTH_ACT[mo][p.n]; if (a) months[+mo] = a.del + a.hall; });
     var delDelta = [0,0,0,0,0,0,0,0,0,0,0,0];
     // Я-1: ОДНА печь → потолок ~CAP_YA1/мес (сезонно). Плавный переход Сен→Ноя (зона уходит постепенно).
     if (p.n === 'Я-1') {
-      for (var ti=8; ti<12; ti++) { var capv = CAP_YA1 * SEASON[ti] / avgSD1; months[ti] = months[ti] * (1 - PHASE_H2[ti]) + capv * PHASE_H2[ti]; }
+      for (var ti=OPEN_FROM_26['Я-10']; ti<12; ti++) { var capv = CAP_YA1 * SEASON[ti] / avgSD1; months[ti] = months[ti] * (1 - PHASE_H2[ti]) + capv * PHASE_H2[ti]; }
     }
     // Я-2: + небольшая часть зоны Я-1 (излишек сверх потолка Я-1), − доставка 202/203 (→Я-10)
     if (p.n === 'Я-2') {
-      for (var ti=8; ti<12; ti++) { var add = ya1Excess[ti] * YA1_TO_YA2; months[ti] += add; delDelta[ti] += add; }
-      for (var tj=8; tj<12; tj++) { months[tj] = Math.max(0, months[tj] - ya2Cannib[tj]); delDelta[tj] -= ya2Cannib[tj]; }
+      for (var ti=OPEN_FROM_26['Я-10']; ti<12; ti++) { var add = ya1Excess[ti] * YA1_TO_YA2; months[ti] += add; delDelta[ti] += add; }
+      for (var tj=OPEN_FROM_26['Я-10']; tj<12; tj++) { months[tj] = Math.max(0, months[tj] - ya2Cannib[tj]); delDelta[tj] -= ya2Cannib[tj]; }
     }
     // Cap Я-6 H2 forecast at physical limit
     if (p.n === 'Я-6') {
@@ -1605,6 +1637,8 @@ function getFullRows27(s) {
   return piz.map(function(p) {
     var wSum = mS.reduce(function(t,w){ return t+w; }, 0);
     var months = mS.map(function(w){ return wSum ? p.v/wSum*w : 0; });
+    // Я-10 открылась в октябре 2026 (перенос со сентября) → в январе 2027 ещё добирает до полки
+    if (p.n === 'Я-10') { var r10=[0.92,1.0]; months = months.map(function(v,i){ return v*(r10[i]!==undefined?r10[i]:1); }); }
     var delDelta = [0,0,0,0,0,0,0,0,0,0,0,0];
     var dh11 = null;
     if (p.n === 'Я-11') {
@@ -1613,9 +1647,12 @@ function getFullRows27(s) {
       var hM = s.hall11 || 12;
       var sAvg = SEASON.reduce(function(t,w){ return t+w; }, 0) / 12;
       var delGrow = 1.08; // рост доставки Я-5 к 2027
+      // Открытие перенесено на середину ноября 2026 → к январю 2027 точке всего ~1.5 мес,
+      // поэтому зал в начале года ещё выходит на полку (в прежнем плане к январю было 3 мес).
+      var ramp27 = [0.85, 0.93, 1.0];
       dh11 = []; months = SEASON.map(function(w,i){
         var d = y5d * (w / SEASON[5]) * delGrow;
-        var h = hM * (w / sAvg);
+        var h = hM * (w / sAvg) * (ramp27[i] !== undefined ? ramp27[i] : 1);
         dh11.push({del:d, hall:h}); return d + h;
       });
     }
@@ -1808,9 +1845,14 @@ const FC_MLABELS = ['Янв','Фев','Мар','Апр','Май','Июн','Ию�
 const FC_QUARTERS = [['Q1',0,3],['Q2',3,3],['Q3',6,3],['Q4',9,3]];
 
 // Месяц открытия новых точек в 2026 (0-based: Сен=8, Окт=9)
-const OPEN_FROM_26 = {'Я-10': 8, 'Я-11': 9};
+// СРОКИ ОТКРЫТИЯ ПЕРЕНЕСЕНЫ (актуализировано 09.09.2026):
+// Я-10: сентябрь → ОКТЯБРЬ 2026. Я-11: октябрь → СЕРЕДИНА НОЯБРЯ 2026 (≈половина месяца).
+const OPEN_FROM_26 = {'Я-10': 9, 'Я-11': 10};
+const OPEN_FRAC_26 = {'Я-11': 0.5};   // первый месяц работы — неполный (открытие серединой месяца)
 // Месяц закрытия точек в 2026 (0-based, exclusive): Я-5 → реновация, последний месяц = Сен (ind 8), close=9
-const CLOSE_AT_26 = {'Я-5': 9};
+// Я-5 = будущая Я-11, поэтому работает ДО открытия Я-11: январь–октябрь полностью + половина ноября.
+const CLOSE_AT_26 = {'Я-5': 11};
+const CLOSE_FRAC_26 = {'Я-5': 0.5};  // ноябрь — половина месяца (до передачи в Я-11)
 
 function computePizMonthly(s, year) {
   // Единый источник истины — те же расчёты, что и в таблицах Д/З и по точкам
@@ -2153,10 +2195,12 @@ function showTab(t){
   document.getElementById('tab-weekly').style.display = (t==='weekly')?'':'none';
   var tk=document.getElementById('tab-tracker'); if(tk) tk.style.display=(t==='tracker')?'':'none';
   var fv=document.getElementById('tab-fvp'); if(fv) fv.style.display=(t==='fvp')?'':'none';
+  var sc=document.getElementById('tab-sched'); if(sc) sc.style.display=(t==='sched')?'':'none';
   document.querySelectorAll('.maintab').forEach(function(b){b.classList.toggle('on', b.dataset.t===t);});
   if(t==='weekly'){ initWeekly(); }
   if(t==='fvp'){ buildFVP(); }
   if(t==='tracker'){ buildTracker(); }
+  if(t==='sched'){ buildSched(); }
   window.scrollTo(0,0);
 }
 
@@ -2270,6 +2314,93 @@ function buildFVP(){
   });
   ut+='</tbody>';
   document.getElementById('fvpUnitTable').innerHTML=ut;
+}
+
+// ─── ВКЛАДКА «ПЕРЕНОС ОТКРЫТИЙ» ──────────────────────────────────────────────
+// Снимок прежнего плана (Я-10 с сентября, Я-11 с октября), зафиксирован 09.09.2026
+// до пересчёта модели. Нужен, чтобы показать эффект переноса «было → стало».
+const SCHED_OLD = {
+  grand26: 1816.10, grand27: 2022.10,
+  monthly: [143.12,133.24,150.14,137.99,150.40,147.16,157.43,151.87,147.95,153.28,157.33,186.15],
+  units:   {'Я-1':154.9,'Я-2':205.7,'Я-3':277.4,'Я-4':212.1,'Я-5':202.7,'Я-6':377.2,'Я-7':226.4,'Я-10':70.0,'Я-11':89.7},
+  units27: {'Я-1':114.0,'Я-2':195.8,'Я-3':252.0,'Я-4':221.0,'Я-6':399.9,'Я-7':230.0,'Я-10':205.0,'Я-11':404.4},
+  open:    {'Я-10':'сентябрь 2026','Я-11':'октябрь 2026','Я-5':'закрытие в сентябре'},
+  monthsOpen: {'Я-10':4,'Я-11':3,'Я-5':9}
+};
+const SCHED_NEW_OPEN = {'Я-10':'октябрь 2026','Я-11':'середина ноября 2026','Я-5':'работает до середины ноября'};
+const SCHED_NEW_MONTHS = {'Я-10':3,'Я-11':1.5,'Я-5':10.5};
+var _schedChart=null;
+function buildSched(){
+  var s=S.base, rows=getFullRows26(s), mo=rowsToNetTotals(rows);
+  var g26=rows.reduce(function(t,r){return t+r.annual;},0);
+  var r27=getFullRows27(s), g27=r27.reduce(function(t,r){return t+r.annual;},0);
+  var ann={}; rows.forEach(function(r){ ann[r.name]=r.annual; });
+  var ann27={}; r27.forEach(function(r){ ann27[r.name]=r.annual; });
+  var d26=g26-SCHED_OLD.grand26, d27=g27-SCHED_OLD.grand27;
+  function kc(l,v,sub,c){ return '<div style="flex:1;min-width:160px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px">'
+    +'<div style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.4px">'+l+'</div>'
+    +'<div style="font-size:22px;font-weight:800;color:'+c+';margin-top:4px">'+v+'</div>'
+    +'<div style="font-size:11px;color:#6B7280;margin-top:2px">'+sub+'</div></div>'; }
+  document.getElementById('schedKpi').innerHTML =
+    kc('Прогноз 2026 стал', m1(g26)+'M ₽', 'было '+m1(SCHED_OLD.grand26)+'M ₽', '#FF7A00') +
+    kc('Потеря 2026', sgn1(d26)+'M ₽', 'из-за переноса · '+(d26/SCHED_OLD.grand26*100).toFixed(2)+'% прогноза', '#DC2626') +
+    kc('К плану года', (g26/ANN_PLAN*100).toFixed(2)+'%', 'план '+m1(ANN_PLAN)+'M ₽ · '+sgn1(g26-ANN_PLAN)+'M ₽', g26>=ANN_PLAN?'#16A34A':'#DC2626') +
+    kc('Прогноз 2027 стал', m1(g27)+'M ₽', 'было '+m1(SCHED_OLD.grand27)+'M ₽ · '+sgn1(d27)+'M ₽', '#DC2626');
+  // таблица по точкам
+  var ut='<thead><tr><th>Точка</th><th>Открытие было</th><th>Открытие стало</th><th>Мес. работы<br>было → стало</th>'
+    +'<th>2026 было</th><th>2026 стало</th><th>Δ 2026</th><th>Δ 2027</th></tr></thead><tbody>';
+  ['Я-10','Я-11','Я-5','Я-1','Я-2'].forEach(function(u){
+    var o=SCHED_OLD.units[u]||0, n=ann[u]||0, d=n-o;
+    var o7=SCHED_OLD.units27[u], n7=ann27[u];
+    var d7=(o7!==undefined&&n7!==undefined)?(n7-o7):null;
+    var col=d>=0?'#16A34A':'#DC2626';
+    var mo1=SCHED_OLD.monthsOpen[u], mo2=SCHED_NEW_MONTHS[u];
+    var isKey=['Я-10','Я-11','Я-5'].indexOf(u)>=0;
+    ut+='<tr'+(isKey?' style="background:#FFFBEB"':'')+'><td style="text-align:left"><b>'+u+'</b>'
+      +(u==='Я-5'?'<div style="font-size:10px;color:#9CA3AF">переходит в Я-11</div>':'')+'</td>'
+      +'<td style="color:#9CA3AF">'+(SCHED_OLD.open[u]||'работает')+'</td>'
+      +'<td style="font-weight:600">'+(SCHED_NEW_OPEN[u]||'работает')+'</td>'
+      +'<td>'+(mo1!==undefined?mo1+' → '+mo2:'—')+'</td>'
+      +'<td style="color:#9CA3AF">'+m1(o)+'</td><td style="font-weight:700">'+m1(n)+'</td>'
+      +'<td style="color:'+col+';font-weight:700">'+sgn1(d)+'</td>'
+      +'<td style="color:'+(d7===null?'#9CA3AF':(d7>=0?'#16A34A':'#DC2626'))+'">'+(d7===null?'—':sgn1(d7))+'</td></tr>';
+  });
+  ut+='<tr style="font-weight:700;background:#FFF7ED"><td style="text-align:left">ИТОГО сеть</td><td colspan="3"></td>'
+    +'<td>'+m1(SCHED_OLD.grand26)+'</td><td>'+m1(g26)+'</td>'
+    +'<td style="color:#DC2626">'+sgn1(d26)+'</td><td style="color:#DC2626">'+sgn1(d27)+'</td></tr></tbody>';
+  document.getElementById('schedUnits').innerHTML=ut;
+  // помесячная таблица (только затронутые месяцы)
+  var mt='<thead><tr><th>Месяц</th><th>Было</th><th>Стало</th><th>Δ</th><th>Что поменялось</th></tr></thead><tbody>';
+  var why={8:'Я-10 не открылась в сентябре',9:'Я-10 открылась вместо Я-11; Я-5 продолжает работать',
+           10:'Я-11 открылась серединой месяца; Я-5 отработала половину',11:'Я-11 первый полный месяц, но с разгона'};
+  var sd=0;
+  for(var i=8;i<12;i++){
+    var o=SCHED_OLD.monthly[i], n=mo[i], d=n-o; sd+=d;
+    mt+='<tr><td style="text-align:left"><b>'+MONTHS[i]+'</b></td><td style="color:#9CA3AF">'+m1(o)+'</td>'
+      +'<td style="font-weight:700">'+m1(n)+'</td>'
+      +'<td style="color:'+(d>=0?'#16A34A':'#DC2626')+';font-weight:700">'+sgn1(d)+'</td>'
+      +'<td style="text-align:left;font-size:11px;color:#6B7280">'+(why[i]||'')+'</td></tr>';
+  }
+  mt+='<tr style="font-weight:700;background:#FFF7ED"><td style="text-align:left">Сен–дек</td>'
+    +'<td>'+m1(SCHED_OLD.monthly.slice(8).reduce(function(a,b){return a+b;},0))+'</td>'
+    +'<td>'+m1(mo.slice(8).reduce(function(a,b){return a+b;},0))+'</td>'
+    +'<td style="color:#DC2626">'+sgn1(sd)+'</td><td></td></tr></tbody>';
+  document.getElementById('schedMon').innerHTML=mt;
+  // график
+  var oldArr=SCHED_OLD.monthly.map(function(v){return +v.toFixed(2);});
+  var newArr=mo.map(function(v){return +v.toFixed(2);});
+  if(!_schedChart){
+    _schedChart=new Chart(document.getElementById('schedChart').getContext('2d'),{type:'bar',
+      data:{labels:MONTHS,datasets:[
+        {label:'Прежний план (Я-10 сен, Я-11 окт)',data:oldArr,backgroundColor:'#CBD5E1',borderRadius:4},
+        {label:'Новый прогноз (Я-10 окт, Я-11 сер. ноя)',data:newArr,backgroundColor:'#FF7A00',borderRadius:4}]},
+      options:{responsive:true,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},
+          tooltip:{callbacks:{label:function(c){return ' '+c.dataset.label+': '+m1(c.raw)+'M ₽';},
+            afterBody:function(c){var i=c[0].dataIndex,d=newArr[i]-oldArr[i];
+              return Math.abs(d)<0.005?[]:['','Разница: '+sgn1(d)+'M ₽ · '+(d>=0?'+':'−')+rub(Math.abs(d))];}}}},
+        scales:{y:{ticks:{callback:function(v){return v+'M';}},grid:{color:'#F3F4F6'}}}}});
+  } else { _schedChart.data.datasets[1].data=newArr; _schedChart.update(); }
 }
 
 // ─── ВКЛАДКА НЕДЕЛЬНЫЙ ПЛАН/ФАКТ (нативная, обновляется ЕЖЕНЕДЕЛЬНО) ──
