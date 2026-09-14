@@ -213,6 +213,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="maintab" data-t="weekly" onclick="showTab('weekly')">📅 Недельный прогноз</button>
   <button class="maintab" data-t="fvp" onclick="showTab('fvp')">📈 Факт / План по месяцам</button>
   <button class="maintab" data-t="sched" onclick="showTab('sched')">🏗 Перенос открытий <span style="font-size:9px;background:#DC2626;color:#fff;padding:1px 5px;border-radius:4px;margin-left:4px">НОВОЕ</span></button>
+  <button class="maintab" data-t="night" onclick="showTab('night')">🌙 Ночная доставка</button>
   <button class="maintab" data-t="tracker" onclick="showTab('tracker')">🎯 Трекер План/Факт <span style="font-size:9px;background:#16A34A;color:#fff;padding:1px 5px;border-radius:4px;margin-left:4px">LIVE</span></button>
 </div>
 <div id="tab-monthly">
@@ -841,6 +842,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <table class="dt" id="schedMon"></table></div>
 </div>
 
+<div id="tab-night" style="display:none;padding:20px 40px 40px">
+  <div class="st" style="margin-top:0">Ночная доставка · Якутск-5 и Якутск-6 <span style="font-size:11px;font-weight:400;color:#16A34A">● окно 00:00–08:00 · обновляется автоматически</span></div>
+  <div style="background:#EEF2FF;border-left:3px solid #4F46E5;padding:10px 14px;border-radius:6px;font-size:12px;color:#312E81;line-height:1.6;margin-bottom:16px">
+    Выручка <b>доставки</b> за ночное окно <b>00:00–08:00</b> по двум круглосуточным пиццериям.
+    Период — с 1 октября 2025 года. Текущий месяц показан отдельно, с разбивкой по неделям; закрытые месяцы — итогом.
+    <span id="nightNote"></span>
+  </div>
+  <div id="nightKpi" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px"></div>
+
+  <div class="cc"><div class="ch"><div><div class="ct">По месяцам</div>
+    <div class="cs">млн ₽ ночной доставки · Я-5 и Я-6</div></div></div>
+    <canvas id="nightMonChart" height="130"></canvas></div>
+  <div class="cc"><div class="ch"><div><div class="ct">Помесячно — цифрами</div>
+    <div class="cs">закрытые месяцы итогом, текущий помечен отдельно</div></div></div>
+    <div style="overflow-x:auto"><table class="dt" id="nightMonTable" style="min-width:820px"></table></div></div>
+
+  <div class="cc"><div class="ch"><div><div class="ct">По неделям</div>
+    <div class="cs">полные недели (пн–вс) · млн ₽ · последние 26 недель</div></div></div>
+    <canvas id="nightWeekChart" height="130"></canvas></div>
+  <div class="two-col">
+    <div class="cc" style="margin-bottom:0"><div class="ch"><div><div class="ct" id="nightCurTitle">Текущий месяц по неделям</div>
+      <div class="cs">итого и в разрезе пиццерий</div></div></div>
+      <div style="overflow-x:auto"><table class="dt" id="nightCurTable"></table></div></div>
+    <div class="cc" style="margin-bottom:0"><div class="ch"><div><div class="ct">Последние полные недели</div>
+      <div class="cs">постоянный недельный срез по пиццериям</div></div></div>
+      <div style="overflow-x:auto"><table class="dt" id="nightWeekTable"></table></div></div>
+  </div>
+</div>
+
 <div id="tab-tracker" style="display:none;padding:20px 40px 40px">
   <div class="st" style="margin-top:0">Недельный План / Факт 2026 <span style="font-size:11px;font-weight:400;color:#16A34A">● данные на <span id="trkCut"></span> · обновляется еженедельно (факт из Dodo IS) · <a href="https://siasynakhunov-ops.github.io/mf-trk-6c28ea8aa9/" target="_blank" rel="noopener" style="color:#2563EB">ежедневная версия ↗</a></span></div>
   <div style="font-size:12px;color:#6B7280;margin:-6px 0 16px">План — недельный бюджет сети (≈1 800M ₽). Факт — из Dodo IS по неделям. Выполнение = факт / план. Прогноз года — базовая модель (совпадает с другими вкладками).</div>
@@ -868,7 +898,12 @@ const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','
 
 // Точный формат млн ₽ — 2 знака (полная точность данных, шаг 10 тыс ₽): 1812.63 -> "1 812.63"
 function m1(x){ if(x==null||isNaN(x)) return '—'; var s=(Math.round(x*100)/100).toFixed(2).split('.'); s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,' '); return s.join('.'); }
-function sgn1(x){ return (x>=0?'+':'−')+m1(Math.abs(x)); }  // знаковое: +12.44 / −5.81
+function sgn1(x){ return (x>=0?'+':'−')+m1(Math.abs(x)); }
+// точная сумма, на вход СЫРЫЕ РУБЛИ (в отличие от rub(), который принимает млн)
+function rubRaw(x){ if(x==null||isNaN(x)) return '—'; return Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽'; }
+// тыс ₽, 1 знак (компактно): 1234.5 -> «1 234.5». Точная сумма всегда дублируется через rub().
+function th(x){ if(x==null||isNaN(x)) return '—'; var s=(Math.round(x*10)/10).toFixed(1).split('.');
+  s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,' '); return s.join('.'); }  // знаковое: +12.44 / −5.81
 // Точная сумма в рублях: 157.44 (млн) -> "157 435 000 ₽"
 function rub(mln){ if(mln==null||isNaN(mln)) return '—'; return Math.round(mln*1e6).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽'; }
 // Строки «Разница / Выполнение» для подсказок на графиках План vs Факт
@@ -885,7 +920,7 @@ const ANN_PLAN = PLAN_MO.reduce(function(a,b){return a+b;},0); // = 1800.30, с�
 const FACT_RUB = [143108000, 133255000, 150137700, 137995700, 150402000, 147163500, 157439400, 151863200, null, null, null, null];
 // Текущий НЕЗАКРЫТЫЙ месяц — факт с начала месяца (обновляет update_master.py).
 // {mo:индекс月, days:дней с фактом, dim:дней в месяце, rub:точные рубли}
-const PART_MONTH = {mo:8, days:12, dim:30, rub:57764424};
+const PART_MONTH = {mo:8, days:13, dim:30, rub:62722877};
 
 const PIZZA_COLORS = {
   'Я-1':'#F97316','Я-2':'#FB923C','Я-3':'#22C55E','Я-4':'#16A34A',
@@ -2196,11 +2231,13 @@ function showTab(t){
   var tk=document.getElementById('tab-tracker'); if(tk) tk.style.display=(t==='tracker')?'':'none';
   var fv=document.getElementById('tab-fvp'); if(fv) fv.style.display=(t==='fvp')?'':'none';
   var sc=document.getElementById('tab-sched'); if(sc) sc.style.display=(t==='sched')?'':'none';
+  var ng=document.getElementById('tab-night'); if(ng) ng.style.display=(t==='night')?'':'none';
   document.querySelectorAll('.maintab').forEach(function(b){b.classList.toggle('on', b.dataset.t===t);});
   if(t==='weekly'){ initWeekly(); }
   if(t==='fvp'){ buildFVP(); }
   if(t==='tracker'){ buildTracker(); }
   if(t==='sched'){ buildSched(); }
+  if(t==='night'){ buildNight(); }
   window.scrollTo(0,0);
 }
 
@@ -2316,6 +2353,124 @@ function buildFVP(){
   document.getElementById('fvpUnitTable').innerHTML=ut;
 }
 
+// ─── ВКЛАДКА «НОЧНАЯ ДОСТАВКА» (00:00–08:00, Я-5 и Я-6) ──────────────────────
+// NIGHT заполняет update_master.py из night_data.json (инкрементальный сбор pull_night.py).
+const NIGHT = {"meta": {"from": "2025-10-01", "cut": "2026-09-13", "window": "00:00–08:00"}, "months": [{"m": "2025-10", "days": 31, "Я-5": {"rev": 429590.0, "orders": 324}, "Я-6": {"rev": 478340.0, "orders": 357}, "closed": true}, {"m": "2025-11", "days": 30, "Я-5": {"rev": 1387771.0, "orders": 1085}, "Я-6": {"rev": 1444709.0, "orders": 1140}, "closed": true}, {"m": "2025-12", "days": 31, "Я-5": {"rev": 3636130.0, "orders": 2627}, "Я-6": {"rev": 3677018.0, "orders": 2713}, "closed": true}, {"m": "2026-01", "days": 31, "Я-5": {"rev": 3842243.0, "orders": 2636}, "Я-6": {"rev": 3550914.0, "orders": 2563}, "closed": true}, {"m": "2026-02", "days": 28, "Я-5": {"rev": 2579968.0, "orders": 1784}, "Я-6": {"rev": 2559231.0, "orders": 1855}, "closed": true}, {"m": "2026-03", "days": 31, "Я-5": {"rev": 2535736.0, "orders": 1824}, "Я-6": {"rev": 2387038.0, "orders": 1727}, "closed": true}, {"m": "2026-04", "days": 30, "Я-5": {"rev": 2481489.0, "orders": 1771}, "Я-6": {"rev": 2145128.0, "orders": 1561}, "closed": true}, {"m": "2026-05", "days": 31, "Я-5": {"rev": 2564674.0, "orders": 1793}, "Я-6": {"rev": 2438116.0, "orders": 1777}, "closed": true}, {"m": "2026-06", "days": 30, "Я-5": {"rev": 2778765.0, "orders": 1943}, "Я-6": {"rev": 2936783.0, "orders": 2125}, "closed": true}, {"m": "2026-07", "days": 31, "Я-5": {"rev": 3375666.0, "orders": 2357}, "Я-6": {"rev": 3150300.0, "orders": 2305}, "closed": true}, {"m": "2026-08", "days": 31, "Я-5": {"rev": 3150586.0, "orders": 2256}, "Я-6": {"rev": 2932370.0, "orders": 2133}, "closed": true}, {"m": "2026-09", "days": 13, "Я-5": {"rev": 1032258.0, "orders": 766}, "Я-6": {"rev": 1086490.0, "orders": 775}, "closed": false}], "weeks": [{"w": "2025-09-29", "label": "29.09", "days": 5, "Я-5": {"rev": 70985.0, "orders": 55}, "Я-6": {"rev": 93503.0, "orders": 67}, "full": false}, {"w": "2025-10-06", "label": "06.10", "days": 7, "Я-5": {"rev": 95444.0, "orders": 75}, "Я-6": {"rev": 78631.0, "orders": 65}, "full": true}, {"w": "2025-10-13", "label": "13.10", "days": 7, "Я-5": {"rev": 105020.0, "orders": 78}, "Я-6": {"rev": 121861.0, "orders": 95}, "full": true}, {"w": "2025-10-20", "label": "20.10", "days": 7, "Я-5": {"rev": 95822.0, "orders": 68}, "Я-6": {"rev": 115489.0, "orders": 81}, "full": true}, {"w": "2025-10-27", "label": "27.10", "days": 7, "Я-5": {"rev": 101376.0, "orders": 76}, "Я-6": {"rev": 93035.0, "orders": 71}, "full": true}, {"w": "2025-11-03", "label": "03.11", "days": 7, "Я-5": {"rev": 99891.0, "orders": 81}, "Я-6": {"rev": 119489.0, "orders": 95}, "full": true}, {"w": "2025-11-10", "label": "10.11", "days": 7, "Я-5": {"rev": 104271.0, "orders": 85}, "Я-6": {"rev": 103882.0, "orders": 78}, "full": true}, {"w": "2025-11-17", "label": "17.11", "days": 7, "Я-5": {"rev": 516688.0, "orders": 400}, "Я-6": {"rev": 533069.0, "orders": 419}, "full": true}, {"w": "2025-11-24", "label": "24.11", "days": 7, "Я-5": {"rev": 627864.0, "orders": 491}, "Я-6": {"rev": 664090.0, "orders": 526}, "full": true}, {"w": "2025-12-01", "label": "01.12", "days": 7, "Я-5": {"rev": 691562.0, "orders": 530}, "Я-6": {"rev": 677020.0, "orders": 514}, "full": true}, {"w": "2025-12-08", "label": "08.12", "days": 7, "Я-5": {"rev": 771283.0, "orders": 552}, "Я-6": {"rev": 782224.0, "orders": 575}, "full": true}, {"w": "2025-12-15", "label": "15.12", "days": 7, "Я-5": {"rev": 792537.0, "orders": 572}, "Я-6": {"rev": 836570.0, "orders": 626}, "full": true}, {"w": "2025-12-22", "label": "22.12", "days": 7, "Я-5": {"rev": 915806.0, "orders": 658}, "Я-6": {"rev": 1008751.0, "orders": 727}, "full": true}, {"w": "2025-12-29", "label": "29.12", "days": 7, "Я-5": {"rev": 769896.0, "orders": 526}, "Я-6": {"rev": 813601.0, "orders": 570}, "full": true}, {"w": "2026-01-05", "label": "05.01", "days": 7, "Я-5": {"rev": 1318280.0, "orders": 904}, "Я-6": {"rev": 1169237.0, "orders": 819}, "full": true}, {"w": "2026-01-12", "label": "12.01", "days": 7, "Я-5": {"rev": 897347.0, "orders": 622}, "Я-6": {"rev": 820719.0, "orders": 609}, "full": true}, {"w": "2026-01-19", "label": "19.01", "days": 7, "Я-5": {"rev": 817699.0, "orders": 560}, "Я-6": {"rev": 633289.0, "orders": 470}, "full": true}, {"w": "2026-01-26", "label": "26.01", "days": 7, "Я-5": {"rev": 642345.0, "orders": 433}, "Я-6": {"rev": 615579.0, "orders": 460}, "full": true}, {"w": "2026-02-02", "label": "02.02", "days": 7, "Я-5": {"rev": 623679.0, "orders": 436}, "Я-6": {"rev": 600700.0, "orders": 461}, "full": true}, {"w": "2026-02-09", "label": "09.02", "days": 7, "Я-5": {"rev": 627420.0, "orders": 432}, "Я-6": {"rev": 641742.0, "orders": 470}, "full": true}, {"w": "2026-02-16", "label": "16.02", "days": 7, "Я-5": {"rev": 665286.0, "orders": 450}, "Я-6": {"rev": 686424.0, "orders": 470}, "full": true}, {"w": "2026-02-23", "label": "23.02", "days": 7, "Я-5": {"rev": 640474.0, "orders": 448}, "Я-6": {"rev": 609512.0, "orders": 438}, "full": true}, {"w": "2026-03-02", "label": "02.03", "days": 7, "Я-5": {"rev": 596309.0, "orders": 416}, "Я-6": {"rev": 623559.0, "orders": 443}, "full": true}, {"w": "2026-03-09", "label": "09.03", "days": 7, "Я-5": {"rev": 547159.0, "orders": 403}, "Я-6": {"rev": 547669.0, "orders": 396}, "full": true}, {"w": "2026-03-16", "label": "16.03", "days": 7, "Я-5": {"rev": 549261.0, "orders": 394}, "Я-6": {"rev": 516653.0, "orders": 378}, "full": true}, {"w": "2026-03-23", "label": "23.03", "days": 7, "Я-5": {"rev": 557703.0, "orders": 409}, "Я-6": {"rev": 527289.0, "orders": 383}, "full": true}, {"w": "2026-03-30", "label": "30.03", "days": 7, "Я-5": {"rev": 599859.0, "orders": 413}, "Я-6": {"rev": 477267.0, "orders": 344}, "full": true}, {"w": "2026-04-06", "label": "06.04", "days": 7, "Я-5": {"rev": 440604.0, "orders": 323}, "Я-6": {"rev": 591236.0, "orders": 417}, "full": true}, {"w": "2026-04-13", "label": "13.04", "days": 7, "Я-5": {"rev": 538841.0, "orders": 391}, "Я-6": {"rev": 530339.0, "orders": 385}, "full": true}, {"w": "2026-04-20", "label": "20.04", "days": 7, "Я-5": {"rev": 777252.0, "orders": 561}, "Я-6": {"rev": 337979.0, "orders": 263}, "full": true}, {"w": "2026-04-27", "label": "27.04", "days": 7, "Я-5": {"rev": 603406.0, "orders": 418}, "Я-6": {"rev": 550163.0, "orders": 404}, "full": true}, {"w": "2026-05-04", "label": "04.05", "days": 7, "Я-5": {"rev": 508231.0, "orders": 375}, "Я-6": {"rev": 488850.0, "orders": 375}, "full": true}, {"w": "2026-05-11", "label": "11.05", "days": 7, "Я-5": {"rev": 491875.0, "orders": 363}, "Я-6": {"rev": 521045.0, "orders": 383}, "full": true}, {"w": "2026-05-18", "label": "18.05", "days": 7, "Я-5": {"rev": 595692.0, "orders": 401}, "Я-6": {"rev": 529412.0, "orders": 384}, "full": true}, {"w": "2026-05-25", "label": "25.05", "days": 7, "Я-5": {"rev": 660434.0, "orders": 445}, "Я-6": {"rev": 620616.0, "orders": 432}, "full": true}, {"w": "2026-06-01", "label": "01.06", "days": 7, "Я-5": {"rev": 668035.0, "orders": 443}, "Я-6": {"rev": 634533.0, "orders": 445}, "full": true}, {"w": "2026-06-08", "label": "08.06", "days": 7, "Я-5": {"rev": 640265.0, "orders": 443}, "Я-6": {"rev": 711439.0, "orders": 498}, "full": true}, {"w": "2026-06-15", "label": "15.06", "days": 7, "Я-5": {"rev": 557661.0, "orders": 409}, "Я-6": {"rev": 729423.0, "orders": 532}, "full": true}, {"w": "2026-06-22", "label": "22.06", "days": 7, "Я-5": {"rev": 706980.0, "orders": 513}, "Я-6": {"rev": 656977.0, "orders": 492}, "full": true}, {"w": "2026-06-29", "label": "29.06", "days": 7, "Я-5": {"rev": 836313.0, "orders": 574}, "Я-6": {"rev": 686661.0, "orders": 502}, "full": true}, {"w": "2026-07-06", "label": "06.07", "days": 7, "Я-5": {"rev": 776303.0, "orders": 530}, "Я-6": {"rev": 686204.0, "orders": 505}, "full": true}, {"w": "2026-07-13", "label": "13.07", "days": 7, "Я-5": {"rev": 698294.0, "orders": 485}, "Я-6": {"rev": 799296.0, "orders": 599}, "full": true}, {"w": "2026-07-20", "label": "20.07", "days": 7, "Я-5": {"rev": 791238.0, "orders": 556}, "Я-6": {"rev": 746031.0, "orders": 541}, "full": true}, {"w": "2026-07-27", "label": "27.07", "days": 7, "Я-5": {"rev": 710725.0, "orders": 520}, "Я-6": {"rev": 667799.0, "orders": 474}, "full": true}, {"w": "2026-08-03", "label": "03.08", "days": 7, "Я-5": {"rev": 716203.0, "orders": 528}, "Я-6": {"rev": 567477.0, "orders": 410}, "full": true}, {"w": "2026-08-10", "label": "10.08", "days": 7, "Я-5": {"rev": 680160.0, "orders": 494}, "Я-6": {"rev": 672092.0, "orders": 492}, "full": true}, {"w": "2026-08-17", "label": "17.08", "days": 7, "Я-5": {"rev": 701327.0, "orders": 475}, "Я-6": {"rev": 641508.0, "orders": 460}, "full": true}, {"w": "2026-08-24", "label": "24.08", "days": 7, "Я-5": {"rev": 720474.0, "orders": 516}, "Я-6": {"rev": 697470.0, "orders": 520}, "full": true}, {"w": "2026-08-31", "label": "31.08", "days": 7, "Я-5": {"rev": 627281.0, "orders": 454}, "Я-6": {"rev": 663733.0, "orders": 494}, "full": true}, {"w": "2026-09-07", "label": "07.09", "days": 7, "Я-5": {"rev": 506016.0, "orders": 382}, "Я-6": {"rev": 545300.0, "orders": 374}, "full": true}], "curWeeks": [{"w": "2026-08-31", "label": "31.08", "days": 6, "Я-5": {"rev": 526242.0, "orders": 384}, "Я-6": {"rev": 541190.0, "orders": 401}, "full": false}, {"w": "2026-09-07", "label": "07.09", "days": 7, "Я-5": {"rev": 506016.0, "orders": 382}, "Я-6": {"rev": 545300.0, "orders": 374}, "full": true}]};
+var _nightMonChart=null, _nightWeekChart=null;
+const NU = ['Я-5','Я-6'];
+const NCOL = {'Я-5':'#7C3AED','Я-6':'#FF7A00'};
+function nSum(o){ return NU.reduce(function(t,u){ return t+((o[u]&&o[u].rev)||0); },0); }
+function nOrd(o){ return NU.reduce(function(t,u){ return t+((o[u]&&o[u].orders)||0); },0); }
+function buildNight(){
+  if(!NIGHT || !NIGHT.months){ return; }
+  var MN=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  function mLabel(m){ var p=m.split('-'); return MN[+p[1]-1]+' '+p[0].slice(2); }
+  var el=document.getElementById('nightNote');
+  if(el) el.textContent='Данные по '+NIGHT.meta.cut+'.';
+
+  // ── KPI ──
+  var totRev=0, totOrd=0;
+  NIGHT.months.forEach(function(m){ totRev+=nSum(m); totOrd+=nOrd(m); });
+  var cur=NIGHT.months[NIGHT.months.length-1];
+  var curRev=nSum(cur), curDays=cur.days;
+  var fullW=NIGHT.weeks.filter(function(w){ return w.full; });
+  var lastW=fullW[fullW.length-1];
+  function kc(l,v,sub,c){ return '<div style="flex:1;min-width:165px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:14px 16px">'
+    +'<div style="font-size:11px;color:#9CA3AF;text-transform:uppercase;letter-spacing:.4px">'+l+'</div>'
+    +'<div style="font-size:22px;font-weight:800;color:'+c+';margin-top:4px">'+v+'</div>'
+    +'<div style="font-size:11px;color:#6B7280;margin-top:2px">'+sub+'</div></div>'; }
+  document.getElementById('nightKpi').innerHTML =
+    kc('Всего за период', m1(totRev/1e6)+'M ₽', 'с '+NIGHT.meta.from+' · '+totOrd.toLocaleString('ru')+' чеков', '#4F46E5') +
+    kc(mLabel(cur.m)+' (с 1-го)', m1(curRev/1e6)+'M ₽', curDays+' ночей · '+th(curRev/curDays/1000)+' тыс ₽/ночь', '#FF7A00') +
+    (lastW ? kc('Последняя полная неделя', th(nSum(lastW)/1000)+' тыс ₽', 'с '+lastW.label+' · Я-5 '+th((lastW['Я-5']||{rev:0}).rev/1000)+' / Я-6 '+th((lastW['Я-6']||{rev:0}).rev/1000), '#16A34A') : '') +
+    kc('Средний чек ночью', rubRaw(totRev/totOrd), 'за весь период', '#111827');
+
+  // ── график по месяцам ──
+  var ml=NIGHT.months.map(function(m){ return mLabel(m.m)+(m.closed?'':' *'); });
+  var d5=NIGHT.months.map(function(m){ return +(((m['Я-5']||{}).rev||0)/1e6).toFixed(3); });
+  var d6=NIGHT.months.map(function(m){ return +(((m['Я-6']||{}).rev||0)/1e6).toFixed(3); });
+  if(!_nightMonChart){
+    _nightMonChart=new Chart(document.getElementById('nightMonChart').getContext('2d'),{type:'bar',
+      data:{labels:ml,datasets:[
+        {label:'Я-5',data:d5,backgroundColor:NCOL['Я-5'],borderRadius:3},
+        {label:'Я-6',data:d6,backgroundColor:NCOL['Я-6'],borderRadius:3}]},
+      options:{responsive:true,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},
+          tooltip:{callbacks:{label:function(c){return ' '+c.dataset.label+': '+m1(c.raw)+'M ₽ · '+rubRaw(c.raw*1e6);},
+            afterBody:function(c){var i=c[0].dataIndex,s=d5[i]+d6[i];return ['','Итого: '+m1(s)+'M ₽'];}}}},
+        scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:function(v){return v+'M';}},grid:{color:'#F3F4F6'}}}}});
+  } else { _nightMonChart.data.labels=ml; _nightMonChart.data.datasets[0].data=d5; _nightMonChart.data.datasets[1].data=d6; _nightMonChart.update(); }
+
+  // ── таблица по месяцам ──
+  var mt='<thead><tr><th>Месяц</th><th>Я-5</th><th>Я-6</th><th>Итого</th><th>Ночей</th><th>тыс ₽/ночь</th><th>Чеков</th><th>Средний чек</th></tr></thead><tbody>';
+  NIGHT.months.forEach(function(m){
+    var a5=(m['Я-5']||{rev:0,orders:0}), a6=(m['Я-6']||{rev:0,orders:0});
+    var s=a5.rev+a6.rev, o=a5.orders+a6.orders;
+    mt+='<tr'+(m.closed?'':' style="background:#FFFBEB"')+'><td style="text-align:left"><b>'+mLabel(m.m)+'</b>'
+      +(m.closed?'':'<div style="font-size:10px;color:#9CA3AF">1–'+m.days+' · месяц не закрыт</div>')+'</td>'
+      +'<td>'+m1(a5.rev/1e6)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(a5.rev)+'</div></td>'
+      +'<td>'+m1(a6.rev/1e6)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(a6.rev)+'</div></td>'
+      +'<td style="font-weight:700">'+m1(s/1e6)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(s)+'</div></td>'
+      +'<td>'+m.days+'</td><td>'+th(s/m.days/1000)+'</td><td>'+o+'</td><td>'+(o?rubRaw(s/o):'—')+'</td></tr>';
+  });
+  var TR=0,TO=0,TD=0,T5=0,T6=0;
+  NIGHT.months.forEach(function(m){ var a5=(m['Я-5']||{rev:0,orders:0}),a6=(m['Я-6']||{rev:0,orders:0});
+    T5+=a5.rev; T6+=a6.rev; TR+=a5.rev+a6.rev; TO+=a5.orders+a6.orders; TD+=m.days; });
+  mt+='<tr style="font-weight:700;background:#FFF7ED"><td style="text-align:left">ИТОГО</td>'
+    +'<td>'+m1(T5/1e6)+'</td><td>'+m1(T6/1e6)+'</td><td>'+m1(TR/1e6)+'</td><td>'+TD+'</td>'
+    +'<td>'+th(TR/TD/1000)+'</td><td>'+TO+'</td><td>'+rubRaw(TR/TO)+'</td></tr></tbody>';
+  document.getElementById('nightMonTable').innerHTML=mt;
+
+  // ── график по неделям (последние 26 полных) ──
+  var wk=fullW.slice(-26);
+  var wl=wk.map(function(w){ return w.label; });
+  var w5=wk.map(function(w){ return +(((w['Я-5']||{}).rev||0)/1e6).toFixed(3); });
+  var w6=wk.map(function(w){ return +(((w['Я-6']||{}).rev||0)/1e6).toFixed(3); });
+  if(!_nightWeekChart){
+    _nightWeekChart=new Chart(document.getElementById('nightWeekChart').getContext('2d'),{type:'bar',
+      data:{labels:wl,datasets:[
+        {label:'Я-5',data:w5,backgroundColor:NCOL['Я-5'],borderRadius:2},
+        {label:'Я-6',data:w6,backgroundColor:NCOL['Я-6'],borderRadius:2}]},
+      options:{responsive:true,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},
+          tooltip:{callbacks:{title:function(c){return 'Неделя с '+wl[c[0].dataIndex];},
+            label:function(c){return ' '+c.dataset.label+': '+m1(c.raw)+'M ₽ · '+rubRaw(c.raw*1e6);},
+            afterBody:function(c){var i=c[0].dataIndex,s=w5[i]+w6[i];return ['','Итого: '+m1(s)+'M ₽ · '+rubRaw(s*1e6)];}}}},
+        scales:{x:{stacked:true,ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:13,font:{size:9}}},
+                y:{stacked:true,ticks:{callback:function(v){return v+'M';}},grid:{color:'#F3F4F6'}}}}});
+  } else { _nightWeekChart.data.labels=wl; _nightWeekChart.data.datasets[0].data=w5; _nightWeekChart.data.datasets[1].data=w6; _nightWeekChart.update(); }
+
+  // ── текущий месяц по неделям ──
+  document.getElementById('nightCurTitle').textContent=mLabel(cur.m)+' по неделям';
+  var ct='<thead><tr><th>Неделя</th><th>Ночей</th><th>Я-5</th><th>Я-6</th><th>Итого</th></tr></thead><tbody>';
+  (NIGHT.curWeeks||[]).forEach(function(w){
+    var a5=(w['Я-5']||{rev:0}), a6=(w['Я-6']||{rev:0}); var s=a5.rev+a6.rev;
+    ct+='<tr><td style="text-align:left">с '+w.label+(w.full?'':' <span style="font-size:10px;color:#9CA3AF">(неполная)</span>')+'</td>'
+      +'<td>'+w.days+'</td>'
+      +'<td>'+th(a5.rev/1000)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(a5.rev)+'</div></td>'
+      +'<td>'+th(a6.rev/1000)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(a6.rev)+'</div></td>'
+      +'<td style="font-weight:700">'+th(s/1000)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(s)+'</div></td></tr>';
+  });
+  var c5=(cur['Я-5']||{rev:0}).rev, c6=(cur['Я-6']||{rev:0}).rev;
+  ct+='<tr style="font-weight:700;background:#FFF7ED"><td style="text-align:left">Месяц</td><td>'+cur.days+'</td>'
+    +'<td>'+th(c5/1000)+'</td><td>'+th(c6/1000)+'</td><td>'+th((c5+c6)/1000)+'</td></tr></tbody>';
+  ct='<caption style="caption-side:top;text-align:left;font-size:11px;color:#9CA3AF;padding-bottom:6px">тыс ₽</caption>'+ct;
+  document.getElementById('nightCurTable').innerHTML=ct;
+
+  // ── последние полные недели ──
+  var wt='<caption style="caption-side:top;text-align:left;font-size:11px;color:#9CA3AF;padding-bottom:6px">тыс ₽</caption>'
+    +'<thead><tr><th>Неделя</th><th>Я-5</th><th>Я-6</th><th>Итого</th><th>тыс ₽/ночь</th></tr></thead><tbody>';
+  fullW.slice(-8).reverse().forEach(function(w){
+    var a5=(w['Я-5']||{rev:0}), a6=(w['Я-6']||{rev:0}); var s=a5.rev+a6.rev;
+    wt+='<tr><td style="text-align:left">с '+w.label+'</td>'
+      +'<td>'+th(a5.rev/1000)+'</td><td>'+th(a6.rev/1000)+'</td>'
+      +'<td style="font-weight:700">'+th(s/1000)+'<div style="font-size:10px;color:#94A3B8">'+rubRaw(s)+'</div></td>'
+      +'<td>'+th(s/w.days/1000)+'</td></tr>';
+  });
+  wt+='</tbody>';
+  document.getElementById('nightWeekTable').innerHTML=wt;
+}
+
 // ─── ВКЛАДКА «ПЕРЕНОС ОТКРЫТИЙ» ──────────────────────────────────────────────
 // Снимок прежнего плана (Я-10 с сентября, Я-11 с октября), зафиксирован 09.09.2026
 // до пересчёта модели. Нужен, чтобы показать эффект переноса «было → стало».
@@ -2406,7 +2561,7 @@ function buildSched(){
 // ─── ВКЛАДКА НЕДЕЛЬНЫЙ ПЛАН/ФАКТ (нативная, обновляется ЕЖЕНЕДЕЛЬНО) ──
 // TRK наполняет update_master.py данными недельного трекера (planW/factW/units/ytd…), еженедельный републиш.
 // Прогноз года берётся из строковой модели (yearFc) — совпадает со всеми вкладками.
-const TRK = {"labels": ["01.01", "05.01", "12.01", "19.01", "26.01", "02.02", "09.02", "16.02", "23.02", "02.03", "09.03", "16.03", "23.03", "30.03", "06.04", "13.04", "20.04", "27.04", "04.05", "11.05", "18.05", "25.05", "01.06", "08.06", "15.06", "22.06", "29.06", "06.07", "13.07", "20.07", "27.07", "03.08", "10.08", "17.08", "24.08", "31.08", "07.09", "14.09", "21.09", "28.09", "05.10", "12.10", "19.10", "26.10", "02.11", "09.11", "16.11", "23.11", "30.11", "07.12", "14.12", "21.12"], "lastW": 36, "cut": "2026-09-12", "planW": [17.06915, 36.874074, 32.121096, 32.213848, 30.945471, 30.926013, 33.311437, 34.762154, 34.429399, 36.285348, 31.015998, 32.177641, 35.810176, 31.754007, 31.705646, 32.091223, 32.06429, 35.080322, 33.293808, 30.7591, 34.573384, 35.646418, 35.437972, 35.533098, 32.942146, 33.559442, 34.369363, 31.670125, 33.072752, 34.042279, 32.103911, 32.4494, 32.392958, 33.044375, 34.888506, 38.267292, 33.706092, 34.372444, 33.78923, 34.15215, 34.149413, 34.160916, 35.175205, 36.132311, 36.91655, 34.691076, 35.144715, 36.764848, 36.918691, 38.613653, 41.072484, 75.856603], "factW": [19.792172, 37.126034, 31.216392, 30.391761, 29.406488, 31.116315, 33.335333, 33.825162, 35.589266, 38.693028, 32.068286, 31.794838, 33.280253, 35.924712, 30.703756, 31.099748, 31.731073, 33.652917, 31.485518, 31.586994, 33.495409, 37.582979, 36.126287, 33.531613, 33.935084, 34.068471, 40.975894, 37.733741, 32.712717, 33.254525, 32.759634, 33.011577, 33.657132, 34.28691, 35.696418, 36.099598, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "planMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 145.0, 148.5, 148.0, 153.3, 157.3, 186.2], "factMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 157.4, 151.9, 57.8, null, null, null], "ytdPlan": 1188.7, "ytdFact": 1202.7, "ytdPct": 101.2, "annPlan": 1800.3, "units": [{"u": "Я-1", "plan": 116.5, "fact": 119.2, "pct": 102.3}, {"u": "Я-2", "plan": 150.2, "fact": 152.7, "pct": 101.7}, {"u": "Я-3", "plan": 195.3, "fact": 198.0, "pct": 101.4}, {"u": "Я-4", "plan": 145.6, "fact": 148.1, "pct": 101.7}, {"u": "Я-5", "plan": 186.8, "fact": 190.0, "pct": 101.7}, {"u": "Я-6", "plan": 257.3, "fact": 262.0, "pct": 101.8}, {"u": "Я-7", "plan": 156.6, "fact": 159.1, "pct": 101.6}]};
+const TRK = {"labels": ["01.01", "05.01", "12.01", "19.01", "26.01", "02.02", "09.02", "16.02", "23.02", "02.03", "09.03", "16.03", "23.03", "30.03", "06.04", "13.04", "20.04", "27.04", "04.05", "11.05", "18.05", "25.05", "01.06", "08.06", "15.06", "22.06", "29.06", "06.07", "13.07", "20.07", "27.07", "03.08", "10.08", "17.08", "24.08", "31.08", "07.09", "14.09", "21.09", "28.09", "05.10", "12.10", "19.10", "26.10", "02.11", "09.11", "16.11", "23.11", "30.11", "07.12", "14.12", "21.12"], "lastW": 37, "cut": "2026-09-13", "planW": [17.06915, 36.874074, 32.121096, 32.213848, 30.945471, 30.926013, 33.311437, 34.762154, 34.429399, 36.285348, 31.015998, 32.177641, 35.810176, 31.754007, 31.705646, 32.091223, 32.06429, 35.080322, 33.293808, 30.7591, 34.573384, 35.646418, 35.437972, 35.533098, 32.942146, 33.559442, 34.369363, 31.670125, 33.072752, 34.042279, 32.103911, 32.4494, 32.392958, 33.044375, 34.888506, 38.267292, 33.706092, 34.372444, 33.78923, 34.15215, 34.149413, 34.160916, 35.175205, 36.132311, 36.91655, 34.691076, 35.144715, 36.764848, 36.918691, 38.613653, 41.072484, 75.856603], "factW": [19.792172, 37.126034, 31.216392, 30.391761, 29.406488, 31.116315, 33.335333, 33.825162, 35.589266, 38.693028, 32.068286, 31.794838, 33.280253, 35.924712, 30.703756, 31.099748, 31.731073, 33.652917, 31.485518, 31.586994, 33.495409, 37.582979, 36.126287, 33.531613, 33.935084, 34.068471, 40.975894, 37.733741, 32.712717, 33.254525, 32.759634, 33.011577, 33.657132, 34.28691, 35.696418, 36.099598, 31.339395, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "planMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 145.0, 148.5, 148.0, 153.3, 157.3, 186.2], "factMo": [143.1, 133.3, 150.1, 138.0, 150.4, 147.2, 157.4, 151.9, 62.7, null, null, null], "ytdPlan": 1222.4, "ytdFact": 1234.1, "ytdPct": 101.0, "annPlan": 1800.3, "units": [{"u": "Я-1", "plan": 117.0, "fact": 119.7, "pct": 102.4}, {"u": "Я-2", "plan": 150.8, "fact": 153.3, "pct": 101.6}, {"u": "Я-3", "plan": 196.1, "fact": 198.8, "pct": 101.3}, {"u": "Я-4", "plan": 146.2, "fact": 148.7, "pct": 101.7}, {"u": "Я-5", "plan": 187.5, "fact": 190.8, "pct": 101.7}, {"u": "Я-6", "plan": 258.3, "fact": 263.2, "pct": 101.9}, {"u": "Я-7", "plan": 157.3, "fact": 159.7, "pct": 101.6}]};
 var _trkChart=null;
 function buildTracker(){
   if(!TRK || !TRK.units){ return; }
