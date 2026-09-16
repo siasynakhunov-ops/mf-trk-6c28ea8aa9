@@ -779,7 +779,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
   <div class="card">
     <div class="ct">Выручка по неделям — весь 2026</div>
-    <div class="cs">Сплошные — факт, штриховка — прогноз · подписаны праздничные недели</div>
+    <div class="cs">Столбцы — выручка (сплошные = факт, светлые = прогноз) · пунктир — недельный план из бюджета · наведите на неделю: план, прогноз и разница в ₽ и %</div>
     <div class="wrap-chart" style="height:330px"><canvas id="weekChart"></canvas></div>
   </div>
 
@@ -2316,12 +2316,28 @@ Chart.defaults.font.family='-apple-system,Segoe UI,Roboto,sans-serif';
 Chart.defaults.font.size=11;
 const grid='#EEF1F5';
 
-// 1) Weekly total
-new Chart(weekChart,{type:'bar',data:{labels,datasets:[{label:'Выручка',data:W.map(w=>w.tot),
- backgroundColor:W.map(w=>w.act?OR:ORL),borderColor:W.map(w=>w.act?OR:'#F9A468'),borderWidth:1,borderRadius:3}]},
- options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-   tooltip:{callbacks:{title:c=>'Неделя '+W[c[0].dataIndex].w+' ('+W[c[0].dataIndex].label+')'+(holLabels[c[0].dataIndex]?' · '+holLabels[c[0].dataIndex]:''),
-     label:c=>' '+m1(c.raw)+' М ₽ · '+rub(c.raw)+' ('+(W[c.dataIndex].act?'факт':'прогноз')+')'}}},
+// План по неделям — тот же бюджет, что в трекере. Сопоставляем по подписи недели,
+// а не по индексу: если ряды когда-нибудь разойдутся, лучше пустая точка, чем сдвиг на неделю.
+const PLAN_W = (function(){
+  if(typeof TRK==='undefined' || !TRK || !TRK.planW || !TRK.labels) return null;
+  var byLab={}; TRK.labels.forEach(function(l,i){ byLab[l]=TRK.planW[i]; });
+  return W.map(function(w){ return byLab[w.label]!==undefined ? byLab[w.label] : null; });
+})();
+
+// 1) Weekly total — выручка (факт/прогноз) + линия плана
+new Chart(weekChart,{type:'bar',data:{labels,datasets:[
+ {label:'Факт / прогноз',data:W.map(w=>w.tot),order:2,
+  backgroundColor:W.map(w=>w.act?OR:ORL),borderColor:W.map(w=>w.act?OR:'#F9A468'),borderWidth:1,borderRadius:3}
+ ].concat(PLAN_W?[{type:'line',label:'План (бюджет)',data:PLAN_W,order:1,
+  borderColor:'#111827',borderWidth:2,borderDash:[5,3],pointRadius:0,pointHoverRadius:4,
+  pointBackgroundColor:'#111827',tension:0,fill:false}]:[])},
+ options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+   plugins:{legend:{display:!!PLAN_W,position:'top',labels:{boxWidth:12,font:{size:11}}},
+   tooltip:{callbacks:{title:c=>'Неделя '+W[c[0].dataIndex].w+' ('+W[c[0].dataIndex].label+' · '+W[c[0].dataIndex].days+' дн)'+(holLabels[c[0].dataIndex]?' · '+holLabels[c[0].dataIndex]:''),
+     label:c=>' '+c.dataset.label+': '+m1(c.raw)+' М ₽ · '+rub(c.raw),
+     afterBody:function(c){ var i=c[0].dataIndex;
+       var head=W[i].act?'Неделя закрыта — это факт':'Прогноз (модель, с учётом сроков открытий)';
+       return [head].concat(planFactLines(PLAN_W?PLAN_W[i]:null, W[i].tot)); }}}},
    scales:{x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:26,callback:function(v,i){return i%2===0?W[i].label:''}}},
      y:{grid:{color:grid},ticks:{callback:v=>v+'М'}}}}});
 
