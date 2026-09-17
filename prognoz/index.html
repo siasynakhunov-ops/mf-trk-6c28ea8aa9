@@ -2159,7 +2159,8 @@ switchScenario('base');
 </script>
 <script>
 var _wkInit=false;
-function initWeekly(){ if(_wkInit) return; _wkInit=true;
+// Недельный ряд считается один раз при загрузке и используется ОБЕИМИ вкладками —
+// «Недельный прогноз» и «Трекер План/Факт». Один источник, чтобы они не разъезжались.
 
 const D = {"units": ["Я-1", "Я-2", "Я-3", "Я-4", "Я-5", "Я-6", "Я-7", "Я-10", "Я-11"], "dow": [0.832, 0.851, 0.867, 0.923, 1.149, 1.287, 1.091], "yoy": 8.8};
 // ── Недели ПН–ВС, собираются в рантайме ──────────────────────────────────────
@@ -2285,6 +2286,8 @@ window._W = W;   // наружу — для проверок целостнос�
     return i>0 && new Date(2026,+p[1]-1,+p[0]).getDay()!==1; });
   if(bd.length) console.warn('⚠️ Недели не с понедельника:', bd.map(function(x){return x.label;}));
 })();
+
+function initWeekly(){ if(_wkInit) return; _wkInit=true;
 const fmt=n=>n.toLocaleString('ru');
 const OR='#FF6A13', ORL='rgba(255,106,19,0.35)';
 // Годовая выручка 2026 — ЕДИНОЕ число со всеми вкладками (базовая строковая модель = KPI месячной вкладки)
@@ -2736,25 +2739,50 @@ function buildTracker(){
     kc('YTD План', m1(TRK.ytdPlan)+'M ₽', 'бюджет за период · '+rub(TRK.ytdPlan), '#111827') +
     kc('Выполнение плана', pctY.toFixed(2)+'%', sgn1(dF)+'M ₽ = '+(dF>=0?'+':'−')+rub(Math.abs(dF)), pc) +
     kc('Прогноз года', m1(yearFc)+'M ₽', 'план '+m1(TRK.annPlan)+'M · '+(yearFc/TRK.annPlan*100).toFixed(2)+'% ('+sgn1(dYr)+'M)', yc);
-  document.getElementById('trkChartSub').textContent='План '+m1(TRK.annPlan)+'M ₽ · факт '+m1(TRK.ytdFact)+'M ('+pctY.toFixed(2)+'% · '+sgn1(dF)+'M ₽) по неделю '+TRK.lastW;
   var lab=TRK.labels, plan=TRK.planW, fact=TRK.factW;
+  // Прогноз на НЕЗАКРЫТЫЕ недели — из того же ряда W, что и вкладка «Недельный прогноз».
+  // Последняя закрытая неделя дублируется, чтобы линия начиналась от факта, а не висела в воздухе.
+  var byLab={}; (window._W||[]).forEach(function(w){ byLab[w.label]=w.tot; });
+  var lastFact=-1; fact.forEach(function(v,i){ if(v!=null) lastFact=i; });
+  var fcst=lab.map(function(l,i){
+    if(i===lastFact) return fact[i];
+    if(fact[i]!=null) return null;
+    return byLab[l]!==undefined ? byLab[l] : null;
+  });
+  var hasFc=fcst.some(function(v,i){ return v!=null && i>lastFact; });
+  var restP=0, restF=0;
+  for(var ri=lastFact+1; ri<lab.length; ri++){ restP+=plan[ri]||0; restF+=fcst[ri]||0; }
+  document.getElementById('trkChartSub').textContent =
+    'План года '+m1(TRK.annPlan)+'M ₽ · факт по неделю '+TRK.lastW+': '+m1(TRK.ytdFact)+'M ('+pctY.toFixed(2)+'% · '+sgn1(dF)+'M ₽)'
+    + (hasFc ? ' · остаток года: план '+m1(restP)+'M, прогноз '+m1(restF)+'M ('+(restP?restF/restP*100:0).toFixed(2)+'% · '+sgn1(restF-restP)+'M ₽)' : '');
   if(!_trkChart){
     _trkChart=new Chart(document.getElementById('trkWeekChart').getContext('2d'),{type:'bar',
       data:{labels:lab,datasets:[
         {label:'План',data:plan,backgroundColor:'#CBD5E1',borderRadius:2,barPercentage:0.95,categoryPercentage:0.82},
         {label:'Факт',data:fact,backgroundColor:fact.map(function(v,i){return v==null?'#eee':(v>=plan[i]?'#16A34A':'#FF7A00');}),borderRadius:2,barPercentage:0.95,categoryPercentage:0.82}
-      ]},
+      ].concat(hasFc?[{type:'line',label:'Прогноз (остаток года)',data:fcst,borderColor:'#FF7A00',
+        borderWidth:2,borderDash:[5,3],pointRadius:0,pointHoverRadius:4,pointBackgroundColor:'#FF7A00',
+        tension:0,fill:false,spanGaps:false}]:[])},
       options:{responsive:true,interaction:{mode:'index',intersect:false},
         plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:11}}},
         tooltip:{callbacks:{
           title:function(c){return 'Неделя '+(c[0].dataIndex+1)+' ('+lab[c[0].dataIndex]+')';},
-          label:function(c){return c.raw==null?' '+c.dataset.label+': — (нет факта)':' '+c.dataset.label+': '+m1(c.raw)+'M ₽ · '+rub(c.raw);},
-          afterBody:function(c){ var i=c[0].dataIndex, ds=c[0].chart.data.datasets; return planFactLines(ds[0].data[i], ds[1].data[i]); }
+          label:function(c){ if(c.raw==null) return null;
+            // на закрытой неделе линия прогноза совпадает с фактом — не дублируем строку
+            if(c.datasetIndex===2 && c.chart.data.datasets[1].data[c.dataIndex]!=null) return null;
+            return ' '+c.dataset.label+': '+m1(c.raw)+'M ₽ · '+rub(c.raw); },
+          afterBody:function(c){ var i=c[0].dataIndex, ds=c[0].chart.data.datasets;
+            var f=ds[1].data[i];
+            if(f!=null) return ['Неделя закрыта — это факт'].concat(planFactLines(ds[0].data[i], f));
+            var fc=ds[2]?ds[2].data[i]:null;
+            if(fc==null) return ['Факта ещё нет'];
+            return ['Прогноз (модель, с учётом сроков открытий)'].concat(planFactLines(ds[0].data[i], fc)); }
         }}},
         scales:{x:{ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:14,font:{size:9}}},y:{ticks:{callback:function(v){return v+'M';}},grid:{color:'#F3F4F6'}}}}});
   }else{
     _trkChart.data.labels=lab; _trkChart.data.datasets[0].data=plan; _trkChart.data.datasets[1].data=fact;
     _trkChart.data.datasets[1].backgroundColor=fact.map(function(v,i){return v==null?'#eee':(v>=plan[i]?'#16A34A':'#FF7A00');});
+    if(_trkChart.data.datasets[2]) _trkChart.data.datasets[2].data=fcst;
     _trkChart.update();
   }
   var sub2='font-size:10px;color:#94A3B8;font-weight:400;margin-top:1px';
