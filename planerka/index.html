@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Планёрка Якутск</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#FF6900; --deep:#E35A00; --ink:#1A1614; --cream:#FFF6EC; --paper:#FFFFFF;
+  --muted:#7E7168; --line:#F2E0CE; --good:#1F8A4C; --bad:#C0392B; --amber:#C97A0A;
+  --good-bg:#E6F4EC; --bad-bg:#FBE9E7; --amber-bg:#FDF1DC;
+  --disp:'Rubik',Verdana,sans-serif; --text:'Nunito Sans',Verdana,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--text);}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--deep)}
+.hidden{display:none!important}
+
+/* ── верхняя панель ─────────────────────────────── */
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;background:var(--ink);color:#fff}
+.bar .logo{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.2px}
+.bar .logo b{color:var(--orange)}
+.bar .sp{flex:1}
+.bar select,.bar button{background:#2c2622;border:1px solid #4a403a;color:#fff;border-radius:8px;padding:7px 10px;cursor:pointer}
+.bar button.primary{background:var(--orange);border-color:var(--orange);font-weight:700}
+.banner{padding:10px 16px;background:var(--amber-bg);color:#6b4300;font-size:14px;border-bottom:1px solid var(--line)}
+
+/* ── главная ─────────────────────────────────────── */
+.home{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+.home h1{font-family:var(--disp);font-size:30px;margin:4px 0 4px}
+.home .lead{color:var(--muted);margin:0 0 20px}
+.cta{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:26px}
+.cta a{display:block;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}
+.cta a:hover{border-color:var(--orange)}
+.cta a b{display:block;font-family:var(--disp);font-size:20px;margin-bottom:4px}
+.cta a span{color:var(--muted);font-size:14px}
+.cta a.main{background:var(--orange);color:#fff;border-color:var(--orange)}
+.cta a.main span{color:#fff;opacity:.9}
+.h2{font-family:var(--disp);font-size:18px;margin:22px 0 10px}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.role{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:4px}
+.role:hover{border-color:var(--orange)}
+.role b{font-family:var(--disp);font-size:17px}
+.role small{color:var(--muted)}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:99px;padding:2px 8px}
+.pill.ok{background:var(--good-bg);color:var(--good)}
+.pill.part{background:var(--amber-bg);color:var(--amber)}
+.pill.no{background:var(--bad-bg);color:var(--bad)}
+.order{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:6px 16px;margin:0;columns:2;column-gap:32px}
+.order li{padding:5px 0;break-inside:avoid}
+@media(max-width:640px){.order{columns:1}}
+
+/* ── экран планёрки (16:9) ───────────────────────── */
+.show{position:fixed;inset:0;background:var(--cream);display:flex;flex-direction:column;overflow:hidden;font-size:clamp(12px,1.12vw,24px)}
+.show .top{display:flex;align-items:baseline;gap:1.2em;padding:1.1em 2em .6em}
+.show .top .num{font-family:var(--disp);font-weight:700;color:var(--orange);font-size:1.6em}
+.show .top h2{font-family:var(--disp);font-size:2.3em;margin:0;line-height:1.05}
+.show .top .sub{color:var(--muted);font-size:1.05em}
+.show .top .sp{flex:1}
+.show .top .wk{font-family:var(--disp);color:var(--muted);font-size:1.05em;text-align:right;white-space:nowrap}
+.dots{display:flex;gap:.35em;padding:0 2em .6em}
+.dots i{flex:1;height:.3em;border-radius:1em;background:var(--line);cursor:pointer}
+.dots i.done{background:#F5B68A}.dots i.on{background:var(--orange)}
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;padding:0 2em 1.2em;gap:1em}
+.cards{display:grid;grid-template-columns:repeat(7,1fr);gap:.8em}
+.card{background:var(--paper);border:2px solid var(--line);border-radius:1em;padding:.8em .9em;cursor:pointer;transition:transform .15s,border-color .15s,opacity .15s;display:flex;flex-direction:column;gap:.3em;min-width:0}
+.card.dim{opacity:.55}
+.card.on{border-color:var(--orange);transform:translateY(-.25em);box-shadow:0 .6em 1.6em rgba(227,90,0,.18);opacity:1}
+.card .nm{font-family:var(--disp);font-weight:600;font-size:1.1em;display:flex;justify-content:space-between;align-items:center;gap:.3em;white-space:nowrap}
+.card .nm .fl{font-size:.7em;font-weight:700;border-radius:99px;padding:.1em .5em}
+.card .val{font-family:var(--disp);font-weight:700;font-size:2.5em;line-height:1;margin:.15em 0 .05em;white-space:nowrap}
+.card .val small{font-size:.45em;font-weight:500;color:var(--muted);margin-left:.1em}
+.card .gl{font-size:.85em;color:var(--muted)}
+.card .ln{font-size:.9em;display:flex;justify-content:space-between;gap:.5em;border-top:1px dashed var(--line);padding-top:.25em}
+.card .ln span:first-child{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.card .ln b{flex-shrink:0}
+.card .ln b{font-weight:700;white-space:nowrap}
+.g{color:var(--good)}.r{color:var(--bad)}.a{color:var(--amber)}.m{color:var(--muted)}
+.trend{display:flex;align-items:flex-end;gap:.18em;height:2.2em;margin-top:.2em}
+.trend i{flex:1;background:#F2D3BC;border-radius:.15em .15em 0 0;min-height:2px;position:relative}
+.trend i.cur{background:var(--orange)}
+.notes{flex:1;min-height:0;align-content:start;background:var(--paper);border:2px solid var(--orange);border-radius:1em;padding:1em 1.4em;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1em 2em;overflow:auto}
+.notes.one{grid-template-columns:1fr}
+.notes h3{grid-column:1/-1;margin:0;font-family:var(--disp);font-size:1.5em;display:flex;gap:.6em;align-items:baseline}
+.notes h3 small{font-family:var(--text);font-weight:600;color:var(--muted);font-size:.6em}
+.note .lb{font-size:.85em;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--deep);margin-bottom:.25em}
+.note .tx{font-size:1.35em;line-height:1.35;white-space:pre-wrap}
+.note .tx.empty{color:#C9B8AA;font-style:italic;font-size:1.1em}
+.note ul{margin:0;padding-left:1.1em;font-size:1.15em;line-height:1.4}
+.big{flex:1;min-height:0;display:grid;gap:1em;overflow:auto}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:1em;padding:.9em 1.1em}
+.tile .lb{color:var(--muted);font-size:.95em}
+.tile .v{font-family:var(--disp);font-weight:700;font-size:2.4em;line-height:1.1}
+.tile .v small{font-size:.45em;color:var(--muted);font-weight:500}
+.tile .s{font-size:.95em}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--paper);border:1px solid var(--line);border-radius:1em;overflow:hidden;font-size:1.05em}
+.tbl th{font-weight:700;text-align:left;color:var(--muted);font-size:.8em;text-transform:uppercase;letter-spacing:.03em;padding:.6em .7em;border-bottom:1px solid var(--line);background:#FFFBF6}
+.tbl td{padding:.55em .7em;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tr.on td{background:#FFF0E3}
+.tbl tr.on td:first-child{box-shadow:inset .3em 0 0 var(--orange)}
+.tbl td.n{font-family:var(--disp);font-weight:600;white-space:nowrap}
+.tbl td.t{white-space:pre-wrap;line-height:1.3}
+.fillgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:.6em}
+.fillgrid div{background:var(--paper);border:1px solid var(--line);border-radius:.8em;padding:.6em .8em;display:flex;justify-content:space-between;align-items:center;font-family:var(--disp)}
+.hint{position:absolute;right:1.2em;bottom:.5em;color:#C9B8AA;font-size:.8em}
+.navbtn{position:absolute;top:50%;width:2.4em;height:4em;border:0;background:rgba(26,22,20,.06);border-radius:.6em;cursor:pointer;font-size:1.2em;color:var(--muted)}
+.navbtn.l{left:.2em}.navbtn.rr{right:.2em}
+.exit{position:absolute;top:.8em;right:1em;border:0;background:none;color:var(--muted);cursor:pointer;font-size:1em}
+
+/* ── форма ───────────────────────────────────────── */
+.form{max-width:860px;margin:0 auto;padding:20px 16px 120px}
+.form h1{font-family:var(--disp);font-size:26px;margin:4px 0}
+.form .lead{color:var(--muted);margin:0 0 16px;font-size:15px}
+.fs{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px}
+.fs h2{font-family:var(--disp);font-size:18px;margin:0 0 4px}
+.fs .auto{font-size:14px;color:var(--muted);background:#FFFBF6;border:1px dashed var(--line);border-radius:10px;padding:8px 10px;margin:8px 0 10px;line-height:1.5}
+.fs .auto b{color:var(--ink)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.fld{display:flex;flex-direction:column;gap:4px;margin:6px 0}
+.fld label{font-size:14px;font-weight:700}
+.fld label small{font-weight:400;color:var(--muted)}
+.fld input,.fld textarea,.fld select{border:1px solid #E6D3C1;border-radius:10px;padding:9px 11px;background:#fff;width:100%}
+.fld textarea{min-height:64px;resize:vertical;line-height:1.35}
+.fld input:focus,.fld textarea:focus{outline:2px solid var(--orange);border-color:var(--orange)}
+.gridform{overflow-x:auto}
+.gridform table{border-collapse:collapse;width:100%;min-width:640px}
+.gridform th{font-size:12px;text-align:left;color:var(--muted);padding:4px}
+.gridform td{padding:3px}
+.gridform td:first-child{font-family:var(--disp);font-weight:600;white-space:nowrap;padding-right:8px}
+.gridform input,.gridform textarea{border:1px solid #E6D3C1;border-radius:8px;padding:6px 8px;width:100%;background:#fff}
+.gridform textarea{min-height:38px;resize:vertical}
+.savebar{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:#fff;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:5}
+.savebar input{background:#2c2622;border:1px solid #4a403a;color:#fff;border-radius:8px;padding:8px 10px;width:150px}
+.savebar button{background:var(--orange);border:0;color:#fff;font-weight:700;border-radius:10px;padding:10px 18px;cursor:pointer}
+.savebar .st{font-size:14px;opacity:.85;flex:1;min-width:160px}
+</style>
+</head>
+<body>
+
+<div id="banner" class="banner hidden"></div>
+
+<!-- главная -->
+<div id="vHome" class="hidden">
+  <div class="bar">
+    <div class="logo">Планёрка <b>Якутск</b></div>
+    <div class="sp"></div>
+    <select id="weekSel" aria-label="Неделя"></select>
+  </div>
+  <div class="home">
+    <h1 id="homeTitle">Планёрка</h1>
+    <p class="lead" id="homeLead">Показатели недели по всем пиццериям, ПРЦ, обучению и отчёту ТУ — в одном месте.</p>
+    <div class="cta">
+      <a class="main" href="#show"><b>▶ Показать на экране</b><span>Для планёрки: блок за блоком, пиццерии по очереди. Клавиши ← →.</span></a>
+      <a href="#fill"><b>✎ Заполнить отчёт</b><span>Для управляющих: выберите свою пиццерию или отдел ниже.</span></a>
+    </div>
+    <div class="h2">Кто заполнил отчёт за неделю</div>
+    <div class="roles" id="roleList"></div>
+    <div class="h2">Порядок планёрки</div>
+    <ol class="order" id="orderList"></ol>
+    <p class="lead" style="margin-top:18px;font-size:13px" id="dataNote"></p>
+  </div>
+</div>
+
+<!-- экран -->
+<div id="vShow" class="show hidden">
+  <div class="top">
+    <span class="num" id="sNum"></span>
+    <div><h2 id="sTitle"></h2><div class="sub" id="sSub"></div></div>
+    <div class="sp"></div>
+    <div class="wk" id="sWeek"></div>
+  </div>
+  <div class="dots" id="sDots"></div>
+  <div class="stage" id="sStage"></div>
+  <button class="navbtn l" id="bPrev" aria-label="Назад">‹</button>
+  <button class="navbtn rr" id="bNext" aria-label="Дальше">›</button>
+  <button class="exit" id="bExit">✕ выйти</button>
+  <div class="hint">← → по пиццериям · ↑ ↓ по блокам · 1–7 пиццерия · F во весь экран</div>
+</div>
+
+<!-- форма -->
+<div id="vForm" class="hidden">
+  <div class="bar">
+    <a class="logo" href="#" style="color:#fff;text-decoration:none">Планёрка <b>Якутск</b></a>
+    <div class="sp"></div>
+    <select id="roleSel" aria-label="Кто заполняет"></select>
+    <select id="weekSel2" aria-label="Неделя"></select>
+  </div>
+  <div class="form" id="formBody"></div>
+  <div class="savebar">
+    <input id="who" placeholder="Ваше имя" autocomplete="name">
+    <input id="code" placeholder="Код доступа" type="password" autocomplete="off">
+    <span class="st" id="saveSt"></span>
+    <button id="bSave">Сохранить</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════ настройки ════════════════════════ */
+// URL веб-приложения Google Apps Script (planerka_apps_script.gs). Пусто = ввод только в этом браузере.
+const API_URL = '';
+
+const U7 = ['Я-1','Я-2','Я-3','Я-4','Я-5','Я-6','Я-7'];
+const NAME = u => 'Якутск-' + u.slice(2);
+const KEY = u => 'u' + u.slice(2);           // префикс полей в таблицах отделов: u1_…
+const ROLES = [...U7, 'ПРЦ', 'Обучение', 'ТУ'];
+const ROLE_NAME = r => U7.includes(r) ? NAME(r) : ({'ПРЦ':'ПРЦ','Обучение':'Отдел обучения','ТУ':'Территориальный управляющий'})[r];
+
+// цели по точкам — из их таблиц «План на месяц» (сентябрь 2026); управляющий может переписать в форме
+const GOAL_SPLH = {'Я-1':3500,'Я-2':3000,'Я-5':3200,'Я-6':3800};
+const GOAL_PPLH = {'Я-1':6,'Я-2':7,'Я-5':7.5,'Я-6':7.5};
+
+/* ════════════════════════ утилиты ════════════════════════ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+const num = v => { if (v === null || v === undefined || v === '') return null; const n = parseFloat(String(v).replace(/\s/g,'').replace(',', '.').replace('%','')); return isFinite(n) ? n : null; };
+const fmt = (v, d = 0) => v === null || v === undefined ? '—' : Number(v).toLocaleString('ru-RU', {minimumFractionDigits: d, maximumFractionDigits: d});
+const mln = v => v == null ? '—' : fmt(v / 1e6, 2);
+const pct = (a, b) => (a && b) ? (a / b - 1) * 100 : null;
+const sgn = (v, d = 1) => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v), d) + ' %';
+const cls = (v, goal, dir) => v == null || goal == null ? '' : ((dir > 0 ? v >= goal : v <= goal) ? 'g' : 'r');
+const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const dd = s => { const d = new Date(s + 'T00:00:00Z'); return d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()]; };
+const addDays = (s, n) => { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };   // в UTC: в +09 локальная полночь даёт вчерашнюю ISO-дату
+const weekLabel = w => { const e = addDays(w, 6); return dd(w).split(' ')[1] === dd(e).split(' ')[1] ? dd(w).split(' ')[0] + '–' + dd(e) : dd(w) + ' – ' + dd(e); };
+const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+             set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+const api = () => API_URL || LS.get('pl_api', '');
+
+/* ════════════════════════ данные ════════════════════════ */
+const S = { weeks: [], week: null, data: {}, entries: {}, updated: {}, hist: [] };
+
+async function jget(url) { const r = await fetch(url, {cache: 'no-store'}); if (!r.ok) throw new Error(r.status); return r.json(); }
+
+async function loadWeek(w) {
+  if (!S.data[w]) { try { S.data[w] = await jget('data/' + w + '.json'); } catch (e) { S.data[w] = null; } }
+  await loadEntries(w);
+}
+async function loadEntries(w) {
+  const local = LS.get('pl_local_' + w, {});
+  let remote = {}, upd = {};
+  if (api()) {
+    try { const r = await jget(api() + '?week=' + w); if (r.ok) { remote = r.entries || {}; upd = r.updated || {}; } } catch (e) { console.warn('api', e); }
+  }
+  const merged = {};
+  for (const role of ROLES) merged[role] = Object.assign({}, api() ? {} : (local[role] || {}), remote[role] || {});
+  S.entries[w] = merged; S.updated[w] = upd;
+}
+const A = (u, k) => S.data[S.week]?.units?.[u]?.[k] ?? null;       // авто из Dodo IS
+const E = (role, k) => { const v = S.entries[S.week]?.[role]?.[k]; return v === undefined || v === '' ? null : v; };  // ручной ввод
+const AH = (u, k) => S.hist.map(w => S.data[w]?.units?.[u]?.[k] ?? null);   // история авто-метрики (старые → новые)
+
+/* ════════════════════════ блоки планёрки ════════════════════════
+   scope 'units' — карточки 7 пиццерий, → переключает пиццерию, внизу комментарии активной.
+   scope 'role'  — отдел (ПРЦ, обучение, ТУ); rows:true — внутри тоже шаг по пиццериям.        */
+const splhGoal = u => num(E(u, 'splh_goal')) ?? GOAL_SPLH[u] ?? null;
+const pplhGoal = u => num(E(u, 'pplh_goal')) ?? GOAL_PPLH[u] ?? null;
+
+const BLOCKS = [
+ { id:'rko', title:'Рейтинг клиентского опыта', sub:'РКО за неделю · цель ≥ 90', scope:'units',
+   card: u => ({ v: num(E(u,'rko')), d: 1, goal: 90, dir: 1,
+                 lines: [['Оценка на картах', E(u,'maps') ?? '—'], ['Обращений', E(u,'complaints') ?? '—']] }),
+   notes: [['rko_minus','За что сняли баллы'], ['rko_done','Что сделали / что меняем'], ['complaints_top','Топ проблем клиентов']],
+   fields: [
+     {k:'rko', l:'РКО за неделю', t:'num', ph:'например 91'},
+     {k:'rko_minus', l:'За что сняли баллы', t:'text', ph:'2 — горелый борт; 4 — стопы I и III группы'},
+     {k:'rko_done', l:'Что сделали / что меняем на этой неделе', t:'text'},
+     {k:'maps', l:'Оценка на картах', s:'2ГИС / Яндекс', t:'num', ph:'4,7'},
+     {k:'maps_reviews', l:'Новых отзывов на картах', t:'num'},
+     {k:'complaints', l:'Обращений клиентов', t:'num'},
+     {k:'complaints_top', l:'Топ-3 проблем клиентов', t:'text', ph:'Перепутали продукт / не положили ингредиент / курьер опоздал'},
+     {k:'scont', l:'Проверки Scont, %', t:'num'},
+   ]},
+ { id:'rs', title:'Рейтинг стандартов', sub:'РС · цель ≥ 90', scope:'units',
+   card: u => ({ v: num(E(u,'rs')), d: 1, goal: 90, dir: 1, lines: [['Проверка', E(u,'rs_period') ?? '—'], ['Scont', E(u,'scont') != null ? E(u,'scont') + ' %' : '—']] }),
+   notes: [['rs_minus','За что сняли'], ['rs_done','План исправления / что сделано']],
+   fields: [
+     {k:'rs', l:'Рейтинг стандартов', t:'num', ph:'например 88'},
+     {k:'rs_period', l:'Какая проверка', t:'str', ph:'I часть сентября / предварительно'},
+     {k:'rs_minus', l:'За что сняли', t:'text', ph:'4 — остаток клея на таре; 12 — смешивание в одной таре'},
+     {k:'rs_done', l:'План исправления / что сделано', t:'text'},
+   ]},
+ { id:'rev', title:'Выручка', sub:'Факт недели из Dodo IS · сравнение с прошлой неделей и с теми же днями год назад', scope:'units', auto:true,
+   card: u => ({ v: A(u,'rev') / 1e6, d: 2, unit: 'млн', color: '', trend: AH(u,'rev'),
+                 lines: [['к пр. неделе', sgn(pct(A(u,'rev'), A(u,'revPrev'))), cls(pct(A(u,'rev'), A(u,'revPrev')), 0, 1)],
+                         ['к году', A(u,'lflLY') ? sgn(pct(A(u,'rev'), A(u,'revLY'))) : 'н/д', cls(pct(A(u,'rev'), A(u,'revLY')), 0, 1)],
+                         ['доставка / зал', mln(A(u,'revDel')) + ' / ' + mln(A(u,'revHall'))],
+                         ['средний чек', fmt(A(u,'check')) + ' ₽']] }),
+   notes: [['rev_comment','Комментарий к выручке'], ['night', 'Ночная выручка']],
+   fields: [ {k:'rev_comment', l:'Комментарий к выручке', s:'почему выросла/упала, что делаем', t:'text'},
+             {k:'night', l:'Ночная выручка (23:00–08:00)', s:'если отслеживаете', t:'str'} ]},
+ { id:'speed', title:'Скорость доставки и выдачи', sub:'Доля доставок дольше 40 мин · среднее время · выдача в зале', scope:'units', auto:true,
+   card: u => ({ v: A(u,'over40'), d: 1, unit: '%', color: vsNet('over40', u, -1), trend: AH(u,'over40'),
+                 lines: [['ср. доставка', fmt(A(u,'dlvMin'),1) + ' мин', vsNet('dlvMin', u, -1)],
+                         ['кухня·полка·путь', fmt(A(u,'cookMin'),1) + ' / ' + fmt(A(u,'shelfMin'),1) + ' / ' + fmt(A(u,'tripMin'),1)],
+                         ['выдача в зале', fmt(A(u,'hallMin'),1) + ' мин', vsNet('hallMin', u, -1)],
+                         ['в зал > 15 мин', E(u,'hall15') != null ? E(u,'hall15') + ' %' : '—']] }),
+   gl: '> 40 мин · зелёный — лучше сети',
+   notes: [['speed_comment','Причины и действия']],
+   fields: [ {k:'hall15', l:'Доля заказов в зал дольше 15 мин, %', s:'из отчёта Dodo IS — в API такой метрики нет', t:'num'},
+             {k:'speed_comment', l:'Причины и действия', t:'text', ph:'нехватка курьеров вечером в пт; ставим доп. смену'} ]},
+ { id:'prod', title:'Производительность', sub:'₽ на человеко-час · продуктов на человека в час · заказов на курьера в час', scope:'units', auto:true,
+   card: u => ({ v: A(u,'splh'), d: 0, unit: '₽/ч', goal: splhGoal(u), dir: 1, trend: AH(u,'splh'),
+                 lines: [['продуктов/ч', fmt(A(u,'pplh'),2) + (pplhGoal(u) ? ' / ' + fmt(pplhGoal(u),1) : ''), cls(A(u,'pplh'), pplhGoal(u), 1)],
+                         ['заказов/курьер', fmt(A(u,'opch'),2) + ' / 2', cls(A(u,'opch'), 2, 1)],
+                         ['человеко-часов', fmt(A(u,'laborH'))],
+                         ['КС кухни', E(u,'ks') != null ? E(u,'ks') + ' %' : '—']] }),
+   notes: [['prod_comment','Комментарий']],
+   fields: [ {k:'splh_goal', l:'Цель по производительности, ₽/чел·ч', s:'если отличается от прошлой', t:'num'},
+             {k:'pplh_goal', l:'Цель: продуктов на человека в час', t:'num'},
+             {k:'ks', l:'КС кухни, %', t:'num'},
+             {k:'prod_comment', l:'Комментарий', t:'text'} ]},
+ { id:'stop', title:'Стоп-продажи и промокоды', sub:'Стоп пиццерии ≤ 120 мин в неделю · промокоды за опоздание ≤ 5', scope:'units', auto:true,
+   card: u => ({ v: A(u,'stopMin'), d: 0, unit: 'мин', goal: 120, dir: -1, trend: AH(u,'stopMin'),
+                 lines: [['стоп секторов', fmt(A(u,'sectorH'),1) + ' ч', vsNet('sectorH', u, -1)],
+                         ['промокоды', fmt(A(u,'vouchers')), cls(A(u,'vouchers'), 5, -1)],
+                         ['продуктов в стопе', fmt(A(u,'prodStops'))],
+                         ['упущено', E(u,'lost') ? fmt(num(E(u,'lost'))) + ' ₽' : '—']] }),
+   notes: [['stop_comment','Причины стопов и что делаем'], ['#stopReasons','Стопы пиццерии по причинам (Dodo IS)'], ['#prodStopTop','Дольше всего в стопе (Dodo IS)']],
+   fields: [ {k:'lost', l:'Упущенная выручка от стопов, ₽', s:'из отчёта Dodo IS', t:'num'},
+             {k:'lost_pct', l:'Доля упущенной выручки, %', t:'num'},
+             {k:'stop_comment', l:'Причины стопов и что делаем', t:'text'} ]},
+ { id:'loss', title:'Потери и излишки', sub:'По инвентаризации · цель: потери ≤ 1,5 %, излишки ≤ 1,5 %', scope:'units',
+   card: u => ({ v: num(E(u,'loss')), d: 2, unit: '%', goal: 1.5, dir: -1,
+                 lines: [['излишки', E(u,'surplus') != null ? E(u,'surplus') + ' %' : '—', cls(num(E(u,'surplus')), 1.5, -1)],
+                         ['списания (Dodo IS)', fmt(A(u,'writeOff')) + ' ₽'],
+                         ['к выручке', fmt(A(u,'writeOffPct'),2) + ' %', vsNet('writeOffPct', u, -1)],
+                         ['брак (Dodo IS)', fmt(A(u,'defect')) + ' ₽']] }),
+   gl: 'потери, % (цель ≤ 1,5)',
+   notes: [['loss_items','Потери по позициям'], ['surplus_items','Излишки по позициям'], ['loss_done','Что делаем'], ['#writeOffTop','Больше всего списали (Dodo IS, по цене продажи)']],
+   fields: [ {k:'loss', l:'Потери, %', t:'num', ph:'0,96'},
+             {k:'loss_items', l:'Потери по позициям', t:'text', ph:'10,2 — молоко; 7,3 — цыпленок'},
+             {k:'surplus', l:'Излишки, %', t:'num'},
+             {k:'surplus_items', l:'Излишки по позициям', t:'text', ph:'46 — моцарелла; 13,7 — альфредо'},
+             {k:'loss_done', l:'Что делаем', t:'text'} ]},
+ { id:'team', title:'Команда', sub:'Найм, увольнения, медкнижки', scope:'units',
+   card: u => ({ v: num(E(u,'hired')), vs: num(E(u,'fired')), d: 0,
+                 lines: [['пробных смен', E(u,'trials') ?? '—'], ['медкнижки', E(u,'med') != null ? E(u,'med') + ' %' : '—', cls(num(E(u,'med')), 100, 1)], ['текучесть', E(u,'turnover') != null ? E(u,'turnover') + ' %' : '—']] }),
+   gl: 'принято / уволено',
+   notes: [['fired_why','Кто ушёл и почему'], ['team_comment','Найм и что делаем']],
+   fields: [ {k:'trials', l:'Назначено пробных смен', t:'num'},
+             {k:'hired', l:'Принято', t:'num'}, {k:'fired', l:'Уволено', t:'num'},
+             {k:'fired_why', l:'Кто ушёл и почему', t:'text', ph:'1 курьер — учёба; 1 пиццамейкер — переезд'},
+             {k:'med', l:'Медкнижки, % сотрудников с действующей', t:'num'},
+             {k:'turnover', l:'Текучесть, %', s:'если считаете', t:'num'},
+             {k:'team_comment', l:'Найм и что делаем', t:'text'} ]},
+ { id:'prc', title:'ПРЦ', sub:'Производственно-распределительный центр', scope:'role', role:'ПРЦ' },
+ { id:'edu', title:'Отдел обучения', sub:'Стажёры по пиццериям', scope:'role', role:'Обучение', rows:true },
+ { id:'tu',  title:'Отчёт территориального управляющего', sub:'Проверки, замечания, генуборки', scope:'role', role:'ТУ', rows:true },
+ { id:'focus', title:'Фокус на неделю', sub:'Главная задача каждой пиццерии до следующей планёрки', scope:'units',
+   card: u => ({ text: E(u,'focus') }),
+   notes: [['focus','Главная задача недели'], ['help','Нужна помощь от офиса']],
+   fields: [ {k:'focus', l:'Главная задача на эту неделю', t:'text'}, {k:'help', l:'Нужна помощь от офиса / других пиццерий', t:'text'} ]},
+];
+
+// поля отделов
+const PRC_FIELDS = [
+  {k:'batches', l:'Количество замесов', s:'цель 250', t:'num', goal:250, dir:1},
+  {k:'dough', l:'Произведено теста, кг', s:'цель 10 000', t:'num', goal:10000, dir:1},
+  {k:'dough_h', l:'Часов на замесы', s:'цель 315', t:'num', goal:315, dir:-1},
+  {k:'veg', l:'Нарезано овощей, кг', t:'num'},
+  {k:'veg_waste', l:'Списания овощей: отходы, %', s:'цель ≤ 25', t:'num', goal:25, dir:-1},
+  {k:'veg_spoil', l:'Списания овощей: порча, %', t:'num'},
+  {k:'veg_h', l:'Часов на овощи', s:'цель 261', t:'num', goal:261, dir:-1},
+  {k:'prep_kgh', l:'Производительность заготовщиков, кг/ч', s:'цель 3', t:'num', goal:3, dir:1},
+  {k:'losses', l:'Потери', t:'text', ph:'перец 10,5 кг; лук 7,5 кг'},
+  {k:'surplus', l:'Излишки', t:'text'},
+  {k:'staff', l:'Принят / уволился', t:'str'},
+  {k:'comment', l:'Комментарий недели', t:'text', ph:'поставка из МСК плохого качества…'},
+];
+const EDU_COLS = [ {k:'stazh', l:'Стажёров'}, {k:'work', l:'Работают'}, {k:'delay', l:'Задерживаются'},
+  {k:'ready', l:'Готовы к аттестации'}, {k:'ispring', l:'Сдали Ispring'}, {k:'done', l:'Завершили'},
+  {k:'problem', l:'Проблемы', text:true}, {k:'task', l:'Задача', text:true} ];
+const TU_COLS = [ {k:'score', l:'Балл'}, {k:'grade', l:'Грейд'}, {k:'remarks', l:'Замечаний'},
+  {k:'fixed', l:'Исправлено'}, {k:'gen', l:'Генуборки, выполнено'}, {k:'genq', l:'из квоты'},
+  {k:'d23', l:'Нарушения Д2 / Д3', text:true} ];
+const TU_FIELDS = [
+  {k:'checks', l:'Количество проверок', t:'num'}, {k:'checks_type', l:'Тип проверок', t:'str', ph:'4 экспресс, 3 большие'},
+  {k:'avg', l:'Средний балл по сети', t:'num'}, {k:'avg_delta', l:'Изменение к прошлой неделе', t:'str', ph:'−2,48'},
+  {k:'remarks_total', l:'Замечаний всего', t:'num'}, {k:'fixed_total', l:'Исправлено всего', t:'str', ph:'17 / 18 %'},
+  {k:'repeat', l:'Общие повторяющиеся ошибки', t:'text', ph:'мухи; чистота потолков; остатки клея на посуде'},
+  {k:'gen_comment', l:'Комментарий по генуборкам', t:'text'},
+];
+
+function vsNet(k, u, dir) {
+  const vals = U7.map(x => A(x, k)).filter(v => v != null);
+  const v = A(u, k); if (v == null || !vals.length) return '';
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+  return (dir > 0 ? v >= avg : v <= avg) ? 'g' : 'a';
+}
+
+/* ════════════════════════ показ ════════════════════════ */
+// слайды: 0 — сводка, дальше блоки; позиция внутри блока — индекс пиццерии
+let slide = 0, pos = 0;
+const SLIDES = () => [{id:'summary', title:'Итоги недели', sub:'Сеть Якутск · Dodo IS'}, ...BLOCKS];
+const steps = b => (b.scope === 'units' || b.rows) ? U7.length : 1;
+
+function renderShow() {
+  const L = SLIDES(), b = L[slide];
+  $('#sNum').textContent = slide ? String(slide).padStart(2, '0') : '';
+  $('#sTitle').textContent = b.title; $('#sSub').textContent = b.sub || '';
+  $('#sWeek').innerHTML = 'Неделя<br><b style="color:var(--ink)">' + weekLabel(S.week) + '</b>';
+  $('#sDots').innerHTML = L.map((x, i) => `<i class="${i === slide ? 'on' : i < slide ? 'done' : ''}" data-i="${i}" title="${esc(x.title)}"></i>`).join('');
+  const st = $('#sStage');
+  if (b.id === 'summary') st.innerHTML = summaryHTML();
+  else if (b.scope === 'units') st.innerHTML = unitsHTML(b);
+  else if (b.id === 'prc') st.innerHTML = prcHTML();
+  else if (b.id === 'edu') st.innerHTML = eduHTML();
+  else if (b.id === 'tu') st.innerHTML = tuHTML();
+  st.querySelectorAll('[data-u]').forEach(el => el.onclick = () => { pos = +el.dataset.u; renderShow(); });
+}
+
+function summaryHTML() {
+  const N = S.data[S.week]?.net;
+  if (!N) return '<div class="tile"><div class="v">Нет данных Dodo IS за эту неделю</div><div class="s m">Они появляются в понедельник утром.</div></div>';
+  const avg = k => { const v = U7.map(u => A(u, k)).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+  const t = (lb, v, s, c = '') => `<div class="tile"><div class="lb">${lb}</div><div class="v ${c}">${v}</div><div class="s">${s}</div></div>`;
+  const dW = pct(N.rev, N.revPrev), dY = pct(N.rev, N.revLY);
+  const filled = ROLES.map(r => { const n = Object.values(S.entries[S.week]?.[r] || {}).filter(v => v !== '').length;
+    return `<div><span>${esc(U7.includes(r) ? r : ROLE_NAME(r))}</span><span class="pill ${n >= 6 ? 'ok' : n ? 'part' : 'no'}">${n ? n + ' полей' : 'пусто'}</span></div>`; }).join('');
+  const rank = U7.map(u => [u, pct(A(u,'rev'), A(u,'revPrev'))]).sort((a, b) => (b[1] ?? -1e9) - (a[1] ?? -1e9));
+  return `<div class="big" style="grid-template-rows:auto auto 1fr">
+    <div class="tiles">
+      ${t('Выручка сети', mln(N.rev) + '<small> млн ₽</small>', `<span class="${cls(dW,0,1)}">${sgn(dW)}</span> к прошлой неделе · <span class="${cls(dY,0,1)}">${sgn(dY)}</span> к году`)}
+      ${t('Заказов', fmt(N.orders), 'средний чек ' + fmt(N.check) + ' ₽')}
+      ${t('Доставок дольше 40 мин', fmt(avg('over40'), 1) + '<small> %</small>', 'в среднем по пиццериям · ср. доставка ' + fmt(avg('dlvMin'), 1) + ' мин')}
+      ${t('Промокоды за опоздание', fmt(N.vouchers), 'стоп пиццерий ' + fmt(N.stopMin) + ' мин · секторов ' + fmt(N.sectorH, 1) + ' ч')}
+    </div>
+    <div class="tiles" style="grid-template-columns:repeat(7,1fr)">${rank.map(([u, d]) => `<div class="tile" style="padding:.6em .8em"><div class="lb">${NAME(u)}</div><div class="v" style="font-size:1.6em">${mln(A(u,'rev'))}</div><div class="s ${cls(d,0,1)}">${sgn(d)}</div></div>`).join('')}</div>
+    <div><div class="lb" style="font-family:var(--disp);font-weight:600;margin-bottom:.5em">Заполнение отчётов</div><div class="fillgrid">${filled}</div></div>
+  </div>`;
+}
+
+function listHTML(arr, unit) {
+  if (!arr || !arr.length) return '<div class="tx empty">нет</div>';
+  return '<ul>' + arr.map(([n, v]) => `<li>${esc(n)} — <b>${fmt(v, unit === 'мин' || unit === '₽' ? 0 : 1)} ${unit}</b></li>`).join('') + '</ul>';
+}
+const AUTO_NOTE = { '#stopReasons': ['stopReasons', 'мин'], '#prodStopTop': ['prodStopTop', 'ч'], '#writeOffTop': ['writeOffTop', '₽'] };
+
+function unitsHTML(b) {
+  const cards = U7.map((u, i) => {
+    const c = b.card(u);
+    let body;
+    if ('text' in c) body = `<div class="gl" style="font-size:1em;color:var(--ink);white-space:pre-wrap;line-height:1.3">${c.text ? esc(c.text) : '<span class="m">не заполнено</span>'}</div>`;
+    else {
+      const color = c.color ?? cls(c.v, c.goal, c.dir);
+      const v = c.v == null ? '<span class="m">—</span>' : 'vs' in c ? `${fmt(c.v)}<small> / </small>${c.vs == null ? '—' : fmt(c.vs)}` : fmt(c.v, c.d === 1 && Number.isInteger(c.v) ? 0 : c.d) + (c.unit ? `<small>${c.unit}</small>` : '');
+      const goal = c.goal != null ? `цель ${c.dir > 0 ? '≥' : '≤'} ${fmt(c.goal, c.goal % 1 ? 1 : 0)}` : (b.gl || '');
+      const tr = c.trend && c.trend.some(x => x != null) ? trendHTML(c.trend) : '';
+      body = `<div class="val ${color}">${v}</div><div class="gl">${goal}</div>${tr}` +
+        (c.lines || []).map(([l, val, cc]) => `<div class="ln"><span>${l}</span><b class="${cc || ''}">${esc(val)}</b></div>`).join('');
+    }
+    const filled = Object.keys(S.entries[S.week]?.[u] || {}).length;
+    const flag = b.auto ? '' : (b.fields || []).some(f => E(u, f.k) != null) ? '' : `<span class="fl" style="background:var(--bad-bg);color:var(--bad)" title="${filled ? 'в этом блоке пусто' : 'отчёт не заполнен'}">пусто</span>`;
+    return `<div class="card ${i === pos ? 'on' : 'dim'}" data-u="${i}"><div class="nm">${NAME(u)}${flag}</div>${body}</div>`;
+  }).join('');
+  const u = U7[pos];
+  const notes = b.notes.map(([k, l]) => {
+    let body;
+    if (k[0] === '#') { const [kk, un] = AUTO_NOTE[k]; body = listHTML(A(u, kk), un); }
+    else { const v = E(u, k); body = v ? `<div class="tx">${esc(v)}</div>` : '<div class="tx empty">не заполнено</div>'; }
+    return `<div class="note"><div class="lb">${l}</div>${body}</div>`;
+  }).join('');
+  const who = S.updated[S.week]?.[u];
+  return `<div class="cards">${cards}</div>
+    <div class="notes ${b.notes.length === 1 ? 'one' : ''}"><h3>${NAME(u)}<small>${who ? 'обновил(а) ' + esc(who.who || '') + ' ' + new Date(who.at).toLocaleString('ru-RU', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) : ''}</small></h3>${notes}</div>`;
+}
+
+function trendHTML(arr) {
+  const vals = arr.filter(v => v != null), mx = Math.max(...vals), mn = Math.min(...vals) * 0.85;
+  return `<div class="trend" title="последние ${arr.length} нед.">${arr.map((v, i) => `<i class="${i === arr.length - 1 ? 'cur' : ''}" style="height:${v == null ? 0 : Math.max(6, (v - mn) / ((mx - mn) || 1) * 100)}%"></i>`).join('')}</div>`;
+}
+
+function prcHTML() {
+  const R = 'ПРЦ', g = k => E(R, k);
+  const dough = num(g('dough')), dh = num(g('dough_h'));
+  const kgh = dough && dh ? dough / dh : null;
+  const tile = f => { const v = num(g(f.k)); return `<div class="tile"><div class="lb">${f.l}</div><div class="v ${cls(v, f.goal, f.dir)}">${v == null ? '—' : fmt(v, v % 1 ? 1 : 0)}</div><div class="s m">${f.s || ''}</div></div>`; };
+  const nums = PRC_FIELDS.filter(f => f.t === 'num');
+  const txt = PRC_FIELDS.filter(f => f.t !== 'num');
+  return `<div class="big" style="grid-template-rows:auto 1fr">
+    <div class="tiles">${nums.map(tile).join('')}
+      <div class="tile"><div class="lb">Производительность тестомейкеров, кг/ч</div><div class="v ${cls(kgh, 30, 1)}">${kgh == null ? '—' : fmt(kgh, 1)}</div><div class="s m">цель 30 · тесто ÷ часы замесов</div></div></div>
+    <div class="notes">${txt.map(f => `<div class="note"><div class="lb">${f.l}</div>${g(f.k) ? `<div class="tx">${esc(g(f.k))}</div>` : '<div class="tx empty">не заполнено</div>'}</div>`).join('')}</div>
+  </div>`;
+}
+
+function rowsTable(role, cols) {
+  return `<table class="tbl"><thead><tr><th>Пиццерия</th>${cols.map(c => `<th>${c.l}</th>`).join('')}</tr></thead><tbody>` +
+    U7.map((u, i) => `<tr class="${i === pos ? 'on' : ''}" data-u="${i}"><td class="n">${NAME(u)}</td>${cols.map(c => `<td class="${c.text ? 't' : 'n'}">${esc(E(role, KEY(u) + '_' + c.k) ?? '—')}</td>`).join('')}</tr>`).join('') +
+    '</tbody></table>';
+}
+function eduHTML() {
+  const tot = k => U7.reduce((a, u) => a + (num(E('Обучение', KEY(u) + '_' + k)) || 0), 0);
+  return `<div class="big" style="grid-template-rows:auto 1fr auto">
+    <div class="tiles" style="grid-template-columns:repeat(6,1fr)">${EDU_COLS.filter(c => !c.text).map(c => `<div class="tile"><div class="lb">${c.l}</div><div class="v">${fmt(tot(c.k))}</div></div>`).join('')}</div>
+    <div style="overflow:auto">${rowsTable('Обучение', EDU_COLS)}</div>
+    <div class="notes one" style="flex:none"><div class="note"><div class="lb">Общий комментарий отдела</div>${E('Обучение','comment') ? `<div class="tx">${esc(E('Обучение','comment'))}</div>` : '<div class="tx empty">не заполнено</div>'}</div></div>
+  </div>`;
+}
+function tuHTML() {
+  const g = k => E('ТУ', k);
+  const t = (lb, v, s = '') => `<div class="tile"><div class="lb">${lb}</div><div class="v">${esc(v ?? '—')}</div><div class="s m">${esc(s)}</div></div>`;
+  return `<div class="big" style="grid-template-rows:auto 1fr auto">
+    <div class="tiles">${t('Проверок', g('checks'), g('checks_type') || '')}${t('Средний балл', g('avg'), g('avg_delta') ? 'к прошлой неделе ' + g('avg_delta') : '')}${t('Замечаний', g('remarks_total'))}${t('Исправлено', g('fixed_total'))}</div>
+    <div style="overflow:auto">${rowsTable('ТУ', TU_COLS)}</div>
+    <div class="notes" style="flex:none"><div class="note"><div class="lb">Общие повторяющиеся ошибки</div>${g('repeat') ? `<div class="tx">${esc(g('repeat'))}</div>` : '<div class="tx empty">не заполнено</div>'}</div>
+      <div class="note"><div class="lb">Генуборки</div>${g('gen_comment') ? `<div class="tx">${esc(g('gen_comment'))}</div>` : '<div class="tx empty">не заполнено</div>'}</div></div>
+  </div>`;
+}
+
+function go(d) {
+  const L = SLIDES(), n = steps(L[slide]);
+  if (d > 0) { if (pos < n - 1) pos++; else if (slide < L.length - 1) { slide++; pos = 0; } }
+  else { if (pos > 0) pos--; else if (slide > 0) { slide--; pos = steps(L[slide]) - 1; } }
+  renderShow();
+}
+function goBlock(d) { const L = SLIDES(); slide = Math.max(0, Math.min(L.length - 1, slide + d)); pos = 0; renderShow(); }
+
+document.addEventListener('keydown', e => {
+  if ($('#vShow').classList.contains('hidden')) return;
+  if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); go(1); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(-1); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); goBlock(1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); goBlock(-1); }
+  else if (/^[1-7]$/.test(e.key) && steps(SLIDES()[slide]) > 1) { pos = +e.key - 1; renderShow(); }
+  else if (e.key === 'f' || e.key === 'а' || e.key === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+  else if (e.key === 'Escape' && !document.fullscreenElement) location.hash = '';
+});
+$('#bPrev').onclick = () => go(-1); $('#bNext').onclick = () => go(1); $('#bExit').onclick = () => { location.hash = ''; };
+$('#sDots').onclick = e => { if (e.target.dataset.i) { slide = +e.target.dataset.i; pos = 0; renderShow(); } };
+
+/* ════════════════════════ форма ════════════════════════ */
+let formRole = null, dirty = {};
+function fieldHTML(f, val) {
+  const id = 'f_' + f.k, lab = `<label for="${id}">${f.l}${f.s ? ' <small>' + f.s + '</small>' : ''}</label>`;
+  const v = esc(val ?? '');
+  if (f.t === 'text') return `<div class="fld" style="grid-column:1/-1">${lab}<textarea id="${id}" data-k="${f.k}" placeholder="${esc(f.ph || '')}">${v}</textarea></div>`;
+  return `<div class="fld">${lab}<input id="${id}" data-k="${f.k}" value="${v}" inputmode="${f.t === 'num' ? 'decimal' : 'text'}" placeholder="${esc(f.ph || '')}"></div>`;
+}
+function autoLine(u, b) {
+  if (!S.data[S.week]) return '';
+  const c = b.card(u); if (!c.lines) return '';
+  const main = b.auto && c.v != null ? `<b>${fmt(c.v, c.d)} ${c.unit || ''}</b> · ` : '';
+  const ln = c.lines.filter(([l, v]) => v !== '—').map(([l, v]) => `${l}: <b>${esc(v)}</b>`).join(' · ');
+  return (main || ln) ? `<div class="auto">Из Dodo IS / уже внесено: ${main}${ln}</div>` : '';
+}
+function renderForm() {
+  const r = formRole, body = $('#formBody'), cur = S.entries[S.week]?.[r] || {};
+  const draft = LS.get('pl_draft_' + S.week + '_' + r, {});
+  const val = k => draft[k] ?? cur[k] ?? '';
+  let h = `<h1>${ROLE_NAME(r)}</h1><p class="lead">Неделя ${weekLabel(S.week)}. Цифры из Dodo IS подтянуты сами — заполните только то, чего нет в системе, и комментарии. Черновик сохраняется в браузере, на сайт попадает после «Сохранить».</p>`;
+  if (U7.includes(r)) {
+    for (const b of BLOCKS.filter(b => b.scope === 'units')) {
+      h += `<div class="fs"><h2>${b.title}</h2>${autoLine(r, b)}<div class="row">${b.fields.map(f => fieldHTML(f, val(f.k))).join('')}</div></div>`;
+    }
+  } else if (r === 'ПРЦ') {
+    h += `<div class="fs"><h2>Показатели недели</h2><div class="row">${PRC_FIELDS.map(f => fieldHTML(f, val(f.k))).join('')}</div></div>`;
+  } else {
+    const cols = r === 'Обучение' ? EDU_COLS : TU_COLS;
+    if (r === 'ТУ') h += `<div class="fs"><h2>Общие итоги недели</h2><div class="row">${TU_FIELDS.map(f => fieldHTML(f, val(f.k))).join('')}</div></div>`;
+    h += `<div class="fs"><h2>${r === 'Обучение' ? 'Стажёры по пиццериям' : 'По пиццериям'}</h2><div class="gridform"><table><thead><tr><th></th>${cols.map(c => `<th>${c.l}</th>`).join('')}</tr></thead><tbody>` +
+      U7.map(u => `<tr><td>${NAME(u)}</td>${cols.map(c => { const k = KEY(u) + '_' + c.k; return c.text ? `<td><textarea data-k="${k}">${esc(val(k))}</textarea></td>` : `<td><input data-k="${k}" value="${esc(val(k))}" size="4"></td>`; }).join('')}</tr>`).join('') +
+      `</tbody></table></div></div>`;
+    if (r === 'Обучение') h += `<div class="fs"><div class="row">${fieldHTML({k:'comment', l:'Общий комментарий отдела', t:'text'}, val('comment'))}</div></div>`;
+  }
+  body.innerHTML = h;
+  dirty = Object.assign({}, draft);
+  body.querySelectorAll('[data-k]').forEach(el => el.oninput = () => {
+    dirty[el.dataset.k] = el.value; LS.set('pl_draft_' + S.week + '_' + r, dirty);
+    $('#saveSt').textContent = 'Есть несохранённые изменения';
+  });
+  const upd = S.updated[S.week]?.[r];
+  $('#saveSt').textContent = Object.keys(draft).length ? 'Есть несохранённые изменения' : upd ? 'Сохранено ' + new Date(upd.at).toLocaleString('ru-RU') + (upd.who ? ' · ' + upd.who : '') : '';
+}
+$('#who').value = LS.get('pl_who', ''); $('#code').value = LS.get('pl_code', '');
+$('#bSave').onclick = async () => {
+  const fields = {};
+  document.querySelectorAll('#formBody [data-k]').forEach(el => fields[el.dataset.k] = el.value.trim());
+  LS.set('pl_who', $('#who').value.trim()); LS.set('pl_code', $('#code').value);
+  const st = $('#saveSt');
+  if (!api()) {
+    const all = LS.get('pl_local_' + S.week, {}); all[formRole] = fields; LS.set('pl_local_' + S.week, all);
+    LS.set('pl_draft_' + S.week + '_' + formRole, {}); S.entries[S.week][formRole] = fields;
+    st.textContent = 'Сохранено только в этом браузере — хранилище ещё не подключено'; return;
+  }
+  st.textContent = 'Сохраняю…'; $('#bSave').disabled = true;
+  try {
+    const r = await fetch(api(), {method: 'POST', body: JSON.stringify({week: S.week, role: formRole, who: $('#who').value.trim(), code: $('#code').value, fields})});
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error === 'bad_code' ? 'неверный код доступа' : j.error);
+    LS.set('pl_draft_' + S.week + '_' + formRole, {}); dirty = {};
+    await loadEntries(S.week);
+    st.textContent = '✓ Сохранено ' + new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'}) + ' — видно на экране планёрки';
+  } catch (e) { st.textContent = '✕ Не сохранилось: ' + e.message + '. Черновик остался в браузере.'; }
+  $('#bSave').disabled = false;
+};
+
+/* ════════════════════════ главная и навигация ════════════════════════ */
+function renderHome() {
+  $('#homeTitle').textContent = 'Планёрка · неделя ' + weekLabel(S.week);
+  $('#roleList').innerHTML = ROLES.map(r => {
+    const n = Object.values(S.entries[S.week]?.[r] || {}).filter(v => v !== '').length, u = S.updated[S.week]?.[r];
+    return `<a class="role" href="#fill/${encodeURIComponent(r)}"><b>${ROLE_NAME(r)}</b><span class="pill ${n >= 6 ? 'ok' : n ? 'part' : 'no'}">${n ? 'заполнено полей: ' + n : 'не заполнено'}</span><small>${u ? new Date(u.at).toLocaleString('ru-RU', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) + (u.who ? ' · ' + esc(u.who) : '') : 'нажмите, чтобы заполнить'}</small></a>`;
+  }).join('');
+  $('#orderList').innerHTML = BLOCKS.map(b => `<li><b>${b.title}</b> <span class="m">— ${b.scope === 'units' ? 'Якутск-1 → Якутск-7' : ROLE_NAME(b.role)}${b.auto ? ' · цифры из Dodo IS' : ''}</span></li>`).join('');
+  const D = S.data[S.week];
+  $('#dataNote').textContent = D ? `Данные Dodo IS собраны ${new Date(D.built).toLocaleString('ru-RU')}. Обновляются сами в понедельник и во вторник в 06:30.` : 'Данных Dodo IS за эту неделю пока нет.';
+}
+function fillWeekSel(sel) {
+  sel.innerHTML = S.weeks.map(w => `<option value="${w}" ${w === S.week ? 'selected' : ''}>${weekLabel(w)}</option>`).join('');
+  sel.onchange = async () => { S.week = sel.value; await afterWeek(); route(); };
+}
+async function afterWeek() {
+  const i = S.weeks.indexOf(S.week);
+  S.hist = S.weeks.slice(i, i + 6).reverse();
+  await Promise.all(S.hist.map(w => S.data[w] ? null : jget('data/' + w + '.json').then(d => S.data[w] = d).catch(() => {})));
+  await loadWeek(S.week);
+}
+
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  ['#vHome', '#vShow', '#vForm'].forEach(v => $(v).classList.add('hidden'));
+  if (h === 'show') { $('#vShow').classList.remove('hidden'); renderShow(); }
+  else if (h.startsWith('fill')) {
+    const r = h.split('/')[1];
+    if (!ROLES.includes(r)) { $('#vHome').classList.remove('hidden'); renderHome(); document.querySelector('#roleList').scrollIntoView({behavior: 'smooth'}); return; }
+    formRole = r; $('#vForm').classList.remove('hidden');
+    $('#roleSel').innerHTML = ROLES.map(x => `<option ${x === r ? 'selected' : ''} value="${x}">${ROLE_NAME(x)}</option>`).join('');
+    $('#roleSel').onchange = () => location.hash = 'fill/' + encodeURIComponent($('#roleSel').value);
+    fillWeekSel($('#weekSel2')); renderForm();
+  } else { $('#vHome').classList.remove('hidden'); fillWeekSel($('#weekSel')); renderHome(); }
+}
+window.addEventListener('hashchange', route);
+
+// на экране планёрки подтягиваем свежий ручной ввод раз в минуту
+setInterval(async () => { if (!$('#vShow').classList.contains('hidden') && api()) { await loadEntries(S.week); renderShow(); } }, 60000);
+
+(async function init() {
+  const q = new URLSearchParams(location.search);
+  if (q.get('api')) LS.set('pl_api', q.get('api'));
+  try { S.weeks = (await jget('data/weeks.json')).weeks; } catch (e) { S.weeks = []; }
+  // текущая неделя для планёрки = последняя закрытая; её же заполняют управляющие
+  const t = new Date(), todayStr = t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0');
+  const lastClosed = addDays(todayStr, -((t.getDay() + 6) % 7) - 7);
+  if (!S.weeks.includes(lastClosed)) S.weeks.unshift(lastClosed);
+  S.weeks.sort().reverse();
+  S.week = q.get('week') && S.weeks.includes(q.get('week')) ? q.get('week') : S.weeks[0];
+  if (!api()) { const b = $('#banner'); b.textContent = 'Хранилище ввода ещё не подключено: всё, что внесено здесь, сохраняется только в этом браузере.'; b.classList.remove('hidden'); }
+  await afterWeek();
+  route();
+})();
+</script>
+</body>
+</html>
