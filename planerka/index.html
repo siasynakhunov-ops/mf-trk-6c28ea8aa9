@@ -260,16 +260,19 @@ const AH = (u, k) => S.hist.map(w => S.data[w]?.units?.[u]?.[k] ?? null);   // �
 /* ════════════════════════ блоки планёрки ════════════════════════
    scope 'units' — карточки 7 пиццерий, → переключает пиццерию, внизу комментарии активной.
    scope 'role'  — отдел (ПРЦ, обучение, ТУ); rows:true — внутри тоже шаг по пиццериям.        */
+// РКО/РС: из Аналитики Dodo IS (кладёт задача Claude), если там пусто — то, что ввёл управляющий
+const RKO = u => A(u,'rko') ?? num(E(u,'rko'));
+const RS = u => A(u,'rs') ?? num(E(u,'rs'));
 const splhGoal = u => num(E(u, 'splh_goal')) ?? GOAL_SPLH[u] ?? null;
 const pplhGoal = u => num(E(u, 'pplh_goal')) ?? GOAL_PPLH[u] ?? null;
 
 const BLOCKS = [
  { id:'rko', title:'Рейтинг клиентского опыта', sub:'РКО за неделю · цель ≥ 90', scope:'units',
-   card: u => ({ v: num(E(u,'rko')), d: 1, goal: 90, dir: 1,
-                 lines: [['Оценка на картах', E(u,'maps') ?? '—'], ['Обращений', E(u,'complaints') ?? '—']] }),
+   card: u => ({ v: RKO(u), d: 1, goal: 90, dir: 1,
+                 lines: [['источник', A(u,'rko') != null ? 'Dodo IS' : E(u,'rko') != null ? 'управляющий' : '—'], ['Оценка на картах', E(u,'maps') ?? '—'], ['Обращений', E(u,'complaints') ?? '—']] }),
    notes: [['rko_minus','За что сняли баллы'], ['rko_done','Что сделали / что меняем'], ['complaints_top','Топ проблем клиентов']],
    fields: [
-     {k:'rko', l:'РКО за неделю', t:'num', ph:'например 91'},
+     {k:'rko', l:'РКО за неделю', s:'только если его нет в Dodo IS — обычно подтягивается сам', t:'num', ph:'например 91'},
      {k:'rko_minus', l:'За что сняли баллы', t:'text', ph:'2 — горелый борт; 4 — стопы I и III группы'},
      {k:'rko_done', l:'Что сделали / что меняем на этой неделе', t:'text'},
      {k:'maps', l:'Оценка на картах', s:'2ГИС / Яндекс', t:'num', ph:'4,7'},
@@ -279,10 +282,10 @@ const BLOCKS = [
      {k:'scont', l:'Проверки Scont, %', t:'num'},
    ]},
  { id:'rs', title:'Рейтинг стандартов', sub:'РС · цель ≥ 90', scope:'units',
-   card: u => ({ v: num(E(u,'rs')), d: 1, goal: 90, dir: 1, lines: [['Проверка', E(u,'rs_period') ?? '—'], ['Scont', E(u,'scont') != null ? E(u,'scont') + ' %' : '—']] }),
+   card: u => ({ v: RS(u), d: 1, goal: 90, dir: 1, lines: [['Проверка', A(u,'rsPeriod') ?? E(u,'rs_period') ?? '—'], ['источник', A(u,'rs') != null ? 'Dodo IS' : E(u,'rs') != null ? 'управляющий' : '—'], ['Scont', E(u,'scont') != null ? E(u,'scont') + ' %' : '—']] }),
    notes: [['rs_minus','За что сняли'], ['rs_done','План исправления / что сделано']],
    fields: [
-     {k:'rs', l:'Рейтинг стандартов', t:'num', ph:'например 88'},
+     {k:'rs', l:'Рейтинг стандартов', s:'только если его нет в Dodo IS', t:'num', ph:'например 88'},
      {k:'rs_period', l:'Какая проверка', t:'str', ph:'I часть сентября / предварительно'},
      {k:'rs_minus', l:'За что сняли', t:'text', ph:'4 — остаток клея на таре; 12 — смешивание в одной таре'},
      {k:'rs_done', l:'План исправления / что сделано', t:'text'},
@@ -458,7 +461,7 @@ function unitsHTML(b) {
         (c.lines || []).map(([l, val, cc]) => `<div class="ln"><span>${l}</span><b class="${cc || ''}">${esc(val)}</b></div>`).join('');
     }
     const filled = Object.keys(S.entries[S.week]?.[u] || {}).length;
-    const flag = b.auto ? '' : (b.fields || []).some(f => E(u, f.k) != null) ? '' : `<span class="fl" style="background:var(--bad-bg);color:var(--bad)" title="${filled ? 'в этом блоке пусто' : 'отчёт не заполнен'}">пусто</span>`;
+    const flag = b.auto || A(u, b.id) != null ? '' : (b.fields || []).some(f => E(u, f.k) != null) ? '' : `<span class="fl" style="background:var(--bad-bg);color:var(--bad)" title="${filled ? 'в этом блоке пусто' : 'отчёт не заполнен'}">пусто</span>`;
     return `<div class="card ${i === pos ? 'on' : 'dim'}" data-u="${i}"><div class="nm">${NAME(u)}${flag}</div>${body}</div>`;
   }).join('');
   const u = U7[pos];
@@ -548,7 +551,7 @@ function fieldHTML(f, val) {
 function autoLine(u, b) {
   if (!S.data[S.week]) return '';
   const c = b.card(u); if (!c.lines) return '';
-  const main = b.auto && c.v != null ? `<b>${fmt(c.v, c.d)} ${c.unit || ''}</b> · ` : '';
+  const main = (b.auto || A(u, b.id) != null) && c.v != null ? `<b>${fmt(c.v, c.d)} ${c.unit || ''}</b> · ` : '';
   const ln = c.lines.filter(([l, v]) => v !== '—').map(([l, v]) => `${l}: <b>${esc(v)}</b>`).join(' · ');
   return (main || ln) ? `<div class="auto">Из Dodo IS / уже внесено: ${main}${ln}</div>` : '';
 }
