@@ -51,6 +51,17 @@ a{color:var(--deep)}
 .pill.ok{background:var(--good-bg);color:var(--good)}
 .pill.part{background:var(--amber-bg);color:var(--amber)}
 .pill.no{background:var(--bad-bg);color:var(--bad)}
+.weeks{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin:0 0 22px;scrollbar-width:thin}
+.weeks a{flex:0 0 auto;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:118px}
+.weeks a:hover{border-color:var(--orange)}
+.weeks a.on{background:var(--orange);border-color:var(--orange);color:#fff}
+.weeks a b{font-family:var(--disp);font-size:15px;white-space:nowrap}
+.weeks a small{font-size:12px;color:var(--muted);white-space:nowrap}
+.weeks a.on small{color:#fff;opacity:.9}
+.archive{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--amber-bg);color:#6b4300;border-radius:10px;padding:8px 12px;margin:0 0 16px;font-size:14px}
+.archive a{font-weight:700;color:#6b4300}
+.bar label{font-size:14px;opacity:.75}
+.show .top .wk select{font:inherit;font-family:var(--disp);color:var(--ink);font-weight:700;background:var(--paper);border:1px solid var(--line);border-radius:.5em;padding:.15em .4em;cursor:pointer}
 .order{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:6px 16px;margin:0;columns:2;column-gap:32px}
 .order li{padding:5px 0;break-inside:avoid}
 @media(max-width:640px){.order{columns:1}}
@@ -152,11 +163,15 @@ a{color:var(--deep)}
   <div class="bar">
     <div class="logo">Планёрка <b>Якутск</b></div>
     <div class="sp"></div>
+    <label for="weekSel">Неделя</label>
     <select id="weekSel" aria-label="Неделя"></select>
   </div>
   <div class="home">
     <h1 id="homeTitle">Планёрка</h1>
     <p class="lead" id="homeLead">Показатели недели по всем пиццериям, ПРЦ, обучению и отчёту ТУ — в одном месте.</p>
+    <div id="archiveNote" class="archive hidden"></div>
+    <div class="h2" style="margin-top:0">Архив недель</div>
+    <div class="weeks" id="weekList"></div>
     <div class="cta">
       <a class="main" href="#show"><b>▶ Показать на экране</b><span>Для планёрки: блок за блоком, пиццерии по очереди. Клавиши ← →.</span></a>
       <a href="#fill"><b>✎ Заполнить отчёт</b><span>Для управляющих: выберите свою пиццерию или отдел ниже.</span></a>
@@ -409,7 +424,8 @@ function renderShow() {
   const L = SLIDES(), b = L[slide];
   $('#sNum').textContent = slide ? String(slide).padStart(2, '0') : '';
   $('#sTitle').textContent = b.title; $('#sSub').textContent = b.sub || '';
-  $('#sWeek').innerHTML = 'Неделя<br><b style="color:var(--ink)">' + weekLabel(S.week) + '</b>';
+  $('#sWeek').innerHTML = 'Неделя<br><select id="weekSel3" aria-label="Неделя"></select>';
+  fillWeekSel($('#weekSel3'));
   $('#sDots').innerHTML = L.map((x, i) => `<i class="${i === slide ? 'on' : i < slide ? 'done' : ''}" data-i="${i}" title="${esc(x.title)}"></i>`).join('');
   const st = $('#sStage');
   if (b.id === 'summary') st.innerHTML = summaryHTML();
@@ -622,12 +638,35 @@ function renderHome() {
     return `<a class="role" href="#fill/${encodeURIComponent(r)}"><b>${ROLE_NAME(r)}</b><span class="pill ${n >= 6 ? 'ok' : n ? 'part' : 'no'}">${n ? 'заполнено полей: ' + n : 'не заполнено'}</span><small>${u ? new Date(u.at).toLocaleString('ru-RU', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) + (u.who ? ' · ' + esc(u.who) : '') : 'нажмите, чтобы заполнить'}</small></a>`;
   }).join('');
   $('#orderList').innerHTML = BLOCKS.map(b => `<li><b>${b.title}</b> <span class="m">— ${b.scope === 'units' ? 'Якутск-1 → Якутск-7' : ROLE_NAME(b.role)}${b.auto ? ' · цифры из Dodo IS' : ''}</span></li>`).join('');
+  $('#weekList').innerHTML = weekListHTML();
+  $('#weekList').querySelectorAll('[data-w]').forEach(a => a.onclick = e => { e.preventDefault(); setWeek(a.dataset.w); });
+  $('#weekList .on')?.scrollIntoView({block: 'nearest', inline: 'nearest'});
+  const an = $('#archiveNote');
+  an.classList.toggle('hidden', S.week === S.weeks[0]);
+  an.innerHTML = `Вы смотрите архив: неделя ${weekLabel(S.week)}. <a href="#" id="toCurrent">Вернуться к текущей неделе</a>`;
+  $('#toCurrent').onclick = e => { e.preventDefault(); setWeek(S.weeks[0]); };
   const D = S.data[S.week];
   $('#dataNote').textContent = D ? `Данные Dodo IS собраны ${new Date(D.built).toLocaleString('ru-RU')}. Обновляются сами в понедельник и во вторник в 06:30.` : 'Данных Dodo IS за эту неделю пока нет.';
 }
 function fillWeekSel(sel) {
-  sel.innerHTML = S.weeks.map(w => `<option value="${w}" ${w === S.week ? 'selected' : ''}>${weekLabel(w)}</option>`).join('');
-  sel.onchange = async () => { S.week = sel.value; await afterWeek(); route(); };
+  sel.innerHTML = S.weeks.map(w => `<option value="${w}" ${w === S.week ? 'selected' : ''}>${weekLabel(w)}${w === S.weeks[0] ? ' · текущая' : ''}</option>`).join('');
+  sel.onchange = () => { sel.blur(); setWeek(sel.value); };   // blur — чтобы стрелки на экране планёрки снова листали слайды
+}
+// неделя хранится в адресе (?week=), поэтому любую прошлую неделю можно открыть ссылкой
+async function setWeek(w) {
+  S.week = w;
+  const q = new URLSearchParams(location.search);
+  if (w === S.weeks[0]) q.delete('week'); else q.set('week', w);
+  history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash);
+  await afterWeek(); route();
+}
+function weekListHTML() {
+  const avg = (w, k) => { const v = U7.map(u => S.data[w]?.units?.[u]?.[k]).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+  return S.weeks.map(w => {
+    const D = S.data[w], r = avg(w, 'rko');
+    const s = D ? mln(D.net.rev) + ' млн ₽' + (r != null ? ' · РКО ' + fmt(r, 1) : '') : 'данных пока нет';
+    return `<a href="#" data-w="${w}" class="${w === S.week ? 'on' : ''}"><b>${weekLabel(w)}</b><small>${w === S.weeks[0] ? 'текущая · ' : ''}${s}</small></a>`;
+  }).join('');
 }
 async function afterWeek() {
   const i = S.weeks.indexOf(S.week);
@@ -664,6 +703,8 @@ setInterval(async () => { if (!$('#vShow').classList.contains('hidden') && api()
   if (!S.weeks.includes(lastClosed)) S.weeks.unshift(lastClosed);
   S.weeks.sort().reverse();
   S.week = q.get('week') && S.weeks.includes(q.get('week')) ? q.get('week') : S.weeks[0];
+  // данные всех недель — для плашек архива (файлы по ~10 КБ)
+  await Promise.all(S.weeks.map(w => jget('data/' + w + '.json').then(d => S.data[w] = d).catch(() => S.data[w] = null)));
   if (!api()) { const b = $('#banner'); b.textContent = 'Хранилище ввода ещё не подключено: всё, что внесено здесь, сохраняется только в этом браузере.'; b.classList.remove('hidden'); }
   await afterWeek();
   route();
