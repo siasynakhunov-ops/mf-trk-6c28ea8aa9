@@ -230,7 +230,9 @@ const ROLE_NAME = r => U7.includes(r) ? NAME(r) : ({'ПРЦ':'ПРЦ','Обуч�
 
 // цели по точкам — из их таблиц «План на месяц» (сентябрь 2026); управляющий может переписать в форме
 const GOAL_SPLH = {'Я-1':3500,'Я-2':3000,'Я-5':3200,'Я-6':3800};
-const GOAL_PPLH = {'Я-1':6,'Я-2':7,'Я-5':7.5,'Я-6':7.5};
+// продуктов на человека в час: Я-1 ≥ 6,5, остальные ≥ 7 (цели ТУ, с октября 2026)
+const GOAL_PPLH = {'Я-1':6.5,'Я-2':7,'Я-3':7,'Я-4':7,'Я-5':7,'Я-6':7,'Я-7':7};
+const GOAL_RKO = 92, GOAL_RS = 92;
 
 /* ════════════════════════ утилиты ════════════════════════ */
 const $ = s => document.querySelector(s);
@@ -279,11 +281,12 @@ const AH = (u, k) => S.hist.map(w => S.data[w]?.units?.[u]?.[k] ?? null);   // �
 const RKO = u => A(u,'rko') ?? num(E(u,'rko'));
 const RS = u => A(u,'rs') ?? num(E(u,'rs'));
 const splhGoal = u => num(E(u, 'splh_goal')) ?? GOAL_SPLH[u] ?? null;
-const pplhGoal = u => num(E(u, 'pplh_goal')) ?? GOAL_PPLH[u] ?? null;
+// цель — минимум: управляющий может поставить себе выше, но не ниже сетевой
+const pplhGoal = u => Math.max(num(E(u, 'pplh_goal')) ?? 0, GOAL_PPLH[u] ?? 0) || null;
 
 const BLOCKS = [
- { id:'rko', title:'Рейтинг клиентского опыта', sub:'РКО за неделю · цель ≥ 90', scope:'units',
-   card: u => ({ v: RKO(u), d: 1, goal: 90, dir: 1,
+ { id:'rko', title:'Рейтинг клиентского опыта', sub:'РКО за неделю · цель ≥ 92 у всех', scope:'units',
+   card: u => ({ v: RKO(u), d: 1, goal: GOAL_RKO, dir: 1,
                  lines: [['источник', A(u,'rko') != null ? 'Dodo IS' : E(u,'rko') != null ? 'управляющий' : '—'], ['Оценка на картах', E(u,'maps') ?? '—'], ['Обращений', E(u,'complaints') ?? '—']] }),
    notes: [['#rkoMinus','За что сняли баллы (Dodo IS)'], ['rko_minus','Комментарий управляющего'], ['rko_done','Что сделали / что меняем'], ['complaints_top','Топ проблем клиентов']],
    fields: [
@@ -296,8 +299,8 @@ const BLOCKS = [
      {k:'complaints_top', l:'Топ-3 проблем клиентов', t:'text', ph:'Перепутали продукт / не положили ингредиент / курьер опоздал'},
      {k:'scont', l:'Проверки Scont, %', t:'num'},
    ]},
- { id:'rs', title:'Рейтинг стандартов', sub:'РС · цель ≥ 90', scope:'units',
-   card: u => ({ v: RS(u), d: 1, goal: 90, dir: 1, lines: [['Проверка', A(u,'rsPeriod') ?? E(u,'rs_period') ?? '—'], ['источник', A(u,'rs') != null ? 'Dodo IS' : E(u,'rs') != null ? 'управляющий' : '—'], ['Scont', E(u,'scont') != null ? E(u,'scont') + ' %' : '—']] }),
+ { id:'rs', title:'Рейтинг стандартов', sub:'РС · цель ≥ 92 у всех', scope:'units',
+   card: u => ({ v: RS(u), d: 1, goal: GOAL_RS, dir: 1, lines: [['Проверка', A(u,'rsPeriod') ?? E(u,'rs_period') ?? '—'], ['источник', A(u,'rs') != null ? 'Dodo IS' : E(u,'rs') != null ? 'управляющий' : '—'], ['Scont', E(u,'scont') != null ? E(u,'scont') + ' %' : '—']] }),
    notes: [['#rsMinus','За что сняли (Dodo IS)'], ['rs_minus','Комментарий управляющего'], ['rs_done','План исправления / что сделано']],
    fields: [
      {k:'rs', l:'Рейтинг стандартов', s:'только если его нет в Dodo IS', t:'num', ph:'например 88'},
@@ -324,15 +327,15 @@ const BLOCKS = [
    notes: [['speed_comment','Причины и действия']],
    fields: [ {k:'hall15', l:'Доля заказов в зал дольше 15 мин, %', s:'из отчёта Dodo IS — в API такой метрики нет', t:'num'},
              {k:'speed_comment', l:'Причины и действия', t:'text', ph:'нехватка курьеров вечером в пт; ставим доп. смену'} ]},
- { id:'prod', title:'Производительность', sub:'₽ на человеко-час · продуктов на человека в час · заказов на курьера в час', scope:'units', auto:true,
-   card: u => ({ v: A(u,'splh'), d: 0, unit: '₽/ч', goal: splhGoal(u), dir: 1, trend: AH(u,'splh'),
-                 lines: [['продуктов/ч', fmt(A(u,'pplh'),2) + (pplhGoal(u) ? ' / ' + fmt(pplhGoal(u),1) : ''), cls(A(u,'pplh'), pplhGoal(u), 1)],
+ { id:'prod', title:'Производительность', sub:'Продуктов на человека в час · цель: Якутск-1 ≥ 6,5, остальные ≥ 7', scope:'units', auto:true,
+   card: u => ({ v: A(u,'pplh'), d: 2, unit: 'прод/ч', goal: pplhGoal(u), dir: 1, trend: AH(u,'pplh'),
+                 lines: [['₽ на чел·ч', fmt(A(u,'splh')) + (splhGoal(u) ? ' / ' + fmt(splhGoal(u)) : ''), cls(A(u,'splh'), splhGoal(u), 1)],
                          ['заказов/курьер', fmt(A(u,'opch'),2) + ' / 2', cls(A(u,'opch'), 2, 1)],
                          ['человеко-часов', fmt(A(u,'laborH'))],
                          ['КС кухни', E(u,'ks') != null ? E(u,'ks') + ' %' : '—']] }),
    notes: [['prod_comment','Комментарий']],
    fields: [ {k:'splh_goal', l:'Цель по производительности, ₽/чел·ч', s:'если отличается от прошлой', t:'num'},
-             {k:'pplh_goal', l:'Цель: продуктов на человека в час', t:'num'},
+             {k:'pplh_goal', l:'Цель: продуктов на человека в час', s:'не ниже сетевой: Якутск-1 — 6,5, остальные — 7', t:'num'},
              {k:'ks', l:'КС кухни, %', t:'num'},
              {k:'prod_comment', l:'Комментарий', t:'text'} ]},
  { id:'stop', title:'Стоп-продажи и промокоды', sub:'Стоп пиццерии ≤ 120 мин в неделю · промокоды за опоздание ≤ 5', scope:'units', auto:true,
