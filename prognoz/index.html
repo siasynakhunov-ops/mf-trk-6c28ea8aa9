@@ -701,7 +701,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div id="tab-weekly" style="display:none">
 <div class="wrap">
   <div class="head"><div class="logo">📅</div><h1>Недельный прогноз выручки — <span>Якутск 2026</span></h1></div>
-  <div class="sub">Недели пн–вс · факт из Dodo IS по суткам, дальше прогноз из той же модели, что и месячная вкладка · Я-10 с окт 2026, Я-11 с середины ноя 2026</div>
+  <div class="sub">Недели пн–вс · факт из Dodo IS по суткам, дальше прогноз из той же модели, что и месячная вкладка · Я-10 открыта 6 окт 2026 (пока доставка), Я-11 в модели — с середины ноября</div>
 
   <div class="kpi-row">
     <div class="kpi"><div class="kl">Выручка 2026</div><div class="kv" id="k1"></div><div class="ks" id="k1s"></div></div>
@@ -2268,8 +2268,7 @@ document.getElementById('k1s').textContent = (_first<0)?'полный факт':
 document.getElementById('k3').textContent = '+'+D.yoy+'%';
 document.getElementById('k4').textContent = m1(YEAR26/365*7)+' М';
 document.getElementById('k5').textContent = (W.reduce(function(a,w){return a+w.del;},0)/YEAR26*100).toFixed(2)+'%';
-document.getElementById('nyoy').textContent='+'+D.yoy+'%';
-document.getElementById('ncmp').textContent=m1(YEAR26)+'М';
+['nyoy','ncmp'].forEach(function(id,i){ var e=document.getElementById(id); if(e) e.textContent=i?m1(YEAR26)+'М':'+'+D.yoy+'%'; });
 
 const labels=W.map(w=>'н'+w.w);
 const holLabels=W.map(w=>w.hol||'');
