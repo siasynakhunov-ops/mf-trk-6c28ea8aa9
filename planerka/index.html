@@ -197,7 +197,7 @@ a{color:var(--deep)}
   <button class="navbtn l" id="bPrev" aria-label="Назад">‹</button>
   <button class="navbtn rr" id="bNext" aria-label="Дальше">›</button>
   <button class="exit" id="bExit">✕ выйти</button>
-  <div class="hint">← → по пиццериям · ↑ ↓ по блокам · 1–7 пиццерия · F во весь экран</div>
+  <div class="hint">← → по пиццериям · ↑ ↓ по блокам · цифры — пиццерия · F во весь экран</div>
 </div>
 
 <!-- форма -->
@@ -222,11 +222,14 @@ a{color:var(--deep)}
 // URL веб-приложения Google Apps Script (planerka_apps_script.gs). Пусто = ввод только в этом браузере.
 const API_URL = 'https://script.google.com/macros/s/AKfycby-4f6xmMxhfXSFewcXVIp_MzVjag2J8PMWWp8_vqHzGJ0fENNlEm7puQIAv276dE9m/exec';
 
-const U7 = ['Я-1','Я-2','Я-3','Я-4','Я-5','Я-6','Я-7'];
+// пиццерии на экране — из данных недели (Я-10 появилась 6 окт 2026); список ниже — только запасной
+let U7 = ['Я-1','Я-2','Я-3','Я-4','Я-5','Я-6','Я-7'];
+// формы управляющих: Apps Script принимает только эти роли — новую точку добавить и туда (ROLES в planerka_apps_script.gs)
+const FORM_UNITS = ['Я-1','Я-2','Я-3','Я-4','Я-5','Я-6','Я-7'];
 const NAME = u => 'Якутск-' + u.slice(2);
 const KEY = u => 'u' + u.slice(2);           // префикс полей в таблицах отделов: u1_…
-const ROLES = [...U7, 'ПРЦ', 'Обучение', 'ТУ'];
-const ROLE_NAME = r => U7.includes(r) ? NAME(r) : ({'ПРЦ':'ПРЦ','Обучение':'Отдел обучения','ТУ':'Территориальный управляющий'})[r];
+const ROLES = [...FORM_UNITS, 'ПРЦ', 'Обучение', 'ТУ'];
+const ROLE_NAME = r => /^Я-\d+$/.test(r) ? NAME(r) : ({'ПРЦ':'ПРЦ','Обучение':'Отдел обучения','ТУ':'Территориальный управляющий'})[r];
 
 // цели по точкам — из их таблиц «План на месяц» (сентябрь 2026); управляющий может переписать в форме
 const GOAL_SPLH = {'Я-1':3500,'Я-2':3000,'Я-5':3200,'Я-6':3800};
@@ -560,7 +563,7 @@ document.addEventListener('keydown', e => {
   else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(-1); }
   else if (e.key === 'ArrowDown') { e.preventDefault(); goBlock(1); }
   else if (e.key === 'ArrowUp') { e.preventDefault(); goBlock(-1); }
-  else if (/^[1-7]$/.test(e.key) && steps(SLIDES()[slide]) > 1) { pos = +e.key - 1; renderShow(); }
+  else if (/^[1-9]$/.test(e.key) && +e.key <= U7.length && steps(SLIDES()[slide]) > 1) { pos = +e.key - 1; renderShow(); }
   else if (e.key === 'f' || e.key === 'а' || e.key === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
   else if (e.key === 'Escape' && !document.fullscreenElement) location.hash = '';
 });
@@ -587,7 +590,7 @@ function renderForm() {
   const draft = LS.get('pl_draft_' + S.week + '_' + r, {});
   const val = k => draft[k] ?? cur[k] ?? '';
   let h = `<h1>${ROLE_NAME(r)}</h1><p class="lead">Неделя ${weekLabel(S.week)}. Цифры из Dodo IS подтянуты сами — заполните только то, чего нет в системе, и комментарии. Черновик сохраняется в браузере, на сайт попадает после «Сохранить».</p>`;
-  if (U7.includes(r)) {
+  if (/^Я-\d+$/.test(r)) {
     for (const b of BLOCKS.filter(b => b.scope === 'units')) {
       h += `<div class="fs"><h2>${b.title}</h2>${autoLine(r, b)}<div class="row">${b.fields.map(f => fieldHTML(f, val(f.k))).join('')}</div></div>`;
     }
@@ -676,6 +679,8 @@ async function afterWeek() {
   S.hist = S.weeks.slice(i, i + 6).reverse();
   await Promise.all(S.hist.map(w => S.data[w] ? null : jget('data/' + w + '.json').then(d => S.data[w] = d).catch(() => {})));
   await loadWeek(S.week);
+  const us = Object.entries(S.data[S.week]?.units || {}).filter(([, v]) => (v.rev || 0) > 0).map(([u]) => u);
+  if (us.length) U7 = us.sort((a, b) => +a.slice(2) - +b.slice(2));
 }
 
 function route() {
