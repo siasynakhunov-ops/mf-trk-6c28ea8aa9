@@ -181,7 +181,8 @@ var MO=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг',
 var mh='<thead><tr><th>Месяц</th><th>План</th><th>Факт</th><th>%</th><th>Δ</th></tr></thead><tbody>';
 for(var i=0;i<12;i++){var pl=D.planMo[i],fa=D.factMo[i],cm=D.curMo&&D.curMo.m===i;
  if(cm){var cp=D.curMo.plan,cf=D.curMo.fact,cd=cf-cp,cc=cd>=0?'pos':'neg';
-  mh+='<tr style="background:#FFFBEB"><td><b>'+MO[i]+'</b><div style="font-size:10.5px;color:#92400E">1–'+D.curMo.days+' · не закрыт</div></td><td>'+f1(cp)+'<div style="font-size:10.5px;color:#94A3B8">из '+f1(pl)+'</div></td><td><b>'+f1(cf)+'</b></td><td class="'+cc+'">'+(cf/cp*100).toFixed(0)+'%</td><td class="'+cc+'">'+(cd>=0?'+':'')+f1(cd)+'</td></tr>';}
+  var few=D.curMo.days<7;   // за 1–6 дней % к плану скачет от дня недели — не показываем
+  mh+='<tr style="background:#FFFBEB"><td><b>'+MO[i]+'</b><div style="font-size:10.5px;color:#92400E">'+(D.curMo.days>1?'1–'+D.curMo.days:'1-е число')+' · не закрыт</div></td><td>'+f1(cp)+'<div style="font-size:10.5px;color:#94A3B8">из '+f1(pl)+'</div></td><td><b>'+f1(cf)+'</b></td>'+(few?'<td colspan="2" style="color:#94A3B8;font-size:11px">мало дней</td>':'<td class="'+cc+'">'+(cf/cp*100).toFixed(0)+'%</td><td class="'+cc+'">'+(cd>=0?'+':'')+f1(cd)+'</td>')+'</tr>';}
  else if(fa==null){mh+='<tr><td>'+MO[i]+'</td><td>'+f1(pl)+'</td><td style="color:#94A3B8">впереди</td><td>—</td><td>—</td></tr>';}
  else{var dd=fa-pl,pc=fa/pl*100,cl=dd>=0?'pos':'neg';
  mh+='<tr><td><b>'+MO[i]+'</b></td><td>'+f1(pl)+'</td><td><b>'+f1(fa)+'</b></td><td class="'+cl+'">'+pc.toFixed(0)+'%</td><td class="'+cl+'">'+(dd>=0?'+':'')+f1(dd)+'</td></tr>';}}
