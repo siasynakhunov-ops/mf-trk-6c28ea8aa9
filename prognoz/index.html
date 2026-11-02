@@ -2429,8 +2429,10 @@ function buildFVP(){
           +'<div style="'+sub+'">1–'+PART_MONTH.days+' · месяц не закрыт</div></td>'
           +'<td>'+m1(pp)+'<div style="'+sub+'">план за '+PART_MONTH.days+' дн · '+rub(pp)+'</div></td>'
           +'<td style="font-weight:700">'+m1(pf)+'<div style="'+sub+'">'+PART_MONTH.rub.toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ')+' ₽</div></td>'
-          +'<td style="color:'+pc+';font-weight:600">'+sgn1(pd)+'<div style="'+sub+';color:'+pc+';opacity:.75">'+(pd>=0?'+':'−')+rub(Math.abs(pd))+'</div></td>'
-          +'<td style="color:'+pc+';font-weight:700">'+(pp?pf/pp*100:0).toFixed(2)+'%</td></tr>';
+          +(PART_MONTH.days<7   // за 1–6 дней % к плану скачет от дня недели — не показываем
+            ? '<td colspan="2" style="color:#94A3B8;font-size:11px">мало дней для сравнения</td></tr>'
+            : '<td style="color:'+pc+';font-weight:600">'+sgn1(pd)+'<div style="'+sub+';color:'+pc+';opacity:.75">'+(pd>=0?'+':'−')+rub(Math.abs(pd))+'</div></td>'
+              +'<td style="color:'+pc+';font-weight:700">'+(pp?pf/pp*100:0).toFixed(2)+'%</td></tr>');
         continue;
       }
       mt+='<tr><td><b>'+MONTHS[i]+'</b></td>'+pCell+'<td colspan="3" style="color:#D1D5DB;text-align:center">прогноз</td></tr>'; continue; }
