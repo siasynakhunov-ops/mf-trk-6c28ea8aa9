@@ -1,0 +1,250 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Норматив часов кухни</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column tool. Settings strip, network summary table, then one schedule card per pizzeria */
+:root {
+  --bg: #f6f7f6;
+  --surface: #ffffff;
+  --fg: #1b2420;
+  --muted: #5c6b64;
+  --line: #dde3df;
+  --accent: #0e6b5c;
+  --accent-soft: #e2f0ec;
+  --good: #1f7a3a;
+  --warn: #a15c00;
+  --warn-soft: #fbefdc;
+  --cut: #b3261e;
+  --cut-soft: #fbe6e4;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #1a211e; --fg: #e6ece9; --muted: #98a8a0; --line: #2c3632;
+    --accent: #5cc4ae; --accent-soft: #1d3530; --good: #6fcf8a; --warn: #e8a94f; --warn-soft: #3a2d17;
+    --cut: #f08a80; --cut-soft: #3d2120; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #1a211e; --fg: #e6ece9; --muted: #98a8a0; --line: #2c3632;
+  --accent: #5cc4ae; --accent-soft: #1d3530; --good: #6fcf8a; --warn: #e8a94f; --warn-soft: #3a2d17;
+  --cut: #f08a80; --cut-soft: #3d2120; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1 { font-size: 28px; line-height: 1.2; margin: 0; font-weight: 700; text-wrap: balance; }
+h2 { font-size: 19px; margin: 0; font-weight: 600; text-wrap: balance; }
+.lead { color: var(--muted); margin: 8px 0 0; max-width: 72ch; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 500; }
+
+.settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field select, .field input { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--fg); width: 100%; }
+.field select:focus-visible, .field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.hint { font-size: 12.5px; color: var(--muted); }
+
+.totals { display: flex; flex-wrap: wrap; gap: 32px; align-items: baseline; }
+.total b { display: block; font-family: var(--font-num); font-size: 30px; font-weight: 500; color: var(--accent); line-height: 1.15; }
+
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 10px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+th:first-child, td:first-child { text-align: left; }
+td.num, td .num { font-family: var(--font-num); }
+tbody tr:last-child td { border-bottom: none; }
+tfoot td { font-weight: 600; border-top: 2px solid var(--line); border-bottom: none; }
+.summary a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.summary a:hover { text-decoration: underline; }
+
+.pill { display: inline-block; font-size: 12px; font-family: var(--font-ui); padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+.pill.ok { background: var(--accent-soft); color: var(--good); }
+.pill.mid { background: var(--warn-soft); color: var(--warn); }
+.pill.low { background: var(--cut-soft); color: var(--cut); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px; scroll-margin-top: 16px; }
+.card-head { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; justify-content: space-between; }
+.card-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 13.5px; }
+.card-meta b { color: var(--fg); font-family: var(--font-num); font-weight: 500; }
+.cut { color: var(--cut); }
+.same { color: var(--muted); }
+.norm-cell { font-weight: 600; }
+.note { font-size: 13.5px; color: var(--muted); margin: 0; max-width: 75ch; }
+.method { font-size: 13.5px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+.method p { margin: 0; }
+.method b { color: var(--fg); }
+</style></head><body><nav style="max-width:1040px;margin:0 auto 18px"><a href="../novaya/" style="color:var(--accent);margin-right:16px;font-size:14px;text-decoration:none;">Новая норма часов</a><a href="../cel/" style="color:var(--accent);margin-right:16px;font-size:14px;text-decoration:none;">Цель и план</a><a href="../norma/" style="color:var(--accent);margin-right:16px;font-size:14px;text-decoration:none;font-weight:600">Таблица нормы</a></nav>
+
+<div class="wrap">
+  <header>
+    <h1>Норматив часов кухни по пиццериям</h1>
+    <p class="lead">Сколько часов кухни ставить в график на каждый день недели. Правило: <b>Пн–Чт и Вс — не ниже 7,0 продукта на человеко-час, Пт–Сб — не ниже 8,5</b>. Так сеть выходит к цели 7,64 — средней производительности пиццерий России с показателем от 6 до 9. Основа: продукты и часы кухни за октябрь 2026 из Dodo IS, «Аналитика» → «Производительность и укомплектованность». Сколько людей ставить по часам дня — в <a href="https://siasynakhunov-ops.github.io/mf-trk-6c28ea8aa9/proizvoditelnost/">презентации</a>.</p>
+  </header>
+
+  <section class="settings" aria-label="Настройки расчёта">
+    <div class="field">
+      <label class="label" for="target">Цель по дням, продуктов на человеко-час</label>
+      <select id="target">
+        <option value="rule">Пн–Чт и Вс 7,0 · Пт–Сб 8,5 — правило сети</option>
+        <option value="stage">Этап 1: Пн–Чт и Вс 7,0, Пт–Сб без изменений</option>
+        <option value="7.634">Единая 7,64 на все дни — прежний расчёт</option>
+        <option value="8.0">Единая 8,0 — как похожие по объёму точки России</option>
+      </select>
+      <span class="hint">Если в какой-то день точка уже работает лучше цели, часы этого дня не трогаем.</span>
+    </div>
+    <div class="field">
+      <label class="label" for="growth">Рост продуктов к октябрю, %</label>
+      <input id="growth" type="number" step="1" value="0">
+      <span class="hint">Для декабря обычно +10%: в 2025 году декабрь был выше ноября на столько.</span>
+    </div>
+    <div class="field">
+      <label class="label" for="floor">Минимум часов кухни в день</label>
+      <input id="floor" type="number" step="5" value="50">
+      <span class="hint">Нижняя граница: 3 человека × 16 часов работы. Меньше этого норматив не опускается.</span>
+    </div>
+    <div class="field">
+      <label class="label" for="rate">Ставка кухни, ₽/ч</label>
+      <input id="rate" type="number" step="10" value="300">
+      <span class="hint">Без налогов на зарплату.</span>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <div class="totals">
+      <div class="total"><span class="label">Лишних часов в неделю</span><b id="t-hours">—</b></div>
+      <div class="total"><span class="label">Экономия в месяц</span><b id="t-month">—</b></div>
+      <div class="total"><span class="label">Экономия в год</span><b id="t-year">—</b></div>
+    </div>
+    <div class="scroll">
+      <table class="summary">
+        <thead><tr><th>Пиццерия</th><th>Октябрь, прод/ч</th><th>По нормативу, прод/ч</th><th>Часов в неделю сейчас</th><th>По нормативу</th><th>Разница</th><th>₽ в месяц</th></tr></thead>
+        <tbody id="sum-body"></tbody>
+        <tfoot id="sum-foot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section id="cards" style="display:flex;flex-direction:column;gap:18px"></section>
+
+  <section class="method">
+    <h2 style="color:var(--fg)">Как считается</h2>
+    <p><b>Продуктов на день</b> — среднее число выпеченных и собранных продуктов в этот день недели за октябрь 2026, умноженное на рост из настроек.</p>
+    <p><b>Часы сейчас</b> — средние часы кухни в этот день недели по Dodo IS, пересчитанные на тот же рост при текущей производительности. В них входит всё время сотрудников кухни, включая менеджеров на смене, поэтому часов здесь больше, чем в графике поваров.</p>
+    <p><b>Норматив</b> = продукты ÷ цель дня (7,0 в Пн–Чт и Вс, 8,5 в Пт–Сб), но не меньше минимума в день и не больше, чем ставят сейчас. <b>Людей</b> = норматив ÷ средняя длина смены кухни на этой точке.</p>
+    <p><b>Экономия в месяц</b> = лишние часы в неделю × ставка × 4,43. В часы кухни входят все, кроме курьеров: повара, кассиры, менеджеры, стажёры и клинеры, — так считает Dodo IS. Как распределить часы по часам дня, показано в презентации.</p>
+  </section>
+</div>
+
+<script>
+// wd: [продуктов в день, часов кухни в день] Пн…Вс, октябрь 2026; p — производительность за месяц
+const DATA = {
+  "Я-1": {"p":5.53,"shift":7.4,"wd":[[710,137.1],[654,134.4],[706,139.3],[732,137.6],[1014,158.6],[1117,178.3],[759,155.2]]},
+  "Я-2": {"p":6.06,"shift":7.7,"wd":[[792,148.9],[724,158.9],[797,149.9],[859,150.7],[1287,181.7],[1416,182.8],[889,160.6]]},
+  "Я-3": {"p":6.32,"shift":8.3,"wd":[[1141,199.2],[1131,200.1],[1082,212],[1211,206.6],[1713,221.1],[1767,222],[1154,217.9]]},
+  "Я-4": {"p":7.03,"shift":8.1,"wd":[[808,113.9],[830,135.8],[850,146.6],[851,145.3],[1251,153.1],[1326,151.8],[906,133]]},
+  "Я-5": {"p":7.02,"shift":8.6,"wd":[[1025,163.4],[1025,164.4],[992,169.6],[1112,188.7],[1445,197.2],[1836,197.5],[1317,177]]},
+  "Я-6": {"p":6.96,"shift":8.5,"wd":[[1578,242.6],[1574,272],[1701,275.1],[1705,269.1],[2272,284.3],[2598,311.8],[1816,266.9]]},
+  "Я-7": {"p":6.59,"shift":8.1,"wd":[[898,150.1],[926,154.2],[906,162.8],[940,156.9],[1362,178.1],[1524,183.8],[1000,176.5]]},
+  "Я-10": {"p":5.24,"shift":8.0,"wd":[[485,104.4],[472,100.7],[515,112.9],[527,114.1],[822,130.1],[969,146.8],[495,117.4]]}
+};
+const NOTES = {
+  "Я-1": "Кассиры — 38 ч в будний день, почти треть часов. Стажёры 17 ч в день перенести в Пт–Сб. В 23:00 на смене 6 человек при 2 продуктах.",
+  "Я-2": "Дневная яма 14–17: 11 человек при 55 продуктах в час — вечерней смене выходить с 16–17. После 21 — не больше 5–6 человек.",
+  "Я-3": "Больше всех кассиров в сети: 53 ч в будний день. После 21 стоят 13 человек, в 23:00 — 8. Часы почти одинаковые всю неделю, хотя в субботу продуктов на 55% больше.",
+  "Я-4": "Ближе всех к цели, пятница и суббота уже в норме. В будни убрать стажёрские часы и одного человека после 21.",
+  "Я-5": "Ночью около 4 человек при 5–20 продуктах в час — оставить 3. Днём 14–17 9 человек при 44 продуктах — оставить 6–7.",
+  "Я-6": "Клинеры — 29 ч в будний день. Утром 7–9 стоят 6 человек при 15 продуктах в час. В пик 11–21 людей, наоборот, не хватает: часы переносить туда.",
+  "Я-7": "Пятница и суббота почти на уровне цели. В будни 14–17 убрать 2 человек, после 21 — 2–3, утро 9–11 — 2.",
+  "Я-10": "Открылась 6 октября, продукты растут — норматив пересматривать каждую неделю. Днём 14–17 стоят 9 человек при 26 продуктах в час."
+};
+const T_NET = 7.634;
+const DAYS = ["Понедельник","Вторник","Среда","Четверг","Пятница","Суббота","Воскресенье"];
+const WEEKS_PER_MONTH = 31 / 7;
+const fmt = (x, d = 0) => x.toLocaleString("ru-RU", { minimumFractionDigits: d, maximumFractionDigits: d });
+const rub = x => fmt(Math.round(x / 1000) * 1000) + " ₽";
+const el = id => document.getElementById(id);
+
+// i — день недели, 0 = понедельник; null = день не трогаем
+function targetFor(mode, i) {
+  const weekend = i === 4 || i === 5;
+  if (mode === "rule") return weekend ? 8.5 : 7.0;
+  if (mode === "stage") return weekend ? null : 7.0;
+  return Number(mode);
+}
+const TARGET_TEXT = { rule: "Пн–Чт и Вс 7,0 · Пт–Сб 8,5", stage: "Пн–Чт и Вс 7,0 · Пт–Сб как сейчас" };
+function pill(p) {
+  const cls = p >= T_NET ? "ok" : p >= 6.5 ? "mid" : "low";
+  return `<span class="pill ${cls} num">${fmt(p, 2)}</span>`;
+}
+
+function render() {
+  const mode = el("target").value;
+  const g = 1 + (Number(el("growth").value) || 0) / 100;
+  const floor = Math.max(0, Number(el("floor").value) || 0);
+  const rate = Math.max(0, Number(el("rate").value) || 0);
+  let sumNow = 0, sumNorm = 0, sumRub = 0, rows = "", cards = "";
+
+  for (const [code, u] of Object.entries(DATA)) {
+    let wNow = 0, wNorm = 0, wProd = 0, body = "";
+    u.wd.forEach(([prod, h], i) => {
+      const products = prod * g, now = h * g;
+      const T = targetFor(mode, i);
+      const norm = T === null ? now : Math.min(now, Math.max(floor, products / T));
+      wProd += products;
+      const diff = now - norm;
+      wNow += now; wNorm += norm;
+      body += `<tr><td>${DAYS[i]}</td><td class="num">${T === null ? "—" : fmt(T, 1)}</td><td class="num">${fmt(products)}</td><td class="num">${fmt(now)}</td>
+        <td class="num">${fmt(products / now, 2)}</td><td class="num norm-cell">${fmt(norm)}</td>
+        <td class="num">${fmt(norm / u.shift, 1)}</td>
+        <td class="num ${diff >= 0.5 ? "cut" : "same"}">${diff >= 0.5 ? "−" + fmt(diff) : "0"}</td></tr>`;
+    });
+    const save = (wNow - wNorm) * rate * WEEKS_PER_MONTH;
+    sumNow += wNow; sumNorm += wNorm; sumRub += save;
+    const anchor = "y" + code.slice(2);
+    const d = wNow - wNorm;
+    rows += `<tr><td><a href="#${anchor}">${code}</a></td><td>${pill(u.p)}</td><td class="num">${fmt(wProd / wNorm, 2)}</td>
+      <td class="num">${fmt(wNow)}</td><td class="num">${fmt(wNorm)}</td>
+      <td class="num ${d >= 0.5 ? "cut" : "same"}">${d >= 0.5 ? "−" + fmt(d) : "0"}</td>
+      <td class="num">${rub(save)}</td></tr>`;
+    cards += `<article class="card" id="${anchor}">
+      <div class="card-head"><h2>${code}</h2>
+        <div class="card-meta"><span>Октябрь <b>${fmt(u.p, 2)}</b> прод/ч</span><span>Цель <b>${TARGET_TEXT[mode] || fmt(Number(mode), 2)}</b></span>
+        <span>Смена кухни в среднем <b>${fmt(u.shift, 1)} ч</b></span><span>Экономия <b>${rub(save)}</b> в месяц</span></div></div>
+      <p class="note">${NOTES[code]}</p>
+      <div class="scroll"><table>
+        <thead><tr><th>День</th><th>Цель дня</th><th>Продуктов</th><th>Часов сейчас</th><th>Прод/ч сейчас</th><th>Норматив часов</th><th>≈ Людей</th><th>Убрать часов</th></tr></thead>
+        <tbody>${body}</tbody>
+        <tfoot><tr><td>Неделя</td><td></td><td></td><td class="num">${fmt(wNow)}</td><td></td><td class="num">${fmt(wNorm)}</td><td></td>
+          <td class="num ${d >= 0.5 ? "cut" : "same"}">${d >= 0.5 ? "−" + fmt(d) : "0"}</td></tr></tfoot>
+      </table></div></article>`;
+  }
+  el("sum-body").innerHTML = rows;
+  el("sum-foot").innerHTML = `<tr><td>Сеть</td><td></td><td></td><td class="num">${fmt(sumNow)}</td><td class="num">${fmt(sumNorm)}</td>
+    <td class="num cut">−${fmt(sumNow - sumNorm)}</td><td class="num">${rub(sumRub)}</td></tr>`;
+  el("cards").innerHTML = cards;
+  el("t-hours").textContent = fmt(sumNow - sumNorm);
+  el("t-month").textContent = rub(sumRub);
+  el("t-year").textContent = rub(sumRub * 12);
+  try { localStorage.setItem("kn3-settings", JSON.stringify({ mode, g: el("growth").value, floor, rate })); } catch (e) {}
+}
+
+try {
+  const s = JSON.parse(localStorage.getItem("kn3-settings") || "null");
+  if (s) { el("target").value = s.mode; el("growth").value = s.g; el("floor").value = s.floor; el("rate").value = s.rate; }
+} catch (e) {}
+["target", "growth", "floor", "rate"].forEach(id => el(id).addEventListener("input", render));
+render();
+if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+</script>
+</body></html>
