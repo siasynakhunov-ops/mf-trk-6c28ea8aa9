@@ -1,7 +1,459 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Производительность кухни · Якутск</title><meta property="og:title" content="Производительность кухни · Якутск"><meta property="og:description" content="Цель 7,64, новая норма часов и графики по часам для управляющих">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap"><style>body{margin:0;background:#16181D;color:#F4F1EA;font-family:'Rubik',Arial,sans-serif;padding:40px 16px}
-.w{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}h1{font-family:'Oswald',Arial,sans-serif;font-size:40px;margin:0 0 8px}
-p{color:#C9C4B8;margin:0 0 12px;line-height:1.5}.card{display:flex;flex-direction:column;gap:6px;background:#2a2d34;border-left:6px solid #F07A2E;border-radius:10px;padding:18px 20px;color:#F4F1EA;text-decoration:none}
-.card span{font-size:22px;font-weight:600}.card small{color:#C9C4B8;font-size:15px;line-height:1.4}.card:hover{background:#33363d}</style></head>
-<body><div class="w"><h1>Производительность кухни</h1><p>Додо Пицца · Якутск. Цель сети — 7,64 продукта на человеко-час. Правило: Пн–Чт и Вс — не ниже 7,0, Пт–Сб — не ниже 8,5. Данные Dodo IS за октябрь 2026.</p><a class="card" href="novaya/"><span>Новая норма часов</span><small>Сравнение со старой нормой и сколько людей ставить в каждый час по каждой пиццерии</small></a><a class="card" href="cel/"><span>Цель и план</span><small>Цель 7,64 из выборки России, сравнение с Дальним Востоком, причины и план</small></a><a class="card" href="norma/"><span>Таблица нормы</span><small>Норма часов кухни по дням недели для каждой пиццерии, с настройками</small></a></div></body></html>
+<title>Производительность кухни Якутск: цель 7,5</title><meta property="og:title" content="Производительность кухни Якутск: цель 7,5"><meta property="og:description" content="Додо Пицца Якутск · производительность кухни">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap"><style>
+*{box-sizing:border-box}
+body{margin:0;background:#202227;color:#F4F1EA;font-family:'Rubik',Arial,sans-serif}
+.top{position:sticky;top:0;z-index:5;background:#16181D;border-bottom:1px solid #33363d;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:10px 16px}
+.top b{font-size:15px;margin-right:auto}
+.top a{color:#C9C4B8;text-decoration:none;font-size:14px;padding:4px 0}
+.top a.on{color:#F07A2E;font-weight:600}
+.deck{max-width:1600px;margin:0 auto;padding:16px 16px 48px;display:flex;flex-direction:column;gap:20px}
+.frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.frame>section{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+section *{margin:0;box-sizing:border-box}
+section div:not([style*="display"]){display:flex;flex-direction:column}
+section h1{font-size:96px;font-weight:600;line-height:1.1}
+section h2{font-size:64px;font-weight:600;line-height:1.15}
+section h3{font-size:44px;font-weight:600;line-height:1.2}
+section p{font-size:32px;line-height:1.4}
+section hr{border:0;width:100%}
+section table{border-collapse:collapse;width:100%}
+section td,section th{padding:.35em .6em;border-bottom:1px solid rgba(0,0,0,.12)}
+section th{font-weight:600}
+section svg{display:block}
+section aside{display:none}
+details{background:#2a2d34;border-radius:8px;padding:10px 14px;color:#C9C4B8;font-size:15px;line-height:1.5}
+summary{cursor:pointer;color:#F4F1EA;font-size:14px}
+details p{margin:8px 0 0}
+.num{font-size:13px;color:#8E8A80}
+</style></head><body>
+<div class="top"><b>Производительность кухни Якутск: цель 7,5</b></div><main class="deck"><div class="frame" id="slide-1"><section id="cover" data-transition="fade" style="background:#16181D;color:#F4F1EA;font-family:'Rubik', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:space-between">
+<div style="position:absolute;left:1180px;top:0px;width:740px;height:1080px;background:linear-gradient(160deg, #F07A2E 0%, #C9551A 100%)"></div>
+<p style="font-size:28px;letter-spacing:4px;text-transform:uppercase;color:#F07A2E;font-weight:500">Додо Пицца · Якутск · ноябрь 2026</p>
+<div style="display:flex;flex-direction:column;gap:32px;width:960px">
+<h1 style="font-family:'Oswald', Arial, sans-serif;font-size:120px;font-weight:600;line-height:1.05;color:#F4F1EA">Производительность кухни</h1>
+<p style="font-size:40px;line-height:1.35;color:#C9C4B8">Цель сети, сравнение с Россией и Дальним Востоком, план для управляющих</p>
+</div>
+<p style="font-size:26px;color:#8E8A80">Источник: Dodo IS, Аналитика «Производительность и укомплектованность», смены и продажи за 1–31 октября</p>
+<p style="position:absolute;left:1260px;top:280px;width:580px;font-size:32px;color:#16181D;font-weight:500;text-transform:uppercase;letter-spacing:3px">Цель недели и месяца</p>
+<p style="position:absolute;left:1250px;top:330px;width:600px;font-family:'Oswald', Arial, sans-serif;font-size:330px;line-height:1;color:#16181D;font-weight:700">7,5</p>
+<p style="position:absolute;left:1260px;top:690px;width:560px;font-size:36px;line-height:1.3;color:#16181D">продукта на человеко-час кухни.<br>Сейчас у нас <b>6,45</b></p>
+<aside>Тема — точка роста номер один для всех управляющих. Цель недели и месяца — 7,5 продукта на человеко-час. Это чуть ниже средней по нормальным пиццериям России (7,64). Для Якутска-1 и Якутска-10 — своя цель, о ней отдельный слайд.</aside>
+</section></div><details><summary>Слайд 1 · комментарий</summary><p>Тема — точка роста номер один для всех управляющих. Цель недели и месяца — 7,5 продукта на человеко-час. Это чуть ниже средней по нормальным пиццериям России (7,64). Для Якутска-1 и Якутска-10 — своя цель, о ней отдельный слайд.</p></details><div class="frame" id="slide-2"><section id="method" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Как получили цель</h2>
+<div style="display:flex;gap:48px;flex:1">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;border:1px solid #DED8CB;border-radius:20px;padding:48px">
+<p style="font-size:28px;letter-spacing:3px;text-transform:uppercase;color:#2F5DA8;font-weight:600">Россия</p>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px">Все пиццерии, октябрь</p><p style="font-size:40px;font-weight:600">1 162</p></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px;color:#5B5F68">− ниже 6 продуктов/ч</p><p style="font-size:40px;color:#5B5F68">140</p></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px;color:#5B5F68">− выше 9 продуктов/ч</p><p style="font-size:40px;color:#5B5F68">230</p></div>
+<hr style="border-top:2px solid #DED8CB">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px">В выборке</p><p style="font-size:40px;font-weight:600">792</p></div>
+<div style="flex:1"></div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><p style="font-size:30px;line-height:1.3;color:#5B5F68;width:340px">Средняя — ориентир, наша цель <b style="color:#1F2228">7,5</b></p><p style="font-family:'Oswald', Arial, sans-serif;font-size:120px;line-height:1;font-weight:700;color:#2F5DA8">7,64</p></div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;border:1px solid #DED8CB;border-radius:20px;padding:48px">
+<p style="font-size:28px;letter-spacing:3px;text-transform:uppercase;color:#2F5DA8;font-weight:600">Дальний Восток</p>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px">Дальневосточный ФО</p><p style="font-size:40px;font-weight:600">61</p></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px;color:#5B5F68">− Якутск (наши)</p><p style="font-size:40px;color:#5B5F68">8</p></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px;color:#5B5F68">− Магадан</p><p style="font-size:40px;color:#5B5F68">3</p></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px;color:#5B5F68">− выше 9 продуктов/ч</p><p style="font-size:40px;color:#5B5F68">13</p></div>
+<hr style="border-top:2px solid #DED8CB">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><p style="font-size:32px">В выборке</p><p style="font-size:40px;font-weight:600">37</p></div>
+<div style="flex:1"></div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end"><p style="font-size:30px;line-height:1.3;color:#5B5F68;width:340px">Средняя по региону</p><p style="font-family:'Oswald', Arial, sans-serif;font-size:120px;line-height:1;font-weight:700;color:#5E7FBF">7,66</p></div>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Производительность = выпеченные продукты ÷ человеко-часы кухни (все, кто не курьер: повара, кассиры, менеджеры, стажёры, клинеры). Новосибирска в ДФО нет.</p>
+<aside>Россия: из 1162 пиццерий убрали слишком слабые (ниже 6) и подозрительно высокие (выше 9) — там, как правило, часть людей не отмечена в сменах. Осталось 792 нормальные пиццерии, их средняя 7,64 — это цель. Дальний Восток: в аналитике за октябрь 61 пиццерия Дальневосточного ФО; Новосибирск туда не входит. Убрали наш Якутск, чтобы не сравнивать себя с собой, Магадан и тех, кто выше 9. Осталось 37, средняя 7,66 — регион работает на уровне России, значит, «у нас Север, у нас по-другому» не работает.</aside>
+</section></div><details><summary>Слайд 2 · комментарий</summary><p>Россия: из 1162 пиццерий убрали слишком слабые (ниже 6) и подозрительно высокие (выше 9) — там, как правило, часть людей не отмечена в сменах. Осталось 792 нормальные пиццерии, их средняя 7,64 — это цель. Дальний Восток: в аналитике за октябрь 61 пиццерия Дальневосточного ФО; Новосибирск туда не входит. Убрали наш Якутск, чтобы не сравнивать себя с собой, Магадан и тех, кто выше 9. Осталось 37, средняя 7,66 — регион работает на уровне России, значит, «у нас Север, у нас по-другому» не работает.</p></details><div class="frame" id="slide-3"><section id="compare" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Якутск на 1,2 продукта ниже России</h2>
+<div style="position:relative;height:660px;display:flex;flex-direction:column;gap:10px">
+<div style="position:absolute;left:1193px;top:0px;width:3px;height:620px;background:#2F5DA8"></div>
+<p style="position:absolute;left:1206px;top:624px;width:420px;font-size:24px;color:#2F5DA8;font-weight:600">Россия 7,64</p>
+<div style="display:flex;align-items:center;gap:24px;height:44px"><p style="width:330px;font-size:28px;font-weight:600">Россия, 6–9</p><div style="width:840px;height:36px;background:#2F5DA8;border-radius:0px 6px 6px 0px"></div><p style="font-size:30px;font-weight:600">7,64</p></div>
+<div style="display:flex;align-items:center;gap:24px;height:44px"><p style="width:330px;font-size:28px;font-weight:600">Дальний Восток</p><div style="width:843px;height:36px;background:#5E7FBF;border-radius:0px 6px 6px 0px"></div><p style="font-size:30px;font-weight:600">7,66</p></div>
+<div style="display:flex;align-items:center;gap:24px;height:44px"><p style="width:330px;font-size:28px;color:#5B5F68">Лидеры нашего объёма</p><div style="width:919px;height:36px;background:#A9BCE0;border-radius:0px 6px 6px 0px"></div><p style="font-size:30px;color:#5B5F68">8,35</p></div>
+<div style="display:flex;align-items:center;gap:24px;height:44px"><p style="width:330px;font-size:28px;font-weight:700">Якутск, сеть</p><div style="width:710px;height:36px;background:#E2661B;border-radius:0px 6px 6px 0px"></div><p style="font-size:30px;font-weight:700">6,45 <span style="color:#B24A0C">−1,19</span></p></div>
+<hr style="border-top:2px dashed #DED8CB;width:1100px">
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-4</p><div style="width:773px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">7,03 <span style="color:#B24A0C">−0,6</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-5</p><div style="width:772px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">7,02 <span style="color:#B24A0C">−0,6</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-6</p><div style="width:766px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">6,96 <span style="color:#B24A0C">−0,7</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-7</p><div style="width:725px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">6,59 <span style="color:#B24A0C">−1,1</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-3</p><div style="width:695px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">6,32 <span style="color:#B24A0C">−1,3</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-2</p><div style="width:667px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">6,06 <span style="color:#B24A0C">−1,6</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-1</p><div style="width:608px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">5,53 <span style="color:#B24A0C">−2,1</span></p></div>
+<div style="display:flex;align-items:center;gap:24px;height:40px"><p style="width:330px;font-size:28px">Якутск-10</p><div style="width:576px;height:30px;background:#F2A673;border-radius:0px 6px 6px 0px"></div><p style="font-size:28px">5,24 <span style="color:#B24A0C">−2,4</span></p></div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Продуктов на человеко-час кухни, октябрь 2026. Лидеры нашего объёма — 113 пиццерий России с 900–2 000 продуктов в день и производительностью 7,5–9.</p>
+<aside>Ни одна наша пиццерия не дотягивает до цели. Лучшие — Я-4, Я-5 и Я-6, им до цели 0,6–0,7 продукта. Хуже всех Я-1 и Я-10. Важно: по объёму мы крупнее средней пиццерии России (1 130 продуктов в день против 700), а крупные пиццерии обычно производительнее — лидеры нашего размера дают 8,35. То есть у нас есть все условия быть выше среднего, а мы ниже.</aside>
+</section></div><details><summary>Слайд 3 · комментарий</summary><p>Ни одна наша пиццерия не дотягивает до цели. Лучшие — Я-4, Я-5 и Я-6, им до цели 0,6–0,7 продукта. Хуже всех Я-1 и Я-10. Важно: по объёму мы крупнее средней пиццерии России (1 130 продуктов в день против 700), а крупные пиццерии обычно производительнее — лидеры нашего размера дают 8,35. То есть у нас есть все условия быть выше среднего, а мы ниже.</p></details><div class="frame" id="slide-4"><section id="weekdays" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Проигрываем в будни, а не в выходные</h2>
+<svg aria-label="Производительность по дням недели: лидеры, Россия, Дальний Восток и Якутск" style="position:absolute;left:128px;top:270px;width:1120px;height:560px" width="1120" height="560" viewBox="0 0 1120 560">
+<g stroke="#DED8CB" stroke-width="2"><line x1="40" y1="530" x2="1080" y2="530"/><line x1="40" y1="430" x2="1080" y2="430"/><line x1="40" y1="230" x2="1080" y2="230"/><line x1="40" y1="130" x2="1080" y2="130"/><line x1="40" y1="30" x2="1080" y2="30"/></g>
+<line x1="40" y1="330" x2="1080" y2="330" stroke="#5B5F68" stroke-width="2" stroke-dasharray="8 6"/>
+<polyline points="60,284 226,293 392,280 558,264 724,117 890,54 1056,204" fill="none" stroke="#A9BCE0" stroke-width="4" stroke-linejoin="round"/>
+<polyline points="60,298 226,364 392,325 558,331 724,185 890,107 1056,321" fill="none" stroke="#5E7FBF" stroke-width="4" stroke-linejoin="round"/>
+<polyline points="60,350 226,365 392,351 558,335 724,179 890,121 1056,263" fill="none" stroke="#2F5DA8" stroke-width="5" stroke-linejoin="round"/>
+<polyline points="60,437 226,474 392,478 558,448 724,286 890,230 1056,433" fill="none" stroke="#E2661B" stroke-width="7" stroke-linejoin="round"/>
+<g fill="#E2661B" stroke="#F6F3EC" stroke-width="3"><circle cx="60" cy="437" r="9"/><circle cx="226" cy="474" r="9"/><circle cx="392" cy="478" r="9"/><circle cx="558" cy="448" r="9"/><circle cx="724" cy="286" r="9"/><circle cx="890" cy="230" r="9"/><circle cx="1056" cy="433" r="9"/></g>
+</svg>
+<p style="position:absolute;left:120px;top:282px;width:48px;font-size:24px;color:#5B5F68;text-align:right">10</p>
+<p style="position:absolute;left:120px;top:382px;width:48px;font-size:24px;color:#5B5F68;text-align:right">9</p>
+<p style="position:absolute;left:120px;top:482px;width:48px;font-size:24px;color:#5B5F68;text-align:right">8</p>
+<p style="position:absolute;left:120px;top:582px;width:48px;font-size:24px;color:#1F2228;text-align:right;font-weight:600">7</p>
+<p style="position:absolute;left:120px;top:682px;width:48px;font-size:24px;color:#5B5F68;text-align:right">6</p>
+<p style="position:absolute;left:120px;top:782px;width:48px;font-size:24px;color:#5B5F68;text-align:right">5</p>
+<p style="position:absolute;left:153px;top:836px;width:70px;font-size:26px;text-align:center">Пн</p>
+<p style="position:absolute;left:319px;top:836px;width:70px;font-size:26px;text-align:center">Вт</p>
+<p style="position:absolute;left:485px;top:836px;width:70px;font-size:26px;text-align:center">Ср</p>
+<p style="position:absolute;left:651px;top:836px;width:70px;font-size:26px;text-align:center">Чт</p>
+<p style="position:absolute;left:817px;top:836px;width:70px;font-size:26px;text-align:center">Пт</p>
+<p style="position:absolute;left:983px;top:836px;width:70px;font-size:26px;text-align:center">Сб</p>
+<p style="position:absolute;left:1149px;top:836px;width:70px;font-size:26px;text-align:center">Вс</p>
+<p style="position:absolute;left:1206px;top:458px;width:200px;font-size:24px;color:#1F2228">Лидеры 8,3</p>
+<p style="position:absolute;left:1206px;top:518px;width:200px;font-size:24px;color:#2F5DA8;font-weight:600">Россия 7,7</p>
+<p style="position:absolute;left:1206px;top:572px;width:200px;font-size:24px;color:#3F5F9F">ДВ 7,1</p>
+<p style="position:absolute;left:1206px;top:686px;width:200px;font-size:24px;color:#B24A0C;font-weight:700">Якутск 6,0</p>
+<div style="position:absolute;left:1440px;top:270px;width:352px;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:4px"><p style="font-size:24px;color:#5B5F68;text-transform:uppercase;letter-spacing:2px">Пн–Чт</p><p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1.05;font-weight:700;color:#B24A0C">5,7</p><p style="font-size:26px;line-height:1.3">у нас, у лидеров <b>7,5</b></p></div>
+<div style="display:flex;flex-direction:column;gap:4px"><p style="font-size:24px;color:#5B5F68;text-transform:uppercase;letter-spacing:2px">Суббота</p><p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1.05;font-weight:700;color:#1F2228">8,0</p><p style="font-size:26px;line-height:1.3">у нас, у лидеров <b>9,8</b></p></div>
+<p style="font-size:28px;line-height:1.35;background:#16181D;color:#F4F1EA;padding:24px;border-radius:14px">Будни — <b>4 дня из 7</b> и главный резерв</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Продуктов на человеко-час по дням недели, октябрь 2026. Пунктир — уровень 7. Лидеры — пиццерии 7,5–9 с объёмом 900–2 000 продуктов в день.</p>
+<aside>Посмотрите на форму линий: у всех одинаковая — будни ниже, пятница и суббота выше. Разница в уровне. Лидеры даже в будни держат 7,5. Дальний Восток в будни около 7. Мы — 5,5–5,9. В субботу мы почти как Россия в среднем. Значит, задача не «работать быстрее в пик», а не держать в будни столько же людей, сколько в выходные.</aside>
+</section></div><details><summary>Слайд 4 · комментарий</summary><p>Посмотрите на форму линий: у всех одинаковая — будни ниже, пятница и суббота выше. Разница в уровне. Лидеры даже в будни держат 7,5. Дальний Восток в будни около 7. Мы — 5,5–5,9. В субботу мы почти как Россия в среднем. Значит, задача не «работать быстрее в пик», а не держать в будни столько же людей, сколько в выходные.</p></details><div class="frame" id="slide-5"><section id="why" data-transition="fade" style="background:#ECE7DC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Почему у лидеров 7,5+, а у нас 6,45</h2>
+<div style="display:flex;gap:32px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:32px">
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">+46 ч</p>
+<h3 style="font-size:32px;font-weight:600;line-height:1.25">в день на пиццерию при том же объёме</h3>
+<p style="font-size:26px;line-height:1.4;color:#5B5F68">Лидеры: 1 087 продуктов за 130 ч. Мы: 1 132 продукта за 176 ч.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:32px">
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">+20%</p>
+<h3 style="font-size:32px;font-weight:600;line-height:1.25">часов сверх прогноза Dodo IS</h3>
+<p style="font-size:26px;line-height:1.4;color:#5B5F68">Россия ставит на 12% меньше прогноза, мы — на 20% больше. Сильнее всего Я-1 и Я-3 (+27%).</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:32px">
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#2F5DA8">2,48</p>
+<h3 style="font-size:32px;font-weight:600;line-height:1.25">продукта в заказе — не причина</h3>
+<p style="font-size:26px;line-height:1.4;color:#5B5F68">У лидеров 2,34. Заказы у нас даже «тяжелее», дело не в меню, а в графике.</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;background:#FFFDF8;border-radius:20px;padding:40px">
+<h3 style="font-size:32px;font-weight:600">Из чего состоят наши 1 390 часов кухни в день</h3>
+<div style="display:flex;height:64px;gap:3px">
+<div style="width:61%;background:#2F5DA8;border-radius:8px 0px 0px 8px"></div>
+<div style="width:16%;background:#E2661B"></div>
+<div style="width:10%;background:#5B5F68"></div>
+<div style="width:9%;background:#F2A673"></div>
+<div style="width:4%;background:#16181D;border-radius:0px 8px 8px 0px"></div>
+</div>
+<div style="display:flex;gap:28px">
+<p style="font-size:24px"><span style="color:#2F5DA8">■</span> Повара и универсалы <b>61%</b></p>
+<p style="font-size:24px"><span style="color:#E2661B">■</span> Кассиры <b>16%</b> · 218 ч</p>
+<p style="font-size:24px"><span style="color:#5B5F68">■</span> Менеджеры <b>10%</b></p>
+<p style="font-size:24px"><span style="color:#F2A673">■</span> Стажёры кухни <b>9%</b> · 132 ч</p>
+<p style="font-size:24px"><span style="color:#16181D">■</span> Клинеры <b>4%</b> · 57 ч</p>
+</div>
+<p style="font-size:24px;color:#5B5F68">Клинеры есть в Dodo IS у Я-2, Я-3, Я-4, Я-5 и Я-6 (Я-6 — 32 ч в день). Без них сеть дала бы 6,72, Я-6 — 7,89.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Октябрь 2026. Перемещения (2–3 чел. × 30–40 мин) ≈ 1,5 ч в день на точку — около 1% часов.</p>
+<aside>Главная разница — не скорость поваров, а количество часов. При одинаковом объёме у лидеров на 46 часов в день меньше. Dodo IS сам считает, сколько часов нужно под наш прогноз продаж, и мы стабильно ставим на 20% больше, тогда как нормальные пиццерии России — на 12% меньше прогноза. Структура: каждый шестой час — кассир, каждый десятый — стажёр. Клинеры в Dodo IS считаются как кухня и съедают производительность: в Я-6 это 32 часа в день. Перемещения по утрам — около 1% часов, это не главная причина, но и их нужно упорядочить.</aside>
+</section></div><details><summary>Слайд 5 · комментарий</summary><p>Главная разница — не скорость поваров, а количество часов. При одинаковом объёме у лидеров на 46 часов в день меньше. Dodo IS сам считает, сколько часов нужно под наш прогноз продаж, и мы стабильно ставим на 20% больше, тогда как нормальные пиццерии России — на 12% меньше прогноза. Структура: каждый шестой час — кассир, каждый десятый — стажёр. Клинеры в Dodo IS считаются как кухня и съедают производительность: в Я-6 это 32 часа в день. Перемещения по утрам — около 1% часов, это не главная причина, но и их нужно упорядочить.</p></details><div class="frame" id="slide-6"><section id="morning" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Где лишние люди в будни</h2>
+<div style="display:flex;gap:40px;align-items:center">
+<p style="font-size:26px"><span style="color:#2F5DA8">■</span> нужно при 7 продуктах/ч</p>
+<p style="font-size:26px"><span style="color:#E2661B">■</span> лишние люди на смене</p>
+<p style="font-size:26px;color:#2F5DA8">┅ не хватает</p>
+</div>
+<svg aria-label="Люди на смене по часам в будни: нужные и лишние" style="position:absolute;left:128px;top:330px;width:1664px;height:450px" width="1664" height="450" viewBox="0 0 1664 450">
+<g transform="translate(0,24)">
+<line x1="0" y1="421" x2="1664" y2="421" stroke="#5B5F68" stroke-width="2"/>
+<rect x="17" y="406" width="64" height="14" rx="4" fill="#2F5DA8"/>
+<rect x="17" y="345" width="64" height="59" rx="4" fill="#E2661B"/>
+<rect x="115" y="359" width="64" height="61" rx="4" fill="#2F5DA8"/>
+<rect x="115" y="286" width="64" height="72" rx="4" fill="#E2661B"/>
+<rect x="213" y="319" width="64" height="101" rx="4" fill="#2F5DA8"/>
+<rect x="213" y="251" width="64" height="66" rx="4" fill="#E2661B"/>
+<rect x="311" y="264" width="64" height="156" rx="4" fill="#2F5DA8"/>
+<rect x="311" y="211" width="64" height="51" rx="4" fill="#E2661B"/>
+<rect x="408" y="210" width="64" height="210" rx="4" fill="#2F5DA8"/>
+<rect x="408" y="188" width="64" height="20" rx="4" fill="#E2661B"/>
+<rect x="506" y="160" width="64" height="260" rx="4" fill="#2F5DA8"/>
+<rect x="506" y="145" width="64" height="15" fill="none" stroke="#2F5DA8" stroke-width="3" stroke-dasharray="6 5"/>
+<rect x="604" y="149" width="64" height="271" rx="4" fill="#2F5DA8"/>
+<rect x="702" y="198" width="64" height="222" rx="4" fill="#2F5DA8"/>
+<rect x="702" y="132" width="64" height="64" rx="4" fill="#E2661B"/>
+<rect x="800" y="197" width="64" height="223" rx="4" fill="#2F5DA8"/>
+<rect x="800" y="116" width="64" height="80" rx="4" fill="#E2661B"/>
+<rect x="898" y="162" width="64" height="258" rx="4" fill="#2F5DA8"/>
+<rect x="898" y="88" width="64" height="72" rx="4" fill="#E2661B"/>
+<rect x="996" y="89" width="64" height="331" rx="4" fill="#2F5DA8"/>
+<rect x="996" y="55" width="64" height="33" rx="4" fill="#E2661B"/>
+<rect x="1094" y="53" width="64" height="367" rx="4" fill="#2F5DA8"/>
+<rect x="1094" y="-1" width="64" height="54" fill="none" stroke="#2F5DA8" stroke-width="3" stroke-dasharray="6 5"/>
+<rect x="1192" y="60" width="64" height="360" rx="4" fill="#2F5DA8"/>
+<rect x="1192" y="9" width="64" height="51" fill="none" stroke="#2F5DA8" stroke-width="3" stroke-dasharray="6 5"/>
+<rect x="1289" y="99" width="64" height="321" rx="4" fill="#2F5DA8"/>
+<rect x="1289" y="85" width="64" height="12" rx="4" fill="#E2661B"/>
+<rect x="1387" y="191" width="64" height="229" rx="4" fill="#2F5DA8"/>
+<rect x="1387" y="110" width="64" height="79" rx="4" fill="#E2661B"/>
+<rect x="1485" y="258" width="64" height="162" rx="4" fill="#2F5DA8"/>
+<rect x="1485" y="143" width="64" height="113" rx="4" fill="#E2661B"/>
+<rect x="1583" y="334" width="64" height="86" rx="4" fill="#2F5DA8"/>
+<rect x="1583" y="212" width="64" height="120" rx="4" fill="#E2661B"/>
+</g>
+</svg>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Будни Пн–Чт, все 8 пиццерий, среднее число людей на смене в час. Продуктов на человека: утро 4,0 · 14–17 5,3 · после 21 4,2.</p>
+<p style="position:absolute;left:145px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">7</p>
+<p style="position:absolute;left:243px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">8</p>
+<p style="position:absolute;left:341px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">9</p>
+<p style="position:absolute;left:439px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">10</p>
+<p style="position:absolute;left:536px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">11</p>
+<p style="position:absolute;left:634px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">12</p>
+<p style="position:absolute;left:732px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">13</p>
+<p style="position:absolute;left:830px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">14</p>
+<p style="position:absolute;left:928px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">15</p>
+<p style="position:absolute;left:1026px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">16</p>
+<p style="position:absolute;left:1124px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">17</p>
+<p style="position:absolute;left:1222px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">18</p>
+<p style="position:absolute;left:1320px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">19</p>
+<p style="position:absolute;left:1417px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">20</p>
+<p style="position:absolute;left:1515px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">21</p>
+<p style="position:absolute;left:1613px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">22</p>
+<p style="position:absolute;left:1711px;top:784px;width:64px;font-size:24px;text-align:center;color:#5B5F68">23</p>
+<p style="position:absolute;left:145px;top:836px;width:420px;font-size:26px;line-height:1.3;padding:12px 20px;background:#FBE3D3;border-radius:12px"><b>Утро 7–11: +71 ч</b></p>
+<p style="position:absolute;left:830px;top:836px;width:320px;font-size:26px;line-height:1.3;padding:12px 20px;background:#FBE3D3;border-radius:12px"><b>14–17: +62 ч</b></p>
+<p style="position:absolute;left:1206px;top:836px;width:240px;font-size:26px;line-height:1.3;padding:12px 20px;background:#DCE5F4;border-radius:12px"><b>18–20:</b> не хватает</p>
+<p style="position:absolute;left:1500px;top:836px;width:252px;font-size:26px;line-height:1.3;padding:12px 20px;background:#FBE3D3;border-radius:12px"><b>После 21: +88 ч</b></p>
+<aside>Это средний будний день по всем восьми пиццериям: высота столбика — сколько людей на смене в этот час. Синее — сколько нужно, чтобы делать 7 продуктов на человека. Оранжевое — лишние. Видно три окна: утро с 7 до 11 (выходят всей сменой, а продаж ещё нет, плюс перемещения), дневная яма 14–17 (вечерняя смена приходит слишком рано, дневная ещё не ушла) и закрытие после 21 (на кухне 5–8 человек при 2–3 продуктах в последний час). В пик 18–20 людей, наоборот, не хватает — часы нужно переносить в пик, а не просто резать. Отдельно ночь в Я-5 и Я-6: 4 человека при 5–20 продуктах в час.</aside>
+</section></div><details><summary>Слайд 6 · комментарий</summary><p>Это средний будний день по всем восьми пиццериям: высота столбика — сколько людей на смене в этот час. Синее — сколько нужно, чтобы делать 7 продуктов на человека. Оранжевое — лишние. Видно три окна: утро с 7 до 11 (выходят всей сменой, а продаж ещё нет, плюс перемещения), дневная яма 14–17 (вечерняя смена приходит слишком рано, дневная ещё не ушла) и закрытие после 21 (на кухне 5–8 человек при 2–3 продуктах в последний час). В пик 18–20 людей, наоборот, не хватает — часы нужно переносить в пик, а не просто резать. Отдельно ночь в Я-5 и Я-6: 4 человека при 5–20 продуктах в час.</p></details><div class="frame" id="slide-7"><section id="closing" data-transition="fade" style="background:#ECE7DC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Закрытие и ночная доставка</h2>
+<div style="display:flex;gap:40px">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;border-radius:20px;padding:36px">
+<h3 style="font-size:34px;font-weight:600">Закрываемся в 23:00 — уходим в 0:00</h3>
+<table style="font-size:26px;color:#1F2228">
+<tr><th style="width:22%;text-align:left">Пиццерия</th><th style="width:28%;text-align:right">Чел.-ч после 23:00</th><th style="width:26%;text-align:right">Последний уходит</th><th style="width:24%;text-align:right">Лишние</th></tr>
+<tr><td>Якутск-1</td><td style="text-align:right">6,9</td><td style="text-align:right">0:00</td><td style="text-align:right">+4,9</td></tr>
+<tr style="background:#F6F3EC"><td>Якутск-2</td><td style="text-align:right">4,8</td><td style="text-align:right"><b>23:38</b></td><td style="text-align:right">+2,8</td></tr>
+<tr><td>Якутск-3</td><td style="text-align:right"><b>11,4</b></td><td style="text-align:right">0:19</td><td style="text-align:right"><b>+9,4</b></td></tr>
+<tr style="background:#F6F3EC"><td>Якутск-4</td><td style="text-align:right">6,9</td><td style="text-align:right">0:17</td><td style="text-align:right">+4,9</td></tr>
+<tr><td>Якутск-7</td><td style="text-align:right">6,1</td><td style="text-align:right">23:51</td><td style="text-align:right">+4,1</td></tr>
+<tr style="background:#F6F3EC"><td>Якутск-10</td><td style="text-align:right">5,0</td><td style="text-align:right">0:00</td><td style="text-align:right">+3,0</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4">Стандарт: в 23:00 остаются <b>3 человека</b>, уборка — до 23:40. Это 2 чел.-ч. Лишних — <b>29 чел.-ч в день, ≈ 270 тыс. ₽ в месяц</b>.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFDF8;border-radius:20px;padding:36px">
+<h3 style="font-size:34px;font-weight:600">Я-5 и Я-6: вся зона с 23:00 до 2:00</h3>
+<table style="font-size:26px;color:#1F2228">
+<tr><th style="width:30%;text-align:left">Время</th><th style="width:35%;text-align:right">Якутск-5</th><th style="width:35%;text-align:right">Якутск-6</th></tr>
+<tr><td>23:00–2:00</td><td style="text-align:right"><b>6 чел. · 9,7</b></td><td style="text-align:right">11 чел. · 5,4</td></tr>
+<tr style="background:#F6F3EC"><td>продуктов в час</td><td style="text-align:right">59</td><td style="text-align:right">61</td></tr>
+<tr><td>2:00–8:00</td><td style="text-align:right">4 чел. · 3,1</td><td style="text-align:right">4 чел. · 3,2</td></tr>
+<tr style="background:#F6F3EC"><td>продуктов в час</td><td style="text-align:right">13</td><td style="text-align:right">14</td></tr>
+</table>
+<p style="font-size:26px;line-height:1.4">Ночная зона у Я-5 — лучшее время суток. Я-6 на тот же объём ставит почти вдвое больше людей: <b>7 человек вместо 11</b>. После 2:00 — <b>2 человека вместо 4</b>. Это ≈ 41 чел.-ч в день, ≈ 380 тыс. ₽ в месяц.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Смены Dodo IS, октябрь 2026, среднее за день. «Последний уходит» — медиана. «6 чел. · 9,7» — людей на кухне и продуктов на человеко-час. После 2:00 в Dodo IS ещё идут продажи, а повара отмечены до 8:00 — проверить, кто и зачем стоит ночью.</p>
+<aside>Слева — закрытие. Все пиццерии закрываются в 23:00, а последние сотрудники уходят около полуночи, в Я-3 — в 0:19. На закрытии отмечается 7–12 человек. Я-2 справляется к 23:38 — это пример. Стандарт: в 23:00 остаются три человека и заканчивают уборку к 23:40; уборку зала и часть заготовок делать до 23:00, в спад после 21. Справа — ночная доставка. С 23 до 2 Я-5 работает на 9,7 продукта на человека — ночная зона себя оправдывает. Я-6 на тот же объём ставит 11 человек — достаточно семи. После 2:00 по данным Dodo IS ещё идут продажи, 13–14 продуктов в час, а на кухне четыре человека до 8 утра — хватит двоих. Это нужно проверить с управляющими.</aside>
+</section></div><details><summary>Слайд 7 · комментарий</summary><p>Слева — закрытие. Все пиццерии закрываются в 23:00, а последние сотрудники уходят около полуночи, в Я-3 — в 0:19. На закрытии отмечается 7–12 человек. Я-2 справляется к 23:38 — это пример. Стандарт: в 23:00 остаются три человека и заканчивают уборку к 23:40; уборку зала и часть заготовок делать до 23:00, в спад после 21. Справа — ночная доставка. С 23 до 2 Я-5 работает на 9,7 продукта на человека — ночная зона себя оправдывает. Я-6 на тот же объём ставит 11 человек — достаточно семи. После 2:00 по данным Dodo IS ещё идут продажи, 13–14 продуктов в час, а на кухне четыре человека до 8 утра — хватит двоих. Это нужно проверить с управляющими.</p></details><div class="frame" id="slide-8"><section id="target" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:28px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Неделя 7,5 — за счёт будней около 7</h2>
+<div style="display:flex;gap:20px;align-items:center">
+<p style="font-size:26px;color:#5B5F68;width:420px;line-height:1.3">Выходные оставляем как есть. Будни → итог недели:</p>
+<p style="font-size:30px;background:#FFFDF8;border:1px solid #DED8CB;padding:12px 26px;border-radius:40px">6,8 → <b>7,24</b></p>
+<p style="font-size:30px;background:#FFFDF8;border:1px solid #DED8CB;padding:12px 26px;border-radius:40px">7,0 → <b>7,37</b></p>
+<p style="font-size:30px;background:#E2661B;color:#16181D;padding:12px 26px;border-radius:40px">7,2 → <b>7,50</b></p>
+</div>
+<table style="font-size:26px;color:#1F2228">
+<tr><th style="width:13%;text-align:left">Пиццерия</th><th style="width:11%;text-align:right">Цель недели</th><th style="width:12%;text-align:right">Пт–Сб сейчас</th><th style="width:17%;text-align:right">Будни и Вс</th><th style="width:16%;text-align:right">Пн–Чт, ч в день</th><th style="width:14%;text-align:right">Вс, ч</th><th style="width:17%;text-align:right">Экономия в мес.</th></tr>
+<tr><td>Якутск-1</td><td style="text-align:right"><b>6,5</b></td><td style="text-align:right">6,33</td><td style="text-align:right">5,1 → <b>6,6</b></td><td style="text-align:right">137 → <b>106</b></td><td style="text-align:right">155 → <b>115</b></td><td style="text-align:right">219 тыс. ₽</td></tr>
+<tr style="background:#ECE7DC"><td>Якутск-2</td><td style="text-align:right">7,5</td><td style="text-align:right">7,42</td><td style="text-align:right">5,3 → <b>7,6</b></td><td style="text-align:right">152 → <b>105</b></td><td style="text-align:right">161 → <b>118</b></td><td style="text-align:right">308 тыс. ₽</td></tr>
+<tr><td>Якутск-3</td><td style="text-align:right">7,5</td><td style="text-align:right">7,85</td><td style="text-align:right">5,5 → <b>7,3</b></td><td style="text-align:right">204 → <b>156</b></td><td style="text-align:right">218 → <b>158</b></td><td style="text-align:right">335 тыс. ₽</td></tr>
+<tr style="background:#ECE7DC"><td>Якутск-4</td><td style="text-align:right">7,5</td><td style="text-align:right">8,45</td><td style="text-align:right">6,3 → <b>7,0</b></td><td style="text-align:right">135 → <b>119</b></td><td style="text-align:right">133 → <b>129</b></td><td style="text-align:right">93 тыс. ₽</td></tr>
+<tr><td>Якутск-5</td><td style="text-align:right">7,5</td><td style="text-align:right">8,31</td><td style="text-align:right">6,3 → <b>7,0</b></td><td style="text-align:right">172 → <b>149</b></td><td style="text-align:right">177 → <b>177</b></td><td style="text-align:right">121 тыс. ₽</td></tr>
+<tr style="background:#ECE7DC"><td>Якутск-6</td><td style="text-align:right">7,5</td><td style="text-align:right">8,17</td><td style="text-align:right">6,3 → <b>7,2</b></td><td style="text-align:right">265 → <b>229</b></td><td style="text-align:right">267 → <b>254</b></td><td style="text-align:right">207 тыс. ₽</td></tr>
+<tr><td>Якутск-7</td><td style="text-align:right">7,5</td><td style="text-align:right">7,97</td><td style="text-align:right">5,8 → <b>7,2</b></td><td style="text-align:right">156 → <b>127</b></td><td style="text-align:right">176 → <b>138</b></td><td style="text-align:right">206 тыс. ₽</td></tr>
+<tr style="background:#ECE7DC"><td>Якутск-10</td><td style="text-align:right"><b>6,5</b></td><td style="text-align:right">6,47</td><td style="text-align:right">4,5 → <b>6,5</b></td><td style="text-align:right">108 → <b>77</b></td><td style="text-align:right">117 → <b>76</b></td><td style="text-align:right">222 тыс. ₽</td></tr>
+<tr style="background:#16181D"><td style="color:#F4F1EA"><b>Сеть</b></td><td style="text-align:right;color:#F4F1EA"></td><td style="text-align:right;color:#F4F1EA"></td><td style="text-align:right;color:#F4F1EA">6,45 → <b>7,3</b></td><td style="text-align:right;color:#F4F1EA">−261 ч в день</td><td style="text-align:right;color:#F4F1EA">−239 ч</td><td style="text-align:right;color:#F4F1EA"><b>1,7 млн ₽</b></td></tr>
+</table>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">«Будни и Вс» — продуктов на человеко-час сейчас → нужно, чтобы выйти на цель недели. Пт–Сб не трогаем. Часы — все, кроме курьеров, средняя неделя октября. Ставка 300 ₽/ч.</p>
+<aside>Выходные у нас уже сильные — пятница и суббота 7,4–8,5. Поэтому задача только одна: подтянуть будни. Считали так: при нынешних пятнице и субботе будни на 6,8 дают неделю 7,24, на 7,0 — 7,37, на 7,2 — ровно 7,5. Для каждой пиццерии своё число: Я-4 и Я-5 достаточно 7,0, у них сильные выходные; Я-6, Я-7 и Я-3 — 7,2–7,3; Я-2 — 7,6, потому что её пятница и суббота пока слабее остальных. Воскресенье по производительности у нас как будний день (около 6), поэтому оно в той же группе. Справа — сколько часов кухни ставить в будний день и в воскресенье. У Я-1 и Я-10 своя цель — 6,5, следующий слайд. Сеть в итоге выходит на 7,3, а шесть пиццерий с общей целью — на 7,5. Экономия около 1,7 млн рублей в месяц.</aside>
+</section></div><details><summary>Слайд 8 · комментарий</summary><p>Выходные у нас уже сильные — пятница и суббота 7,4–8,5. Поэтому задача только одна: подтянуть будни. Считали так: при нынешних пятнице и субботе будни на 6,8 дают неделю 7,24, на 7,0 — 7,37, на 7,2 — ровно 7,5. Для каждой пиццерии своё число: Я-4 и Я-5 достаточно 7,0, у них сильные выходные; Я-6, Я-7 и Я-3 — 7,2–7,3; Я-2 — 7,6, потому что её пятница и суббота пока слабее остальных. Воскресенье по производительности у нас как будний день (около 6), поэтому оно в той же группе. Справа — сколько часов кухни ставить в будний день и в воскресенье. У Я-1 и Я-10 своя цель — 6,5, следующий слайд. Сеть в итоге выходит на 7,3, а шесть пиццерий с общей целью — на 7,5. Экономия около 1,7 млн рублей в месяц.</p></details><div class="frame" id="slide-9"><section id="own" data-transition="fade" style="background:#ECE7DC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Своя цель для Я-1 и Я-10 — 6,5</h2>
+<div style="display:flex;gap:40px;flex:1">
+<div style="flex:3;display:flex;flex-direction:column;gap:20px;background:#FFFDF8;border-radius:20px;padding:40px">
+<h3 style="font-size:36px;font-weight:600">Якутск-1: одна печь</h3>
+<p style="font-size:26px;color:#5B5F68">Больше всего продуктов в час, пятница–суббота</p>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;gap:20px"><p style="width:200px;font-size:26px;font-weight:600">Якутск-1</p><div style="width:321px;height:34px;background:#E2661B;border-radius:0px 6px 6px 0px"></div><p style="font-size:26px;font-weight:600">114</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:200px;font-size:26px">Якутск-4</p><div style="width:383px;height:34px;background:#A9BCE0;border-radius:0px 6px 6px 0px"></div><p style="font-size:26px">136</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:200px;font-size:26px">Якутск-2</p><div style="width:417px;height:34px;background:#A9BCE0;border-radius:0px 6px 6px 0px"></div><p style="font-size:26px">148</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:200px;font-size:26px">Якутск-7</p><div style="width:456px;height:34px;background:#A9BCE0;border-radius:0px 6px 6px 0px"></div><p style="font-size:26px">162</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:200px;font-size:26px">Якутск-3</p><div style="width:555px;height:34px;background:#A9BCE0;border-radius:0px 6px 6px 0px"></div><p style="font-size:26px">197</p></div>
+<div style="display:flex;align-items:center;gap:20px"><p style="width:200px;font-size:26px">Якутск-6</p><div style="width:600px;height:34px;background:#A9BCE0;border-radius:0px 6px 6px 0px"></div><p style="font-size:26px">213</p></div>
+</div>
+<p style="font-size:26px;line-height:1.4">В пик Я-1 физически делает в 1,5–2 раза меньше, поэтому выходные её не вытягивают. Лучший месяц года — <b>6,39</b> (август). Цель — <b>6,5</b>, в будни — <b>6,6</b>.</p>
+</div>
+<div style="flex:2;display:flex;flex-direction:column;gap:20px;background:#FFFDF8;border-radius:20px;padding:40px">
+<h3 style="font-size:36px;font-weight:600">Якутск-10: старт</h3>
+<p style="font-size:26px;line-height:1.4">Открылась 6 октября. Продуктов в день — около 600, вдвое меньше средней по сети, и они растут каждую неделю.</p>
+<p style="font-size:26px;line-height:1.4">Пятница и суббота сейчас 6,47 — поэтому на старте цель недели <b>6,5</b>, в будни — <b>6,5</b> (сейчас 4,5).</p>
+<p style="font-size:26px;line-height:1.4">Пересматривать каждый месяц: при росте продаж цель поднимается к 7,5.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Продуктов в самый загруженный час, среднее по пятницам и субботам октября 2026 (продажи Dodo IS). Цель Я-10 — наше предложение на старт.</p>
+<aside>Якутск-1 маленькая и с одной печью. Это видно в цифрах: в самый загруженный час пятницы и субботы она выпускает 114 продуктов, а Я-3 и Я-6 — около 200. Поэтому у Я-1 выходные не могут дать такой же подъём, как у других, и общая цель 7,5 для неё нереальна. За весь 2026 год её лучший месяц — 6,39. Ставим цель 6,5: это чуть выше лучшего результата и реально. Для этого в будни нужно 6,6 — сейчас 5,1. Якутск-10 только открылась, продуктов пока мало, поэтому на старте тоже 6,5, с пересмотром каждый месяц.</aside>
+</section></div><details><summary>Слайд 9 · комментарий</summary><p>Якутск-1 маленькая и с одной печью. Это видно в цифрах: в самый загруженный час пятницы и субботы она выпускает 114 продуктов, а Я-3 и Я-6 — около 200. Поэтому у Я-1 выходные не могут дать такой же подъём, как у других, и общая цель 7,5 для неё нереальна. За весь 2026 год её лучший месяц — 6,39. Ставим цель 6,5: это чуть выше лучшего результата и реально. Для этого в будни нужно 6,6 — сейчас 5,1. Якутск-10 только открылась, продуктов пока мало, поэтому на старте тоже 6,5, с пересмотром каждый месяц.</p></details><div class="frame" id="slide-10"><section id="plan" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Шесть правил графика в будни</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;flex:1">
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:36px;border-top:8px solid #E2661B">
+<h3 style="font-size:34px;font-weight:600">1. Утро до 11</h3>
+<p style="font-size:26px;line-height:1.4">Открытие в 8:00 — 2 повара и менеджер. Перемещение принимают двое, до 30 минут. Остальные выходят к 10–11.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:36px;border-top:8px solid #E2661B">
+<h3 style="font-size:34px;font-weight:600">2. Дневная яма 14–17</h3>
+<p style="font-size:26px;line-height:1.4">Вечерняя смена выходит к 16–17, а не к 14. Дневная уходит в 15–16. В яму — заготовки и уборка.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:36px;border-top:8px solid #E2661B">
+<h3 style="font-size:34px;font-weight:600">3. Закрытие в 23:00</h3>
+<p style="font-size:26px;line-height:1.4">С 22:00 — не больше 4–5 человек. В 23:00 остаются трое, уборка до 23:40. Зал и заготовки — до закрытия.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:36px;border-top:8px solid #2F5DA8">
+<h3 style="font-size:34px;font-weight:600">4. Кассиры</h3>
+<p style="font-size:26px;line-height:1.4">Вне пика — один кассир. Кассир доставки — только 17–21, в остальное время выдачу ведёт универсал. Сейчас кассиры — 16% часов.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:36px;border-top:8px solid #2F5DA8">
+<h3 style="font-size:34px;font-weight:600">5. Стажёры и клинеры</h3>
+<p style="font-size:26px;line-height:1.4">Стажёр в будни — вместо часов опытного, а не сверху. Клинер — в часы спада. Я-6: клинеров с 32 до 16 ч в день.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;background:#FFFDF8;border-radius:20px;padding:36px;border-top:8px solid #2F5DA8">
+<h3 style="font-size:34px;font-weight:600">6. Ночь Я-5 и Я-6</h3>
+<p style="font-size:26px;line-height:1.4">23:00–2:00 — по примеру Я-5: 6–7 человек на 60 продуктов в час. После 2:00 — двое.</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Пятницу, субботу и вечерний пик 17–21 не режем: там людей и так впритык.</p>
+<aside>Это не «сократить людей», а поставить их туда, где есть продажи. Утро: не выходить всей сменой к восьми. Дневная яма: вечерняя смена приходит слишком рано и два часа стоит вместе с дневной. Закрытие: после 23 часов уходить быстрее, по примеру Я-2. Кассиры и стажёры — самые большие часы, которые не делают продукт. Клинеры в Dodo IS считаются кухней. Ночная зона Я-5 работает отлично, Я-6 стоит перестроить по её примеру. Выходные и пик не трогаем.</aside>
+</section></div><details><summary>Слайд 10 · комментарий</summary><p>Это не «сократить людей», а поставить их туда, где есть продажи. Утро: не выходить всей сменой к восьми. Дневная яма: вечерняя смена приходит слишком рано и два часа стоит вместе с дневной. Закрытие: после 23 часов уходить быстрее, по примеру Я-2. Кассиры и стажёры — самые большие часы, которые не делают продукт. Клинеры в Dodo IS считаются кухней. Ночная зона Я-5 работает отлично, Я-6 стоит перестроить по её примеру. Выходные и пик не трогаем.</p></details><div class="frame" id="slide-11"><section id="units-a" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Задачи по пиццериям: Я-1, Я-2, Я-3, Я-10</h2>
+<div style="display:flex;gap:24px;flex:1">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-1</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 6,5 · будни 5,1 → 6,6</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−31 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 137 → 106</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>Кассиры 38 ч</b> в будний день — 28% часов</p>
+<p style="font-size:24px;line-height:1.3"><b>Закрытие:</b> 8 человек после 23:00, последний уходит в 0:00</p>
+<p style="font-size:24px;line-height:1.3"><b>Стажёры 17 ч</b> в день — ставить в Пт–Сб</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-2</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 7,5 · будни 5,3 → 7,6</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−47 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 152 → 105</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>14–17:</b> 11 человек при 55 продуктах в час</p>
+<p style="font-size:24px;line-height:1.3"><b>После 21:</b> 10 человек при 39 продуктах в час</p>
+<p style="font-size:24px;line-height:1.3"><b>Закрытие</b> быстрее всех — к 23:38, пример для сети</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-3</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 7,5 · будни 5,5 → 7,3</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−48 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 204 → 156</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>Кассиры 53 ч</b> в будний день — больше всех</p>
+<p style="font-size:24px;line-height:1.3"><b>Закрытие:</b> 11,4 чел.-ч после 23:00 — больше всех</p>
+<p style="font-size:24px;line-height:1.3"><b>После 21:</b> 13 человек, нужно 6–7</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-10</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 6,5 · будни 4,5 → 6,5</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−31 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 108 → 77</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>14–17:</b> 9 человек при 26 продуктах в час</p>
+<p style="font-size:24px;line-height:1.3"><b>Стажёры 16 ч</b> в день — 17% часов</p>
+<p style="font-size:24px;line-height:1.3"><b>Закрытие:</b> последний уходит в 0:00</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Будни = Пн–Чт, октябрь 2026. Пятницу и субботу не трогаем. Число людей — в среднем на кухне в этот час.</p>
+<aside>Четыре пиццерии с самым большим разрывом. Я-1 и Я-3 — перебор кассиров и долгое закрытие. Я-2 — дневная яма и вечер после 21, зато закрывается быстрее всех. Я-10 — дневная яма и много стажёров. У Я-1 и Я-10 своя цель недели — 6,5.</aside>
+</section></div><details><summary>Слайд 11 · комментарий</summary><p>Четыре пиццерии с самым большим разрывом. Я-1 и Я-3 — перебор кассиров и долгое закрытие. Я-2 — дневная яма и вечер после 21, зато закрывается быстрее всех. Я-10 — дневная яма и много стажёров. У Я-1 и Я-10 своя цель недели — 6,5.</p></details><div class="frame" id="slide-12"><section id="units-b" data-transition="fade" style="background:#F6F3EC;color:#1F2228;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:36px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#16181D">Задачи по пиццериям: Я-4, Я-5, Я-6, Я-7</h2>
+<div style="display:flex;gap:24px;flex:1">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-4</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 7,5 · будни 6,3 → 7,0</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−16 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 135 → 119</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>Ближе всех к цели</b>, выходные сильные</p>
+<p style="font-size:24px;line-height:1.3"><b>Закрытие:</b> последний уходит в 0:17</p>
+<p style="font-size:24px;line-height:1.3"><b>Стажёры 17 ч</b> в будний день</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-5</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 7,5 · будни 6,3 → 7,0</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−23 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 172 → 149</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>23:00–2:00 — 9,7</b>, лучшее время суток</p>
+<p style="font-size:24px;line-height:1.3"><b>После 2:00:</b> 4 человека при 13 продуктах в час</p>
+<p style="font-size:24px;line-height:1.3"><b>14–17:</b> 9 человек при 44 продуктах в час</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-6</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 7,5 · будни 6,3 → 7,2</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−36 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 265 → 229</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>23:00–2:00:</b> 11 человек, у Я-5 на тот же объём — 6</p>
+<p style="font-size:24px;line-height:1.3"><b>Клинеры 29 ч</b> в будний день — 11% часов</p>
+<p style="font-size:24px;line-height:1.3"><b>Утро 7–9:</b> 6–7 человек при 15 продуктах в час</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;border-radius:20px;padding:32px">
+<h3 style="font-size:40px;font-weight:600">Якутск-7</h3>
+<p style="font-size:24px;color:#5B5F68">цель недели 7,5 · будни 5,8 → 7,2</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:72px;line-height:1;font-weight:700;color:#B24A0C">−29 ч</p>
+<p style="font-size:26px;line-height:1.3">в день Пн–Чт: 156 → 127</p>
+<hr style="border-top:2px solid #DED8CB">
+<p style="font-size:24px;line-height:1.3"><b>14–17:</b> 11 человек, нужно 9</p>
+<p style="font-size:24px;line-height:1.3"><b>После 21:</b> 10 человек, нужно 7–8</p>
+<p style="font-size:24px;line-height:1.3"><b>Воскресенье 5,7</b> — держать состав как в будни</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#5B5F68">Будни = Пн–Чт, октябрь 2026. Пятницу и субботу не трогаем. Число людей — в среднем на кухне в этот час.</p>
+<aside>Эти четыре пиццерии ближе к цели. Я-4 и Я-5 хватит 7,0 в будни — у них сильные выходные. Я-6 — главное: ночная зона 23–2 по примеру Я-5, клинеры и утро. Я-7 — дневная яма, вечер и воскресенье.</aside>
+</section></div><details><summary>Слайд 12 · комментарий</summary><p>Эти четыре пиццерии ближе к цели. Я-4 и Я-5 хватит 7,0 в будни — у них сильные выходные. Я-6 — главное: ночная зона 23–2 по примеру Я-5, клинеры и утро. Я-7 — дневная яма, вечер и воскресенье.</p></details><div class="frame" id="slide-13"><section id="effect" data-transition="fade" style="background:#16181D;color:#F4F1EA;font-family:'Rubik', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Oswald', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#F4F1EA">Эффект и контроль</h2>
+<div style="display:flex;gap:64px">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:4px;border-left:6px solid #8E8A80;padding:0px 0px 0px 28px">
+<p style="font-size:26px;color:#C9C4B8">Ноябрь: будни до 7,0</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:88px;line-height:1.05;font-weight:700">неделя 7,37</p>
+<p style="font-size:26px;color:#C9C4B8">Я-2…Я-7, выходные как сейчас</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;border-left:6px solid #F07A2E;padding:0px 0px 0px 28px">
+<p style="font-size:26px;color:#C9C4B8">Декабрь: будни по таблице, около 7,2</p>
+<p style="font-family:'Oswald', Arial, sans-serif;font-size:88px;line-height:1.05;font-weight:700;color:#F07A2E">7,5 · 1,7 млн ₽</p>
+<p style="font-size:26px;color:#C9C4B8">экономия в месяц, ≈ 20 млн ₽ в год</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px">
+<h3 style="font-size:36px;font-weight:600;color:#F4F1EA">Как держим</h3>
+<p style="font-size:28px;line-height:1.4;color:#E4DFD3"><b style="color:#F07A2E">График</b> на неделю — по часам из таблицы целей.</p>
+<p style="font-size:28px;line-height:1.4;color:#E4DFD3"><b style="color:#F07A2E">Каждый день</b> менеджер в 15:00 и 21:00 сверяет людей с продажами и отпускает лишних.</p>
+<p style="font-size:28px;line-height:1.4;color:#E4DFD3"><b style="color:#F07A2E">Каждый понедельник</b> на планёрке — производительность недели и будней по каждой пиццерии.</p>
+<p style="font-size:28px;line-height:1.4;color:#E4DFD3"><b style="color:#F07A2E">Главный показатель</b> управляющего — неделя 7,5 (Я-1 и Я-10 — 6,5).</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8E8A80">Расчёт на средней неделе октября 2026 и ставке 300 ₽/ч. Источник: Dodo IS — Аналитика, смены и продажи.</p>
+<aside>Первый шаг — будни до 7: шесть пиццерий с общей целью выходят на 7,37 за неделю. Второй шаг — будни по таблице, это около 7,2, у каждой пиццерии своё число: неделя 7,5. Выходные не трогаем. Экономия около 1,7 млн рублей в месяц, около 20 млн в год. Контроль простой: график по часам из таблицы, менеджер дважды в день сверяет людей с продажами, на планёрке смотрим неделю и будни. Главный KPI управляющего — неделя 7,5, у Я-1 и Я-10 — 6,5.</aside>
+</section></div><details><summary>Слайд 13 · комментарий</summary><p>Первый шаг — будни до 7: шесть пиццерий с общей целью выходят на 7,37 за неделю. Второй шаг — будни по таблице, это около 7,2, у каждой пиццерии своё число: неделя 7,5. Выходные не трогаем. Экономия около 1,7 млн рублей в месяц, около 20 млн в год. Контроль простой: график по часам из таблицы, менеджер дважды в день сверяет людей с продажами, на планёрке смотрим неделю и будни. Главный KPI управляющего — неделя 7,5, у Я-1 и Я-10 — 6,5.</p></details></main><script>
+function fit(){document.querySelectorAll('.frame').forEach(f=>{const s=f.firstElementChild;s.style.transform='scale('+(f.clientWidth/1920)+')'})}
+addEventListener('resize',fit);addEventListener('load',fit);fit();
+</script></body></html>
