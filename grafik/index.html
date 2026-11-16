@@ -139,9 +139,12 @@ async function loadState(){
 async function save(fields){
   const who = ($('#who')?.value || LS.get('g_who','')).trim();
   if (who) LS.set('g_who', who);
-  const body = {week:S.week, role:ROLE, who, code:LS.get('g_code',''), fields};
+  const rk = $('#rukcode') ? $('#rukcode').value.trim() : '';
+  const body = {week:S.week, role:ROLE, who, code:LS.get('g_code',''), code_ruk:rk, fields};
   const r = await fetch(API_URL, {method:'POST', body:JSON.stringify(body)}).then(r=>r.json());
-  if (!r.ok) throw new Error(r.error || 'не сохранилось');
+  const ERR = {bad_ruk_code:'неверный код руководителя', no_ruk_code:'код руководителя ещё не задан в хранилище', bad_code:'неверный код доступа'};
+  if (!r.ok) throw new Error(ERR[r.error] || r.error || 'не сохранилось');
+  if (rk) LS.set('g_rk', rk);
   Object.assign(S.st, fields);
 }
 
@@ -230,7 +233,8 @@ function render(){
 <p class="lead">Агент проверяет графики из Dodo IS против прогноза Dodo IS, плана выручки и цели производительности на ${MONTHS[+d.month.slice(5)-1]}. Проверка от ${esc(d.generated.replace('T',' '))}.${S.stOk===false?' <b class="bad">Решения сейчас не загрузились — обновите страницу.</b>':''}</p></div>
 <div class="bar"><label for="wk" class="mode">Неделя</label><select id="wk">${weekOpts}</select>
 ${S.view!=='all'&&S.view!=='ruk'?`<a class="mode" href="#">Все пиццерии</a>`:''}
-<label for="who" class="mode">Кто вы</label><input id="who" value="${esc(LS.get('g_who',''))}" placeholder="Имя" size="14"></div>
+<label for="who" class="mode">Кто вы</label><input id="who" value="${esc(LS.get('g_who',''))}" placeholder="Имя" size="14">
+${S.view==='ruk'?`<label for="rukcode" class="mode">Код руководителя</label><input id="rukcode" type="password" autocomplete="current-password" value="${esc(LS.get('g_rk',''))}" size="10">`:''}</div>
 ${one?'':`<div class="net">
 <div><span>Согласовано</span><b class="good">${cnt('approved')}</b></div>
 <div><span>Ждут проверки</span><b>${cnt('ready')+cnt('changed')}</b></div>
@@ -259,6 +263,7 @@ ${S.view==='all'||S.view==='ruk'?`<div class="links"><span class="mode">Ссыл
 async function act(b){
   const k = b.dataset.k, u = S.data.units.find(x => key(x.unit)===k), now = new Date().toISOString();
   if (!($('#who').value||'').trim()) { toast('Напишите, кто вы — поле «Кто вы» вверху'); $('#who').focus(); return; }
+  if (b.dataset.act !== 'ready' && !($('#rukcode').value||'').trim()) { toast('Введите код руководителя вверху страницы'); $('#rukcode').focus(); return; }
   const f = {};
   if (b.dataset.act === 'approve') Object.assign(f, {[`g_${k}_ok`]:'approved', [`g_${k}_at`]:now, [`g_${k}_mod`]:u.last_modified||'', [`g_${k}_note`]:$(`#n-${k}`).value.trim()});
   if (b.dataset.act === 'return') {
@@ -268,7 +273,7 @@ async function act(b){
   if (b.dataset.act === 'ready') Object.assign(f, {[`g_${k}_ready`]:now, [`g_${k}_mnote`]:$(`#m-${k}`).value.trim()});
   b.disabled = true;
   try { await save(f); toast(b.dataset.act==='approve'?`${u.unit}: согласовано`:b.dataset.act==='return'?`${u.unit}: возвращён на доработку`:'Отправлено руководителю'); render(); }
-  catch (e) { toast('Не сохранилось: ' + e.message + '. Попробуйте ещё раз.'); b.disabled = false; }
+  catch (e) { toast('Не сохранилось: ' + e.message + '.'); b.disabled = false; }
 }
 
 async function go(week){
