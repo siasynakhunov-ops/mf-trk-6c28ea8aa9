@@ -1,0 +1,197 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Печи: вторая печь только в пик</title><meta property="og:title" content="Печи: вторая печь только в пик"><meta property="og:description" content="Додо Пицца Якутск · экономия электричества на печах">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400..700&family=Nunito+Sans:wght@400;600;700&display=swap"><style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#202227}
+.top{position:sticky;top:0;z-index:5;background:#16181D;border-bottom:1px solid #33363d;padding:12px 16px;font:600 15px Rubik,Arial,sans-serif;color:#F4F1EA}
+.deck{max-width:1600px;margin:0 auto;padding:16px 16px 48px;display:flex;flex-direction:column;gap:20px}
+.frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.frame>section{position:absolute;left:0;top:0;transform-origin:0 0}
+details{background:#2a2d34;border-radius:8px;padding:10px 14px;color:#C9C4B8;font:15px/1.5 Rubik,Arial,sans-serif}
+summary{cursor:pointer;color:#F4F1EA;font-size:14px} details p{margin:8px 0 0}
+.dl{background:#16181D;color:#F4F1EA;font:18px Rubik,Arial,sans-serif;padding:24px 16px;text-align:center} .dl a{color:#F07A2E}
+section *{margin:0;box-sizing:border-box}
+section h1{font-size:96px;font-weight:600}section h2{font-size:64px;font-weight:600}section h3{font-size:44px;font-weight:600}
+section{box-sizing:border-box;width:1920px;height:1080px;overflow:hidden;position:relative}
+section aside{display:none}
+section table{border-collapse:separate;border-spacing:0;border:solid rgba(26,22,20,.15);border-width:2px 0 0 2px}
+section th,section td{padding:.35em .6em;text-align:left;border:solid rgba(26,22,20,.15);border-width:0 2px 2px 0}
+section th{font-weight:700;color:#1A1614}
+:root{--dark:#1A1614;--cream:#FBF6EF;--cream2:#F2E9DD;--orange:#FF6900;--orange-t:#C24E00;--orange-big:#E35A00;--body:#4A403A;--muted:#7A6E66;--line:#E2D6C6;}
+body{font-family:'Nunito Sans',Arial,sans-serif;color:var(--body);}
+section{background:var(--cream);padding:128px;display:flex;flex-direction:column;gap:40px;counter-increment:page;}
+section.alt{background:var(--cream2);}
+section.dark{background:var(--dark);color:#E9DED2;}
+h1,h2,h3{font-family:'Rubik',Arial,sans-serif;color:var(--dark);}
+h1{font-size:96px;font-weight:700;line-height:1.05;}
+h2{font-size:64px;font-weight:600;line-height:1.1;}
+h3{font-size:32px;font-weight:600;line-height:1.2;}
+.dark h1,.dark h2,.dark h3{color:#FBF6EF;}
+.eyebrow{font-size:24px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange-t);}
+.dark .eyebrow{color:#FF8A3D;}
+.lead{font-size:32px;line-height:1.4;color:var(--body);}
+.dark .lead{color:#D9CCBF;}
+.small{font-size:24px;line-height:1.4;color:var(--muted);}
+.dark .small{color:#B8AA9C;}
+.foot{position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:var(--muted);}
+.big{font-family:'Rubik',Arial,sans-serif;font-size:160px;font-weight:700;line-height:1;color:#FF7A1A;}
+.row{display:flex;gap:32px;}
+.card{flex:1;background:#FFFDFA;border:2px solid var(--line);border-radius:20px;padding:36px;display:flex;flex-direction:column;gap:12px;}
+.alt .card{background:var(--cream);}
+.dark .card{background:#2A2320;border-color:#3D332E;}
+.card .num{font-family:'Rubik',Arial,sans-serif;font-size:64px;font-weight:700;color:var(--orange-big);line-height:1;}
+.dark .card .num{color:#FF8A3D;}
+.card .lbl{font-size:24px;line-height:1.35;color:var(--muted);}
+.dark .card .lbl{color:#B8AA9C;}
+.card .txt{font-size:28px;line-height:1.4;color:var(--body);}
+.dark .card .txt{color:#E9DED2;}
+table.t{font-size:28px;color:var(--body);width:100%;}
+.barrow{display:flex;align-items:center;gap:24px;}
+.barrow .bl{width:220px;font-size:26px;font-weight:700;color:var(--dark);}
+.barrow .bar{height:44px;background:var(--orange);border-radius:6px;}
+.barrow .bar.grey{background:#CDBFAF;}
+.barrow .bar.red{background:#B33A1A;}
+.barrow .bv{font-size:28px;font-weight:700;color:var(--dark);white-space:nowrap;}
+.task{display:flex;gap:28px;align-items:flex-start;}
+.task .n{font-family:'Rubik',Arial,sans-serif;font-size:44px;font-weight:700;color:var(--orange-big);width:56px;line-height:1;}
+.task .tx{flex:1;display:flex;flex-direction:column;gap:6px;}
+.task .tx h3{font-size:32px;}
+.task .tx p{font-size:26px;line-height:1.4;color:var(--body);}
+.fade{animation:up .5s ease-out both;animation-delay:calc(var(--i,0) * 110ms);}
+@keyframes up{from{opacity:0;transform:translate(0,24px);}to{opacity:1;transform:translate(0,0);}}
+
+body{color:#F4F1EA}
+</style></head><body><div class="top">Печи: вторая печь только в пик</div><main class="deck"><div class="frame" id="slide-1"><section id="cover" class="dark" style="justify-content:center;">
+<p class="eyebrow">Якутск · печи · ноябрь 2026</p>
+<h1 style="width:1500px;">Вторая печь — только в пик</h1>
+<div class="row" style="align-items:flex-end;gap:56px;">
+<p class="big fade" style="--i:1;font-size:140px;white-space:nowrap;">≈174 тыс. ₽</p>
+<p class="lead fade" style="--i:2;width:680px;padding-bottom:16px;">экономии в месяц на 7 пиццериях (≈2,1&#160;млн&#160;₽ в год) — без замедления кухни</p>
+</div>
+<p class="lead" style="width:1500px;">В тихие часы работаем на одной печи. Время включения и выключения второй — по каждой пиццерии, по её реальной нагрузке за 6 недель.</p>
+<p class="foot" style="color:#B8AA9C;">Нагрузка: Dodo IS, 05.10–15.11.2026, продукты по часам · Тариф 14 ₽/кВт·ч — расчётный</p>
+<aside>Главная мысль: вторая печь большую часть утра и поздний вечер греет воздух. Если включать её только на пиковые часы, сеть экономит около 174 тысяч рублей в месяц. Скорость не страдает — порог проверен на Я-1, где печь одна.</aside>
+</section>
+</div><details><summary>Слайд 1 · комментарий</summary><p>Главная мысль: вторая печь большую часть утра и поздний вечер греет воздух. Если включать её только на пиковые часы, сеть экономит около 174 тысяч рублей в месяц. Скорость не страдает — порог проверен на Я-1, где печь одна.</p></details><div class="frame" id="slide-2"><section id="cost" style="padding:128px 128px 160px;">
+<p class="eyebrow">Сколько стоит работа печи</p>
+<h2>Минута второй печи — 2–3 ₽</h2>
+<div class="row">
+<div class="card fade" style="--i:1;">
+<h3>Zanolli Synthesis 11/65</h3>
+<p class="lbl">Я-1 (одна), Я-2, Я-3, Я-4, Я-5 · 18,5 кВт</p>
+<p class="num">2,2 ₽/мин</p>
+<p class="txt">в работе · 130 ₽ в час</p>
+<p class="txt">разогрев 20 мин = 86 ₽</p>
+<p class="txt"><b>≈60 тыс. ₽/мес</b>, если вторая печь горит весь день</p>
+</div>
+<div class="card fade" style="--i:2;">
+<h3>XLT 3240</h3>
+<p class="lbl">Я-6 · 27 кВт</p>
+<p class="num">3,2 ₽/мин</p>
+<p class="txt">в работе · 189 ₽ в час</p>
+<p class="txt">разогрев 20 мин = 126 ₽</p>
+<p class="txt"><b>≈88 тыс. ₽/мес</b>, если вторая печь горит весь день</p>
+</div>
+<div class="card fade" style="--i:3;">
+<h3>Robochef 800</h3>
+<p class="lbl">Я-7, Я-10, Я-11 · 27,8 кВт</p>
+<p class="num">3,2 ₽/мин</p>
+<p class="txt">в работе · 195 ₽ в час</p>
+<p class="txt">разогрев 20 мин = 130 ₽</p>
+<p class="txt"><b>≈91 тыс. ₽/мес</b>, если вторая печь горит весь день</p>
+</div>
+</div>
+<p class="small">На разогреве печь берёт полную паспортную мощность. Разогретая держит температуру термостатом и в среднем тянет около половины паспорта — это и есть «минута в работе».</p>
+<p class="foot">Мощность — паспорта моделей · 14 ₽/кВт·ч с НДС (расчётный) · «весь день» = 7:40–23:00, 15,3 ч</p>
+<aside>Цифры на минуту и час — при тарифе 14 рублей за киловатт-час. Если реальный тариф другой, всё пересчитывается пропорционально. Доля 50% от паспорта — типичная для конвейерных печей на холостом ходу; точную цифру даст замер по счётчику, это задача на последнем слайде.</aside>
+</section>
+</div><details><summary>Слайд 2 · комментарий</summary><p>Цифры на минуту и час — при тарифе 14 рублей за киловатт-час. Если реальный тариф другой, всё пересчитывается пропорционально. Доля 50% от паспорта — типичная для конвейерных печей на холостом ходу; точную цифру даст замер по счётчику, это задача на последнем слайде.</p></details><div class="frame" id="slide-3"><section id="rule" class="alt" style="padding:128px 128px 160px;">
+<p class="eyebrow">Правило одной печи</p>
+<h2>Одна Zanolli — до 70 продуктов в час</h2>
+<div class="row" style="gap:72px;align-items:flex-start;">
+<div style="flex:1.6;display:flex;flex-direction:column;gap:18px;">
+<p class="small" style="color:#4A403A;">Я-1 работает на одной печи. Время приготовления заказа (медиана) в зависимости от загрузки часа, продуктов в час:</p>
+<div class="barrow fade" style="--i:1;"><p class="bl">до 40</p><div class="bar" style="width:277px;"></div><p class="bv">8,3 мин</p></div>
+<div class="barrow fade" style="--i:2;"><p class="bl">40–55</p><div class="bar" style="width:290px;"></div><p class="bv">8,7 мин</p></div>
+<div class="barrow fade" style="--i:3;"><p class="bl">55–70</p><div class="bar" style="width:327px;"></div><p class="bv">9,8 мин</p></div>
+<div class="barrow fade" style="--i:4;"><p class="bl">70–85</p><div class="bar red" style="width:390px;"></div><p class="bv">11,7 мин</p></div>
+<div class="barrow fade" style="--i:5;"><p class="bl">100–130</p><div class="bar red" style="width:520px;"></div><p class="bv">15,6 мин</p></div>
+<div class="barrow fade" style="--i:6;"><p class="bl">Я-2 · 2 печи</p><div class="bar grey" style="width:327px;"></div><p class="bv">9,8 мин</p></div>
+<p class="small">После 70 продуктов в час одна печь готовит на 3–6 минут дольше. Я-2 на двух печах при 100–130 — 9,8 мин.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;">
+<div class="card"><p class="num">≤ 70 / час</p><p class="txt">Zanolli: одна печь, если в 9 из 10 дней в этот час было не больше 70</p></div>
+<div class="card"><p class="num">≤ 85 / час</p><p class="txt">Robochef 800 и XLT 3240: лента 80 см против 65 см</p></div>
+<p class="small">И ни разу за 6 недель больше 110 (Zanolli) / 130 — иначе обе печи.</p>
+</div>
+</div>
+<p class="foot">Продукты — всё, что идёт через печь · Dodo IS, 05.10–15.11.2026, ≈14 тыс. заказов Я-1</p>
+<aside>Почему именно 70. До 55 продуктов в час одна печь работает так же быстро, как две в других пиццериях. От 55 до 70 — плюс минута. После 70 время резко растёт: почти 12 минут, а в пике 15–16. Поэтому порог 70 для Zanolli. Для Robochef и XLT порог 85 — оценка по ширине ленты; её проверяем первые две недели по времени приготовления.</aside>
+</section>
+</div><details><summary>Слайд 3 · комментарий</summary><p>Почему именно 70. До 55 продуктов в час одна печь работает так же быстро, как две в других пиццериях. От 55 до 70 — плюс минута. После 70 время резко растёт: почти 12 минут, а в пике 15–16. Поэтому порог 70 для Zanolli. Для Robochef и XLT порог 85 — оценка по ширине ленты; её проверяем первые две недели по времени приготовления.</p></details><div class="frame" id="slide-4"><section id="schedule" style="padding:128px 128px 160px;gap:32px;">
+<p class="eyebrow">График второй печи</p>
+<h2>Вторая печь включена только в эти часы</h2>
+<table class="t" style="font-size:26px;">
+<tr><th style="width:15%;">Пиццерия</th><th style="width:17%;">Печь</th><th style="width:22%;text-align:center;">Пн–Чт</th><th style="width:22%;text-align:center;">Пт–Вс</th><th style="width:24%;text-align:right;">Без 2-й печи, ч/день</th></tr>
+<tr><td>Я-10</td><td>Robochef</td><td style="text-align:center;">16:40 → 20:00</td><td style="text-align:center;">11:40 → 20:00</td><td style="text-align:right;">12 / 7</td></tr>
+<tr><td>Я-7</td><td>Robochef</td><td style="text-align:center;">11:40 → 21:00</td><td style="text-align:center;">10:40 → 22:00</td><td style="text-align:right;">6 / 4</td></tr>
+<tr><td>Я-4</td><td>Zanolli</td><td style="text-align:center;">11:40 → 21:00</td><td style="text-align:center;">10:40 → 22:00</td><td style="text-align:right;">6 / 4</td></tr>
+<tr><td>Я-2</td><td>Zanolli</td><td style="text-align:center;">11:40 → 22:00</td><td style="text-align:center;">09:40 → 22:00</td><td style="text-align:right;">5 / 3</td></tr>
+<tr><td>Я-6</td><td>XLT 3240</td><td style="text-align:center;">10:40 → 00:00</td><td style="text-align:center;">09:40 → 01:00</td><td style="text-align:right;">5 / 3</td></tr>
+<tr><td>Я-5</td><td>Zanolli</td><td style="text-align:center;">10:40 → 00:00</td><td style="text-align:center;">09:40 → 01:00</td><td style="text-align:right;">5 / 3</td></tr>
+<tr><td>Я-3</td><td>Zanolli</td><td style="text-align:center;">09:40 → 22:00</td><td style="text-align:center;">08:40 → 23:00</td><td style="text-align:right;">3 / 1</td></tr>
+</table>
+<p class="small">Включение — за 20 минут до пикового часа, чтобы печь успела разогреться. Первая печь — как сейчас, с открытия до закрытия. Я-1 — одна печь, не меняем. Я-11 (Robochef) — с открытия по графику Я-10, пересчёт через 3 недели.</p>
+<p class="foot">Нагрузка 05.10–15.11.2026 · Пт–Вс — по самому нагруженному из трёх дней · Я-5, Я-6 работают до 02:00</p>
+<aside>Как читать: стрелка — вторая печь включена с первого времени по второе. Всё остальное время работаем на одной. Я-10 на сегодня самая недогруженная, поэтому там вторая печь нужна только вечером. Важно: в Я-10 открывается зал — нагрузка вырастет, график Я-10 пересчитываем через 2 недели после открытия зала.</aside>
+</section>
+</div><details><summary>Слайд 4 · комментарий</summary><p>Как читать: стрелка — вторая печь включена с первого времени по второе. Всё остальное время работаем на одной. Я-10 на сегодня самая недогруженная, поэтому там вторая печь нужна только вечером. Важно: в Я-10 открывается зал — нагрузка вырастет, график Я-10 пересчитываем через 2 недели после открытия зала.</p></details><div class="frame" id="slide-5"><section id="money" class="alt" style="padding:128px 128px 160px;">
+<p class="eyebrow">Экономия</p>
+<h2>≈174 тыс. ₽ в месяц, 12,4 тыс. кВт·ч</h2>
+<div class="row" style="gap:72px;align-items:flex-start;">
+<div style="flex:1.6;display:flex;flex-direction:column;gap:16px;">
+<div class="barrow fade" style="--i:1;"><p class="bl">Я-10</p><div class="bar" style="width:560px;"></div><p class="bv">58,3 тыс.</p></div>
+<div class="barrow fade" style="--i:2;"><p class="bl">Я-7</p><div class="bar" style="width:292px;"></div><p class="bv">30,4 тыс.</p></div>
+<div class="barrow fade" style="--i:3;"><p class="bl">Я-6</p><div class="bar" style="width:229px;"></div><p class="bv">23,8 тыс.</p></div>
+<div class="barrow fade" style="--i:4;"><p class="bl">Я-4</p><div class="bar" style="width:194px;"></div><p class="bv">20,3 тыс.</p></div>
+<div class="barrow fade" style="--i:5;"><p class="bl">Я-2</p><div class="bar" style="width:157px;"></div><p class="bv">16,3 тыс.</p></div>
+<div class="barrow fade" style="--i:6;"><p class="bl">Я-5</p><div class="bar" style="width:157px;"></div><p class="bv">16,3 тыс.</p></div>
+<div class="barrow fade" style="--i:7;"><p class="bl">Я-3</p><div class="bar" style="width:81px;"></div><p class="bv">8,4 тыс.</p></div>
+<p class="small">₽ в месяц по пиццериям. Я-1 — одна печь, экономии нет.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:24px;">
+<div class="card"><p class="num">≈2,1 млн ₽</p><p class="txt">в год — около 9% счёта пиццерий за электричество</p></div>
+<div class="card"><p class="num">150–200 тыс.</p><p class="txt">в месяц при тарифе 12–16 ₽ за кВт·ч</p></div>
+<p class="small">Плюс Я-11: до ≈58 тыс. ₽/мес, если нагрузка будет как у Я-10.</p>
+</div>
+</div>
+<p class="foot">Сравнение с режимом «обе печи с 7:40 до закрытия» · минус лишние разогревы · счёт: «Электроэнергия кафе», окт. 2026</p>
+<aside>Больше всего даёт Я-10: она пока недогружена, и вторая печь там нужна только вечером. Но в Я-10 открывается зал — экономия там уменьшится, пересчитаем. Если в какой-то пиццерии вторую печь уже выключают утром — экономия там меньше, это стоит уточнить у управляющих.</aside>
+</section>
+</div><details><summary>Слайд 5 · комментарий</summary><p>Больше всего даёт Я-10: она пока недогружена, и вторая печь там нужна только вечером. Но в Я-10 открывается зал — экономия там уменьшится, пересчитаем. Если в какой-то пиццерии вторую печь уже выключают утром — экономия там меньше, это стоит уточнить у управляющих.</p></details><div class="frame" id="slide-6"><section id="tasks" style="padding:128px 128px 160px;gap:30px;">
+<p class="eyebrow">Задачи управляющим</p>
+<h2>Как работаем со второй печью</h2>
+<div class="task fade" style="--i:1;"><p class="n">1</p><div class="tx"><h3>График второй печи — на стену у печей</h3><p>Распечатать время своей пиццерии. Вкл/выкл — менеджер смены, отметка в чек-листе.</p></div></div>
+<div class="task fade" style="--i:2;"><p class="n">2</p><div class="tx"><h3>Включать по часам, а не по очереди</h3><p>Печь греется 20 минут: ждать заказов поздно. Включаем по графику, даже если сейчас тихо.</p></div></div>
+<div class="task fade" style="--i:3;"><p class="n">3</p><div class="tx"><h3>Включить раньше графика, если</h3><p>За 15 минут больше 18 продуктов (Zanolli) или 21 (Robochef, XLT), крупный заказ, акция, мороз.</p></div></div>
+<div class="task fade" style="--i:4;"><p class="n">4</p><div class="tx"><h3>Не оставлять «на всякий случай»</h3><p>Выключить в своё время. Лишний час — 130–195 ₽, месяц без контроля — до 90 тыс. ₽ на пиццерию.</p></div></div>
+<div class="task fade" style="--i:5;"><p class="n">5</p><div class="tx"><h3>Контроль скорости — раз в неделю</h3><p>Время приготовления в часы с одной печью не хуже прежнего. Хуже — включаем вторую на час раньше.</p></div></div>
+<p class="foot">Я-10 — пересмотр через 2 недели после открытия зала · Я-11 — через 3 недели после открытия</p>
+<aside>Ключевое: печь нельзя включить «по требованию» — 20 минут разогрева. Поэтому работаем по графику, а ручное раннее включение — только по понятному сигналу. 18 продуктов за 15 минут — это темп 70 в час, порог одной Zanolli; 21 за 15 минут — 85 в час для Robochef и XLT.</aside>
+</section>
+</div><details><summary>Слайд 6 · комментарий</summary><p>Ключевое: печь нельзя включить «по требованию» — 20 минут разогрева. Поэтому работаем по графику, а ручное раннее включение — только по понятному сигналу. 18 продуктов за 15 минут — это темп 70 в час, порог одной Zanolli; 21 за 15 минут — 85 в час для Robochef и XLT.</p></details><div class="frame" id="slide-7"><section id="check" class="dark" style="padding:128px 128px 160px;">
+<p class="eyebrow">Что уточнить, чтобы цифра стала точной</p>
+<h2>Три проверки до старта</h2>
+<div class="row">
+<div class="card fade" style="--i:1;"><p class="num">Тариф</p><p class="txt">В бюджете есть только суммы, без кВт·ч. Взяли 14 ₽ за кВт·ч. Нужен один счёт энергосбыта (₽ и кВт·ч) — бухгалтерия.</p></div>
+<div class="card fade" style="--i:2;"><p class="num">Замер</p><p class="txt">Счётчик за тихий час с одной печью и за такой же час с двумя — разница и есть расход второй печи. Одна Zanolli-пиццерия и Я-7. Мы брали 50% паспорта.</p></div>
+<div class="card fade" style="--i:3;"><p class="num">Сейчас</p><p class="txt">Где вторую печь уже выключают утром? Там экономия меньше — уточнить у управляющих.</p></div>
+</div>
+<p class="lead">Через 2 недели работы — пересчёт по факту: время приготовления по часам и счёт за электричество в сравнении с прошлым месяцем.</p>
+<p class="foot" style="color:#B8AA9C;">Мощность: паспорта Zanolli 11/65 E 18,5 кВт, XLT 3240 27 кВт, Robochef RC800 27,8 кВт</p>
+<aside>Расчёт честный, но в нём два допущения: тариф и доля паспортной мощности в работе. Обе проверки занимают один день. После них цифра экономии будет точной до тысячи рублей.</aside>
+</section>
+</div><details><summary>Слайд 7 · комментарий</summary><p>Расчёт честный, но в нём два допущения: тариф и доля паспортной мощности в работе. Обе проверки занимают один день. После них цифра экономии будет точной до тысячи рублей.</p></details></main>
+<div class="dl">Скачать PDF: <a href="pechi.pdf">вся презентация</a></div>
+<script>function fit(){document.querySelectorAll('.frame').forEach(f=>{f.firstElementChild.style.transform='scale('+(f.clientWidth/1920)+')'})}addEventListener('resize',fit);addEventListener('load',fit);fit();</script>
+</body></html>
