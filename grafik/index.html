@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Согласование графиков Якутск</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Лист согласования: сводка сверху, ниже карточка каждой пиццерии — правки слева, часы справа, решение внизу */
+:root{--bg:#f6f5f2;--panel:#fff;--fg:#1d1f22;--mute:#686c72;--line:#e2dfd8;--accent:#c4501b;
+--ok:#1f7a4d;--ok-bg:#e3f1e8;--warn:#9a6400;--warn-bg:#fbf0d6;--bad:#b3261e;--bad-bg:#fbe5e2;--info:#2b5c99;--info-bg:#e2ebf6;
+--p1:#f7dccd;--p2:#efb393;--p3:#e1814f;--m1:#d6e4f2;--m2:#a9c6e6;--m3:#6f9fd2;
+--f-body:"IBM Plex Sans",system-ui,sans-serif;--f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,monospace;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#16181b;--panel:#1e2125;--fg:#e8e6e1;--mute:#9a9ea5;--line:#30343a;--accent:#ec7a45;
+--ok:#6fcf9b;--ok-bg:#19352a;--warn:#e8b552;--warn-bg:#3a2f15;--bad:#f08a80;--bad-bg:#3d1f1c;--info:#8fb6ea;--info-bg:#1d2c40;
+--p1:#4a2c1f;--p2:#7a3d20;--p3:#a94d22;--m1:#1f3044;--m2:#284a6d;--m3:#3a6aa0;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 60px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:26px}
+h1,h2,h3,h4{font-family:var(--f-head);text-wrap:balance;margin:0}
+h1{font-size:30px;font-weight:600;letter-spacing:-.01em} h2{font-size:20px;font-weight:600}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--mute);max-width:72ch;margin:6px 0 0}
+.top{display:grid;gap:6px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+select,input,textarea,button{font:inherit;color:var(--fg)}
+select,input,textarea{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 9px}
+textarea{width:100%;min-height:56px;resize:vertical}
+button{cursor:pointer;border-radius:6px;padding:7px 13px;border:1px solid var(--line);background:var(--panel);font-weight:500}
+button:hover{border-color:var(--accent)} button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--ok);border-color:var(--ok);color:var(--panel)}
+button.danger{color:var(--bad);border-color:var(--bad)}
+button:disabled{opacity:.5;cursor:default}
+.mode{font-size:13px;color:var(--mute)}
+.net{display:flex;flex-wrap:wrap;gap:12px 32px;padding:16px 0;border-block:1px solid var(--line)}
+.net div{display:grid} .net span{font-size:12px;color:var(--mute)} .net b{font:600 24px var(--f-head);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table.sum{border-collapse:collapse;width:100%;min-width:820px;font-variant-numeric:tabular-nums}
+.sum th{font:500 12px var(--f-body);color:var(--mute);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+.sum td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.sum .num{text-align:right;font-family:var(--f-mono);font-size:14px}
+.sum a{color:var(--fg);font-weight:600;text-decoration:none;border-bottom:1px solid var(--line)}
+.sum small{display:block;color:var(--mute);font-size:12px}
+.good{color:var(--ok)} .bad{color:var(--bad)}
+.pill{display:inline-block;font:500 12.5px var(--f-body);padding:2px 9px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)} .pill.bad{background:var(--bad-bg);color:var(--bad)} .pill.info{background:var(--info-bg);color:var(--info)} .pill.mute{background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+.unit{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0;scroll-margin-top:16px}
+.unit header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.unit h3{font-size:22px;margin-right:4px}
+.kvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.kv{display:grid;gap:1px} .kv span{font-size:12px;color:var(--mute)} .kv b{font:600 22px var(--f-head);font-variant-numeric:tabular-nums}
+.kv em{font-style:normal;font-size:13px;color:var(--mute)} .kv em.bad{color:var(--bad)} .kv em.good{color:var(--ok)}
+.cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:24px;align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.unit{padding:14px}}
+.hm td.need{background:var(--bg)}
+.msg{min-width:0;display:grid;gap:6px}
+.msg p{margin:0;color:var(--mute);font-size:14px}
+.msg h4{font-size:14px;font-weight:600;margin-top:8px}
+.msg ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.hmbox{min-width:0;display:grid;gap:8px} .hmbox h4{font-size:13px;font-weight:500;color:var(--mute)}
+.hm-wrap{overflow-x:auto}
+table.hm{border-collapse:separate;border-spacing:2px;font:11.5px var(--f-mono);font-variant-numeric:tabular-nums}
+.hm th{font-weight:400;color:var(--mute);padding:0 2px;text-align:center}
+.hm th.dl{text-align:left;padding-right:6px;font-family:var(--f-body);font-weight:500;color:var(--fg)}
+.hm td{width:26px;height:24px;text-align:center;border-radius:3px;background:var(--bg);color:var(--fg)}
+.hm td.pk{box-shadow:inset 0 -2px 0 var(--accent)}
+.hm .p1{background:var(--p1)} .hm .p2{background:var(--p2)} .hm .p3{background:var(--p3)}
+.hm .m1{background:var(--m1)} .hm .m2{background:var(--m2)} .hm .m3{background:var(--m3)}
+.hm td.dh,.hm th.dh{width:auto;background:transparent;text-align:left;padding-left:8px;white-space:nowrap}
+.hm td.dh span{color:var(--mute)}
+.decide{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:10px}
+.decide .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.decide .hist{font-size:13px;color:var(--mute);display:grid;gap:3px}
+.decide .hist b{color:var(--fg);font-weight:500}
+.note{padding:10px 12px;border-radius:6px;background:var(--bad-bg);color:var(--fg);font-size:14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:4px}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.how div{border-top:2px solid var(--line);padding-top:10px;display:grid;gap:4px}
+.how b{font:600 15px var(--f-head)} .how span{font-size:13.5px;color:var(--mute)} .how .when{font:500 12px var(--f-mono);color:var(--accent)}
+.foot{font-size:12.5px;color:var(--mute);max-width:90ch}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px} .links a{color:var(--accent)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="lead">Загружаю…</p></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycby-4f6xmMxhfXSFewcXVIp_MzVjag2J8PMWWp8_vqHzGJ0fENNlEm7puQIAv276dE9m/exec';
+const ROLE = 'ТУ';                         // решения по графикам храним в строках руководителя (роль «ТУ» хранилища планёрки)
+const STATUS = {ok:['Проверку прошёл','ok'], ok_if_plan:['Прошёл, если выполним план','warn'], rework:['Нужны правки','bad'], incomplete:['График не заполнен','bad']};
+const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const n1 = x => x == null ? '—' : x.toFixed(1).replace('.', ',');
+const n0 = x => x == null ? '—' : Math.round(x).toLocaleString('ru-RU');
+const key = u => u.replace('Я-', 'ya');
+const LS = {get(k, d){try{return localStorage.getItem(k) ?? d}catch(_){return d}}, set(k, v){try{localStorage.setItem(k, v)}catch(_){}}};
+let S = {weeks: [], week: null, data: null, st: {}, view: 'all'};
+
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
+async function jget(u){const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error(r.status);return r.json()}
+function fmtWhen(iso){if(!iso)return '';const d=new Date(iso);return d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Asia/Yakutsk'})}
+
+function parseHash(){
+  const h = location.hash.replace('#','');
+  if (h === 'ruk') return 'ruk';
+  if (/^ya\d+$/.test(h)) return h;
+  return 'all';
+}
+
+// Итоговое состояние пиццерии: решение руководителя важнее статуса агента
+function decision(u){
+  const k = key(u.unit), st = S.st;
+  const ok = st[`g_${k}_ok`], at = st[`g_${k}_at`], mod = st[`g_${k}_mod`];
+  const ready = st[`g_${k}_ready`];
+  if (ok === 'approved') {
+    if ((mod || '') !== (u.last_modified || '')) return {label:'Изменён после согласования', cls:'warn', state:'changed', at};
+    return {label:'Согласовано', cls:'ok', state:'approved', at};
+  }
+  if (ok === 'returned' && !(ready && ready > at)) return {label:'Возвращён на доработку', cls:'bad', state:'returned', at};
+  if (ready && (!at || ready > at)) return {label:'Управляющий исправил — проверить', cls:'info', state:'ready', at:ready};
+  const [l, c] = STATUS[u.status];
+  return {label:'Агент: ' + l.toLowerCase(), cls:c, state:'agent'};
+}
+
+async function loadState(){
+  try {
+    const r = await jget(`${API_URL}?week=${S.week}`);
+    S.st = (r.entries && r.entries[ROLE]) || {};
+    S.stOk = true;
+  } catch (_) { S.st = {}; S.stOk = false; }
+}
+
+async function save(fields){
+  const who = ($('#who')?.value || LS.get('g_who','')).trim();
+  if (who) LS.set('g_who', who);
+  const body = {week:S.week, role:ROLE, who, code:LS.get('g_code',''), fields};
+  const r = await fetch(API_URL, {method:'POST', body:JSON.stringify(body)}).then(r=>r.json());
+  if (!r.ok) throw new Error(r.error || 'не сохранилось');
+  Object.assign(S.st, fields);
+}
+
+function heat(u){
+  const sc = u.norm_hours ? u.hours_target / u.norm_hours : 1;
+  const hours = u.days[0].rows.map(r => r.h);
+  let h = '<div class="hm-wrap"><table class="hm"><thead><tr><th></th>' + hours.map(x=>`<th>${x%24}</th>`).join('') + '<th class="dh">ч / можно</th></tr></thead><tbody>';
+  for (const d of u.days){
+    h += `<tr><th class="dl">${d.dow}</th>`;
+    for (const r of d.rows){
+      if (!u.hours) { const need = r.n * sc; h += `<td class="need${r.pk?' pk':''}" title="${d.dow} ${r.h%24}:00 — нужно ≈${need.toFixed(1)} чел., прогноз ${Math.round(r.p)} прод.">${need>=.5?Math.round(need):''}</td>`; continue; }
+      const v = r.s - r.n * sc;
+      const cls = v>=2.5?'p3':v>=1.5?'p2':v>=.75?'p1':v<=-2.5?'m3':v<=-1.5?'m2':v<=-.75?'m1':'';
+      const t = Math.abs(v)>=.75 ? (v>0?'+':'−')+Math.round(Math.abs(v)) : '';
+      h += `<td class="${cls}${r.pk?' pk':''}" title="${d.dow} ${r.h%24}:00 — в графике ${r.s.toFixed(1)}, норма ${(r.n*sc).toFixed(1)}, прогноз ${Math.round(r.p)} прод.">${t}</td>`;
+    }
+    h += `<td class="dh">${n0(d.hours)}<span> / ${n0(d.target_hours)}</span></td></tr>`;
+  }
+  return h + '</tbody></table></div>';
+}
+
+function msgHtml(msg){
+  let out = '', inList = false;
+  for (const ln of msg.split('\n').slice(1)){
+    if (ln.startsWith('• ')) { if(!inList){out+='<ul>';inList=true} out += `<li>${esc(ln.slice(2))}</li>`; }
+    else { if(inList){out+='</ul>';inList=false} out += ln.endsWith(':') ? `<h4>${esc(ln.slice(0,-1))}</h4>` : `<p>${esc(ln)}</p>`; }
+  }
+  return out + (inList ? '</ul>' : '');
+}
+
+function decideBlock(u){
+  const k = key(u.unit), st = S.st, dec = decision(u);
+  const hist = [];
+  if (st[`g_${k}_ready`]) hist.push(`Управляющий: исправил ${fmtWhen(st[`g_${k}_ready`])}${st[`g_${k}_mnote`]?` — «${esc(st[`g_${k}_mnote`])}»`:''}`);
+  if (st[`g_${k}_ok`]==='approved') hist.push(`Руководитель: <b>согласовал</b> ${fmtWhen(st[`g_${k}_at`])}`);
+  if (st[`g_${k}_ok`]==='returned') hist.push(`Руководитель: вернул ${fmtWhen(st[`g_${k}_at`])}`);
+  const note = st[`g_${k}_note`] && st[`g_${k}_ok`]==='returned' ? `<div class="note"><b>Комментарий руководителя:</b> ${esc(st[`g_${k}_note`])}</div>` : '';
+  const changed = dec.state==='changed' ? `<div class="note">График в Dodo IS поменяли после согласования. Нужно согласовать заново.</div>` : '';
+  let ctl = '';
+  if (S.view === 'ruk') {
+    ctl = `<label for="n-${k}" class="mode">Комментарий управляющему (необязательно)</label>
+<textarea id="n-${k}" placeholder="Например: Вт и Ср убрать по одному кассиру после 21:00">${esc(st[`g_${k}_ok`]==='returned'?st[`g_${k}_note`]||'':'')}</textarea>
+<div class="row"><button class="primary" type="button" data-act="approve" data-k="${k}">Согласовать</button>
+<button class="danger" type="button" data-act="return" data-k="${k}">Вернуть на доработку</button></div>`;
+  } else if (S.view === k) {
+    ctl = `<label for="m-${k}" class="mode">Что поменяли или почему оставили как есть</label>
+<textarea id="m-${k}" placeholder="Например: убрал стажёров из Вт–Ср 14–17, добавил пиццамейкера в Сб 11–15">${esc(st[`g_${k}_mnote`]||'')}</textarea>
+<div class="row"><button class="primary" type="button" data-act="ready" data-k="${k}">Исправил график — проверьте</button>
+<span class="mode">Сначала поправьте график в Dodo IS: агент перепроверяет его каждый час.</span></div>`;
+  }
+  return `<div class="decide">${changed}${note}${hist.length?`<div class="hist">${hist.map(x=>`<div>${x}</div>`).join('')}</div>`:''}${ctl}</div>`;
+}
+
+function card(u){
+  const dec = decision(u), gap = u.hours - u.hours_target, [al, ac] = STATUS[u.status];
+  const fact = u.fact_hours ? (()=>{const dl=u.fact_hours-u.hours;return `<div class="kv"><span>Отработали по факту</span><b>${n0(u.fact_hours)} ч</b><em class="${dl>20?'bad':''}">${dl>=0?'+':'−'}${n0(Math.abs(dl))} ч к графику</em></div>`})() : '';
+  return `<section class="unit" id="u-${key(u.unit)}">
+<header><h3>${esc(u.unit)}</h3><span class="pill ${dec.cls}">${dec.label}</span>${dec.state!=='agent'?`<span class="pill ${ac}">Агент: ${al.toLowerCase()}</span>`:''}</header>
+<div class="kvs">
+<div class="kv"><span>Часов в графике</span><b>${n0(u.hours)}</b><em class="${gap>3?'bad':gap<-3?'good':''}">${gap>0?'лишних':'запас'} ${n0(Math.abs(gap))} ч · можно ${n0(u.hours_target)}</em></div>
+<div class="kv"><span>Производительность графика</span><b>${n1(u.prod_fc)}</b><em>по плану выручки ${n1(u.prod_plan)}</em></div>
+<div class="kv"><span>Цель месяца</span><b>${n1(u.goal)}</b><em>будни ${n1(u.prod_weekdays)} · Пт–Сб ${n1(u.prod_fri_sat)}</em></div>
+${fact}</div>
+<div class="cols"><div class="msg">${msgHtml(u.message)}</div>
+<div class="hmbox"><h4>${u.hours?'Люди сверх нормы (+) и нехватка (−) по часам':'Сколько людей ставить по часам (все, кроме курьеров)'}</h4>${heat(u)}</div></div>
+${decideBlock(u)}
+</section>`;
+}
+
+function render(){
+  const d = S.data, w0 = new Date(d.week + 'T00:00'), w1 = new Date(w0); w1.setDate(w1.getDate()+6);
+  const f = x => x.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'});
+  const units = S.view==='all'||S.view==='ruk' ? d.units : d.units.filter(u => key(u.unit)===S.view);
+  const decs = d.units.map(decision);
+  const cnt = s => decs.filter(x=>x.state===s).length;
+  const rows = d.units.map((u,i) => {const dec=decs[i], gap=u.hours-u.hours_target; return `<tr>
+<td><a href="#u-${key(u.unit)}" data-jump="${key(u.unit)}">${esc(u.unit)}</a></td><td><span class="pill ${dec.cls}">${dec.label}</span>${dec.at?`<small>${fmtWhen(dec.at)}</small>`:''}</td>
+<td class="num">${n0(u.hours)}</td><td class="num">${n0(u.hours_target)}</td><td class="num ${gap>3?'bad':gap<-3?'good':''}">${gap>0?'+':'−'}${n0(Math.abs(gap))}</td>
+<td class="num">${n1(u.prod_fc)}</td><td class="num">${n1(u.prod_plan)}</td><td class="num">${n1(u.goal)}</td><td class="num">${n0(u.fact_hours)}</td></tr>`}).join('');
+  const one = units.length === 1;
+  const weekOpts = S.weeks.map(w => `<option value="${w}" ${w===S.week?'selected':''}>${new Date(w+'T00:00').toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'})} – ${(()=>{const e=new Date(w+'T00:00');e.setDate(e.getDate()+6);return e.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit'})})()}</option>`).join('');
+  const links = d.units.map(u => `<a href="#${key(u.unit)}">${esc(u.unit)}</a>`).join('');
+  $('#app').innerHTML = `
+<div class="top"><div class="eyebrow">Додо Пицца Якутск · графики кухни и кассы${S.view==='ruk'?' · режим руководителя':''}</div>
+<h1>${one?esc(units[0].unit)+' · ':''}неделя ${f(w0)}–${f(w1)}</h1>
+<p class="lead">Агент проверяет графики из Dodo IS против прогноза Dodo IS, плана выручки и цели производительности на ${MONTHS[+d.month.slice(5)-1]}. Проверка от ${esc(d.generated.replace('T',' '))}.${S.stOk===false?' <b class="bad">Решения сейчас не загрузились — обновите страницу.</b>':''}</p></div>
+<div class="bar"><label for="wk" class="mode">Неделя</label><select id="wk">${weekOpts}</select>
+${S.view!=='all'&&S.view!=='ruk'?`<a class="mode" href="#">Все пиццерии</a>`:''}
+<label for="who" class="mode">Кто вы</label><input id="who" value="${esc(LS.get('g_who',''))}" placeholder="Имя" size="14"></div>
+${one?'':`<div class="net">
+<div><span>Согласовано</span><b class="good">${cnt('approved')}</b></div>
+<div><span>Ждут проверки</span><b>${cnt('ready')+cnt('changed')}</b></div>
+<div><span>На доработке</span><b class="bad">${cnt('returned')+decs.filter((x,i)=>x.state==='agent'&&d.units[i].status!=='ok').length}</b></div>
+<div><span>Часов в графиках</span><b>${n0(d.network.hours)}</b></div>
+<div><span>Можно по цели</span><b>${n0(d.network.hours_target)}</b></div>
+<div><span>Производительность сети</span><b>${n1(d.network.prod_fc)}</b></div>
+<div><span>Цель сети</span><b>${n1(d.network.goal)}</b></div></div>
+<div class="tbl"><table class="sum"><thead><tr><th>Пиццерия</th><th>Состояние</th><th class="num">Часов</th><th class="num">Можно</th><th class="num">Разница</th><th class="num">Произв. по прогнозу</th><th class="num">по плану</th><th class="num">Цель</th><th class="num">Факт, ч</th></tr></thead><tbody>${rows}</tbody></table></div>`}
+<div class="legend"><span><i style="background:var(--p2)"></i>людей больше нормы</span><span><i style="background:var(--m2)"></i>людей меньше нормы</span><span><i style="background:var(--bg);box-shadow:inset 0 -2px 0 var(--accent)"></i>час пик</span><span>Наведите на клетку — график, норма и прогноз продуктов в этот час</span></div>
+${units.map(card).join('')}
+<h2>Как идёт согласование</h2>
+<div class="how">
+<div><span class="when">Пятница</span><b>Задание на неделю</b><span>Агент считает по прогнозу Dodo IS и плану выручки, сколько часов можно поставить каждой пиццерии по дням.</span></div>
+<div><span class="when">До воскресенья 12:00</span><b>Управляющий ставит график в Dodo IS</b><span>Всех: кухня, касса, менеджеры, клинеры. Смены вне графика агент не видит.</span></div>
+<div><span class="when">Воскресенье 12:00–20:00</span><b>Проверка каждый час</b><span>Агент пишет, что поправить. Управляющий правит в Dodo IS и жмёт «Исправил график — проверьте».</span></div>
+<div><span class="when">Воскресенье вечер</span><b>Согласование</b><span>Руководитель согласует или возвращает с комментарием. После согласования управляющий публикует график сотрудникам.</span></div>
+</div>
+${S.view==='all'||S.view==='ruk'?`<div class="links"><span class="mode">Ссылки для управляющих:</span>${links}</div>`:''}
+<p class="foot">Норма: менеджер весь день; кассир доставки, кассир зала 11–21, второй кассир 17–21 при 100+ продуктах в час; клинер 9–17, где он есть; в 7:00 трое на подготовке; поставка +1 человек на 1,5 ч; кухня 1 человек на 12 продуктов в час в пик (Пт–Сб 11–22, ежедневно 17–21), вне пика 1 на 16 (Я-3 — 13, Я-4 в пик — 15); с 22:00 трое на кухне, закрытие до 23:40; генуборка 12 ч в неделю. Производительность = продукты прогноза ÷ часы всех, кроме курьеров. «Можно» = больше из двух: продукты ÷ цель или норма.</p>`;
+  $('#wk').onchange = e => go(e.target.value);
+  document.querySelectorAll('[data-jump]').forEach(a => a.onclick = ev => {ev.preventDefault(); document.getElementById('u-'+a.dataset.jump).scrollIntoView({behavior:'smooth'})});
+  document.querySelectorAll('[data-act]').forEach(b => b.onclick = () => act(b));
+}
+
+async function act(b){
+  const k = b.dataset.k, u = S.data.units.find(x => key(x.unit)===k), now = new Date().toISOString();
+  if (!($('#who').value||'').trim()) { toast('Напишите, кто вы — поле «Кто вы» вверху'); $('#who').focus(); return; }
+  const f = {};
+  if (b.dataset.act === 'approve') Object.assign(f, {[`g_${k}_ok`]:'approved', [`g_${k}_at`]:now, [`g_${k}_mod`]:u.last_modified||'', [`g_${k}_note`]:$(`#n-${k}`).value.trim()});
+  if (b.dataset.act === 'return') {
+    const note = $(`#n-${k}`).value.trim();
+    Object.assign(f, {[`g_${k}_ok`]:'returned', [`g_${k}_at`]:now, [`g_${k}_note`]:note});
+  }
+  if (b.dataset.act === 'ready') Object.assign(f, {[`g_${k}_ready`]:now, [`g_${k}_mnote`]:$(`#m-${k}`).value.trim()});
+  b.disabled = true;
+  try { await save(f); toast(b.dataset.act==='approve'?`${u.unit}: согласовано`:b.dataset.act==='return'?`${u.unit}: возвращён на доработку`:'Отправлено руководителю'); render(); }
+  catch (e) { toast('Не сохранилось: ' + e.message + '. Попробуйте ещё раз.'); b.disabled = false; }
+}
+
+async function go(week){
+  S.week = week;
+  S.data = await jget(`data/${week}.json?v=${Date.now()}`);
+  await loadState();
+  render();
+  if (S.view !== 'all' && S.view !== 'ruk') window.scrollTo(0,0);
+}
+
+(async () => {
+  S.view = parseHash();
+  window.addEventListener('hashchange', () => { S.view = parseHash(); render(); });
+  try {
+    const w = await jget(`data/weeks.json?v=${Date.now()}`);
+    S.weeks = w.weeks;
+    const q = new URLSearchParams(location.search).get('week');
+    // по умолчанию — ближайшая неделя, которую сейчас согласуют (самая поздняя)
+    await go(q && S.weeks.includes(q) ? q : S.weeks[0]);
+  } catch (e) { $('#app').innerHTML = `<p class="lead bad">Не загрузились данные: ${esc(e.message)}. Обновите страницу.</p>`; }
+})();
+</script>
+</body>
+</html>
